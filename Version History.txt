@@ -1,0 +1,8 @@
+Version History
+v0.1 - Path algorithm works. # of agents slider broken. Most land parameters not used. Some unused code shells to clean up.
+
+To-do List
+TBD
+
+Bug Fixes Needed
+TBD
