@@ -15,27 +15,26 @@ class Monkey(Agent):
     def step(self):
         self.age += 1
 
-        adult = self.age > 1
-
         self.switch()
-
+        """
         # new Monkey
-        if (adult):
-            neig = self.model.grid.get_neighborhood(self.pos, True, False)
-            if any(map(self.model.grid.is_cell_empty, neig)):
-                empty = list(filter(self.model.grid.is_cell_empty, neig))
-                pos = random.choice(empty)
-                last = self.model.number_of_monkeys
-                new_monkey = Monkey(last + 1, self.model)
-                new_monkey.strategy = self.strategy
-                self.model.grid.place_agent(new_monkey, pos)
-                self.model.schedule.add(new_monkey)
-                self.model.number_of_monkeys += 1
-            else:
-                from maxent import masterdict  # can't do this at the beginning
-                pos = self.neighbor_choice(neig, masterdict)
-                # pos = random.choice(neig)
-                self.move_to(pos)
+        neig = self.model.grid.get_neighborhood(self.pos, True, False)
+        pos = random.choice(neig)
+        last = self.model.number_of_monkeys
+        print(last)
+        new_monkey = Monkey(last + 1, self.model)
+        new_monkey.strategy = self.strategy
+        self.model.grid.place_agent(new_monkey, pos)
+        self.model.schedule.add(new_monkey)
+        self.model.number_of_monkeys += 1
+        
+        else:
+        """
+        from model import masterdict  # can't do this at the beginning
+        neig = self.model.grid.get_neighborhood(self.pos, True, False)
+        pos = self.neighbor_choice(neig, masterdict)
+        # pos = random.choice(neig)
+        self.move_to(pos)
 
         # Death
  #       if self.age > 10:
@@ -47,7 +46,7 @@ class Monkey(Agent):
         # picks a weighted neighbor to move to
         # print(neighborlist)
         color = None
-        suitability = None
+        weight = None
         neighborcolor = []
         for ng in neighborlist:
             if color != None:
@@ -59,17 +58,23 @@ class Monkey(Agent):
         if color != None:
             neighborcolor.append(color)
         for color in neighborcolor:
-            if color == 'Green':
-                suitability = 12
-            elif color == 'Yellow':
-                suitability = 5
-            elif color == 'Red':
-                suitability = 1
-            elif color == 'Black':
-                suitability = 0
-            else:
-                print('test')
-            choicelist.append(suitability)
+            if color == 'Red':  # elevation 1900+
+                weight = 1
+            elif color == 'Orange':  # elevation 1700-1900
+                weight = 11
+            elif color == 'Yellow':  # elevation 1500-1700
+                weight = 1
+            elif color == 'Green':  # elevation 1300-1500
+                weight = 4
+            elif color == 'Blue':  # elevation 1100-1300
+                weight = 10
+            elif color == 'Purple':  # elevation 900-1100
+                weight = 3
+            elif color == 'Black':  # elevation 900-
+                weight = 1
+            elif color == 'Gray':  # elevation -9999, outside FNNR
+                weight = 0
+            choicelist.append(weight)
         # print(choicelist)
         if choicelist != [] and choicelist != [0, 0, 0, 0, 0, 0, 0, 0]:
             try:
@@ -140,36 +145,52 @@ class Monkey(Agent):
         self.model.schedule.remove(self)
         self.model.number_of_monkeys -= 1
 
-# all parameters below are currently unused except for seed and suitability
+# all parameters below are currently unused except for seed and weight
 
 class Red(Maxent):
 
     seed = 0.005
-    temperature = 18
-    elevation = 800
-    forest_type = 3
-    suitability = 2
+    min_elev = 1899
+    max_elev = 3000
 
-class Green(Maxent):
+class Orange(Maxent):
 
-    seed = 0.01
-    temperature = 12
-    elevation = 1500
-    forest_type = 1
-    suitability = 10
+    seed = 0.005
+    min_elev = 1699
+    max_elev = 1900
 
 class Yellow(Maxent):
 
     seed = 0.01
-    temperature = 15
-    elevation = 1000
-    forest_type = 2
-    suitability = 5
+    min_elev = 1499
+    max_elev = 1700
+
+class Green(Maxent):
+
+    seed = 0.01
+    min_elev = 1299
+    max_elev = 1500
+
+class Blue(Maxent):
+
+    seed = 0.01
+    min_elev = 1099
+    max_elev = 1300
+
+class Purple(Maxent):
+
+    seed = 0.01
+    min_elev = 899
+    max_elev = 1100
 
 class Black(Maxent):
 
     seed = 0.001
-    temperature = 20
-    elevation = 500
-    forest_type = 4
-    suitability = 0
+    min_elev = 0
+    max_elev = 900
+
+class Gray(Maxent):
+
+    seed = 0.001
+    min_elev = -10000
+    max_elev = -9998
