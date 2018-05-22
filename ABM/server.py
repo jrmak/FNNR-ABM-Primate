@@ -1,11 +1,11 @@
-from mesa.visualization.modules import CanvasGrid, ChartModule
+from mesa.visualization.modules import CanvasGrid  #, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 
-from agents import Red, Orange, Yellow, Green, Blue, Purple, Black, Gray, Monkey
+from agents import Red, Orange, Yellow, Green, Blue, Purple, Black, Gray, Family
 from model import Movement
 
-# should match the same width and height as in model.py
+# should be a square
 width = 104
 height = 104
 
@@ -72,7 +72,7 @@ def movement_portrayal(agent):
         portrayal["h"] = 1
         portrayal["Layer"] = 0
 
-    elif type(agent) is Monkey:
+    elif type(agent) is Family:
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "white"
         portrayal["r"] = 3
@@ -82,11 +82,14 @@ def movement_portrayal(agent):
 
 # monkey_movement_chart = {"Label": "Golden Monkey", "Color": "purple"}
 
-agent_slider = UserSettableParameter('slider', "Number of Agents", 10, 10, 30, 1)
+agent_slider = UserSettableParameter('slider', "Number of Families", 5, 1, 20, 1)
 
 canvas = CanvasGrid(movement_portrayal, width, height)
 # chart_count = ChartModule([monkey_movement_chart])
-model_params = {"strategy": "switch", "num_monkey": agent_slider}
+model_params = {"number_of_families": agent_slider}
 
-server = ModularServer(Movement, [canvas], "Movement", model_params) # deleted ', chart_count' after canvvas
+server = ModularServer(Movement, [canvas], "FNNR: an ABM of Guizhou Golden Monkey Movement", model_params)
+        # deleted ', chart_count' after canvvas
+
+
 server.launch()
