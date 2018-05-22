@@ -1,8 +1,13 @@
-Version History
-v0.1 - Path algorithm works. # of agents slider broken. Most land parameters not used. Some unused code shells to clean up.
+---Version History---
+5/22/18 - Monkey demographic structure/population model set up--now runs through either server.py or graph.py. # of (family) agents slider fixed; will add more eventually. Some code cleanup.
+5/14/18 - Path algorithm for monkey movement (8-grid neighbor choice according to elevation's assigned weight) works. # of agents slider broken. Some unused code shells to clean up.
 
-To-do List
-TBD
 
-Bug Fixes Needed
-TBD
+---To-do List---
+Get rid of visual grid whitespace in visualization
+Account for slight difference between slope and DEM ASCII files (ArcGIS aggregation - uncheck 'modify size if needed')
+
+---Bug Fixes/Improvements Needed---
+Clean up code/comment further
+Add Word documentation
+
