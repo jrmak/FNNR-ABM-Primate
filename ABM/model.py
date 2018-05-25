@@ -21,7 +21,7 @@ class Movement(Model):
     number_of_purple = 0
     number_of_gray = 0
 
-    def __init__(self, width = 89, height = 104, torus = False,
+    def __init__(self, width = 104, height = 104, torus = False,
                  time = 0, number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0):
         # seed can be changed
@@ -86,9 +86,9 @@ class Movement(Model):
                 for monkey_id in range(family_size):
                     gender = random.randint(0, 1)
                     if gender == 1:
-                        last_birth_interval = random.randint(0, 3)
+                        last_birth_interval = random.uniform(0, 3)
                     else:
-                        last_birth_interval = 0
+                        last_birth_interval = -9999
                     mother = 0  # no parent check for first generation
                     choice = random.random()  # 0 - 1 float
                     if choice <= 0.11:
@@ -171,6 +171,6 @@ class Movement(Model):
 
 
 model = Movement()
-time = 3
+time = 10
 for t in range(time):
     model.step()

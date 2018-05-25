@@ -66,40 +66,41 @@ class Family(Agent):
                 # the below takes care of edges
                 while len(choicelist) < 8:
                     choicelist.append(0)
-                # random choice plays a role, but is affected by weights
+                # random choice plays a role, but each neighbor choice is affected by weights
+                # the next few dozen lines determine which weighted % category the random choice falls into
                 chance = random.uniform(0, 1)
                 oldsum = 0
                 newsum = choicelist[1] / sum(choicelist)
                 if oldsum < chance < newsum:
-                    direction = neighborlist[1]
+                    direction = neighborlist[1]  # north neighbor
                 oldsum = newsum
                 newsum += choicelist[6] / sum(choicelist)
                 if oldsum < chance < newsum:
-                    direction = neighborlist[6]
+                    direction = neighborlist[6]  # south neighbor
                 oldsum = newsum
                 newsum += choicelist[3] / sum(choicelist)
                 if oldsum < chance < newsum:
-                    direction = neighborlist[3]
+                    direction = neighborlist[3]  # west neighbor
                 oldsum = newsum
                 newsum += choicelist[4] / sum(choicelist)
                 if oldsum < chance < newsum:
-                    direction = neighborlist[4]
+                    direction = neighborlist[4]  # east neighbor
                 oldsum = newsum
                 newsum += choicelist[0] / sum(choicelist)
                 if oldsum < chance < newsum:
-                    direction = neighborlist[0]
+                    direction = neighborlist[0]  # northwest neighbor
                 oldsum = newsum
                 newsum += choicelist[2] / sum(choicelist)
                 if oldsum < chance < newsum:
-                    direction = neighborlist[2]
+                    direction = neighborlist[2]  # northeast neighbor
                 oldsum = newsum
                 newsum += choicelist[3] / sum(choicelist)
                 if oldsum < chance < newsum:
-                    direction = neighborlist[3]
+                    direction = neighborlist[5]  # southwest neighbor
                 oldsum = newsum
                 newsum += choicelist[7] / sum(choicelist)
                 if oldsum < chance < newsum:
-                    direction = neighborlist[7]
+                    direction = neighborlist[7]  # southeast neighbor
                 return direction
             except:
                 pass
@@ -149,6 +150,7 @@ class Monkey(Family):
 
         # Death
         chance = random.uniform(0, 1)
+        # formula may be fixed later
         if self.age <= 1 and chance <= 0.00305:
             self.death()
             recent_death_infant.append(self.mother)
@@ -171,7 +173,8 @@ class Monkey(Family):
             # 0.9782^73 = 20% chance to survive each year with ticks every 5 days
 
         self.age += (1/73)
-        self.last_birth_interval += 1/73
+        if self.gender == 1 and 10 < self.age < 25:
+            self.last_birth_interval += 1/73
 
     def check_age_category(self):
         if (self.age <= 1 and self.age_category == 0) or \
@@ -188,7 +191,7 @@ class Monkey(Family):
 
     def check_recent_death_infant(self):
         if self.unique_id in recent_death_infant:
-            self.last_birth_interval = 2.2
+            self.last_birth_interval = random.uniform(2, 2.3)
             recent_death_infant.remove(self.unique_id)
 
     def birth(self, parent_pos, new_family_size, parent_family, mother_id):
@@ -200,7 +203,10 @@ class Monkey(Family):
         age = 0
         age_category = 0
         family_id = parent_family
-        last_birth_interval = 0
+        if gender == 1:
+            last_birth_interval = random.uniform(0, 3)
+        else:
+            last_birth_interval = -9999
         mother = mother_id
         if mother == 0:
             mother = random.choice(random_mother_list)
@@ -209,6 +215,7 @@ class Monkey(Family):
         self.model.schedule.add(new_monkey)
         self.model.number_of_monkeys += 1
         self.model.monkey_birth_count += 1
+        demographic_structure_list[0] += 1
 
     def death(self):
         # death from the perspective of a monkey agent

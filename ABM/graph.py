@@ -10,7 +10,7 @@ import numpy as np
 from model import *
 
 model = Movement()
-time = 73
+time = 73 * 10
 for t in range(time):
     model.step()
     save_summary(t, show_monkey_population(model), show_monkey_birth_count(model), show_monkey_death_count(model))
@@ -26,7 +26,7 @@ index = np.arange(len(age_category_list))
 print(demographic_structure_list)
 width = 0.5
 plt.bar(index, demographic_structure_list, width, align = 'center')
-plt.xticks(index)
+plt.xticks(index, age_category_list)
 plt.title('Age Structure in the FNNR After ' + str(time) + ' Steps')
 plt.xlabel('Age')
 plt.ylabel('Number of Monkeys')
