@@ -1,7 +1,8 @@
 ---Version History---
-5/22/18 - Minor bug fixes to the population structure model over the long term. Most work done today was in ArcGIS, preparing layers for Maxent.
-5/22/18 - Monkey demographic structure/population model set up--now runs through either server.py or graph.py. # of (family) agents slider fixed; will add more eventually. Some code cleanup.
-5/14/18 - Path algorithm for monkey movement (8-grid neighbor choice according to elevation's assigned weight) works. # of agents slider broken. Some unused code shells to clean up.
+5/28 - Expect to finish more pseudocore (sections 8-10)
+5/25 - Minor bug fixes to the population structure model over the long term. Most work done today was in ArcGIS, preparing layers for Maxent.
+5/22 - Monkey demographic structure/population model set up--now runs through either server.py or graph.py. # of (family) agents slider fixed; will add more eventually. Some code cleanup.
+5/14 and before - Path algorithm for monkey movement (8-grid neighbor choice according to elevation's assigned weight) works. # of agents slider broken. Some unused code shells to clean up.
 
 
 ---To-do List---
