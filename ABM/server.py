@@ -72,10 +72,16 @@ def movement_portrayal(agent):
         portrayal["h"] = 1
         portrayal["Layer"] = 0
 
-    elif type(agent) is Family:
+    elif type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "white"
-        portrayal["r"] = 3
+        portrayal["r"] = 5
+        portrayal["Layer"] = 1
+
+    elif type(agent) is Family and agent.family_type == 'all_male':
+        portrayal["Shape"] = "circle"
+        portrayal["Color"] = "aqua"
+        portrayal["r"] = 5
         portrayal["Layer"] = 1
 
     return portrayal
@@ -84,7 +90,9 @@ def movement_portrayal(agent):
 
 agent_slider = UserSettableParameter('slider', "Number of Families", 5, 1, 20, 1)
 
-canvas = CanvasGrid(movement_portrayal, width, height)
+canvas_width = 700
+canvas_height = 700
+canvas = CanvasGrid(movement_portrayal, width, height, canvas_width, canvas_height)
 # chart_count = ChartModule([monkey_movement_chart])
 model_params = {"number_of_families": agent_slider}
 

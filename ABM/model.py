@@ -6,6 +6,8 @@ from agents import *
 
 masterdict = {'Red':[], 'Orange':[], 'Yellow':[], 'Green':[], 'Blue':[],
               'Purple':[], 'Black':[], 'Gray':[]}  # master dictionary
+global_family_id_list = []
+
 # dictionary keys: land suitability (or elevation, etc.) categorized by color
 # dictionary values: grid coordinates that belong to that land type
 
@@ -24,7 +26,6 @@ class Movement(Model):
     def __init__(self, width = 104, height = 104, torus = False,
                  time = 0, number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0):
-        # seed can be changed
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
         self.time = time
@@ -69,7 +70,7 @@ class Movement(Model):
 
         # create monkey agents - each pixel represents a family group of 25-45 monkeys
 
-        superlist = masterdict['Red'] + masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
+        superlist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
                     + masterdict['Blue'] + masterdict['Purple']
 
         if self.time == 0:  # only do this on the first step
@@ -78,9 +79,12 @@ class Movement(Model):
                 from agents import Family
                 family_size = random.randint(25, 45)
                 family_id = i
-                family = Family(family_id, self, pos, family_size)
+                list_of_family_members = []
+                family_type = 'traditional'
+                family = Family(family_id, self, pos, family_size, list_of_family_members, family_type)
                 self.grid.place_agent(family, pos)
                 self.schedule.add(family)
+                global_family_id_list.append(family_id)
 
                 from agents import Monkey
                 for monkey_id in range(family_size):
@@ -121,11 +125,12 @@ class Movement(Model):
                         demographic_structure_list[5] += 1
                         gender = 1
 
-                    monkey = Monkey(monkey_id, self, pos, family_size, gender, age, age_category, family_id,
-                                    last_birth_interval, mother)
+                    monkey = Monkey(monkey_id, self, pos, family_size, list_of_family_members, family_type,
+                                    gender, age, age_category, family_id, last_birth_interval, mother)
 
                     self.number_of_monkeys += 1
                     self.schedule.add(monkey)
+                    list_of_family_members.append(monkey.unique_id)
 
 
     def step(self):
@@ -171,6 +176,6 @@ class Movement(Model):
 
 
 model = Movement()
-time = 10
+time = 400
 for t in range(time):
     model.step()

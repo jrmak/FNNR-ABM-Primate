@@ -6,22 +6,26 @@ from maxent import Maxent
 demographic_structure_list = [0] * 6
 recent_death_infant = []
 random_mother_list = []
+male_subgroup_list = []
 
 class Family(Agent):
     # the pixel that represents each group of monkeys with the same family id.
     # it moves on the visualization grid, unlike individual monkey agents.
-    def __init__(self, unique_id, model, pos, family_size):
+    def __init__(self, unique_id, model, pos, family_size, list_of_family_members, family_type):
         super().__init__(unique_id, model)
         self.pos = pos
         self.family_size = family_size
+        self.list_of_family_members = list_of_family_members
+        self.family_type = family_type
 
     def step(self):
         # movement
         from model import masterdict  # can't do this at the beginning
-        neig = self.model.grid.get_neighborhood(self.pos, True, False)
-        pos = self.neighbor_choice(neig, masterdict)
+        neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
+        pos = self.neighbor_choice(neig, masterdict)  # chooses from weighted choice
+        self.move_to(pos)  # moves to chosen neighboring pixel
+
         # pos = random.choice(neig)
-        self.move_to(pos)
 
         if self.family_size == 0:
             self.model.grid._remove_agent(self.pos, self)
@@ -49,15 +53,15 @@ class Family(Agent):
             elif color == 'Orange':  # elevation 1700-1900
                 weight = 11
             elif color == 'Yellow':  # elevation 1500-1700
-                weight = 1
-            elif color == 'Green':  # elevation 1300-1500
-                weight = 4
-            elif color == 'Blue':  # elevation 1100-1300
-                weight = 10
-            elif color == 'Purple':  # elevation 900-1100
                 weight = 3
-            elif color == 'Black':  # elevation 900-
+            elif color == 'Green':  # elevation 1300-1500
+                weight = 10
+            elif color == 'Blue':  # elevation 1100-1300
+                weight = 7
+            elif color == 'Purple':  # elevation 900-1100
                 weight = 1
+            elif color == 'Black':  # elevation 900-
+                weight = 0.1
             elif color == 'Gray':  # elevation -9999, outside FNNR
                 weight = 0
             choicelist.append(weight)
@@ -115,9 +119,9 @@ class Family(Agent):
 
 class Monkey(Family):
 
-    def __init__(self, unique_id, model, pos, family_size, gender, age, age_category, family_id,
-                 last_birth_interval, mother):
-        super().__init__(unique_id, model, pos, family_size)
+    def __init__(self, unique_id, model, pos, family_size, list_of_family_members, family_type,
+                 gender, age, age_category, family_id, last_birth_interval, mother):
+        super().__init__(unique_id, model, pos, family_size, list_of_family_members, family_type)
         self.gender = gender
         self.age = age
         self.age_category = age_category
@@ -141,11 +145,15 @@ class Monkey(Family):
         if (self.gender == 1 and 10 <= self.age <= 25):
             self.check_recent_death_infant()
 
+        # Check if male subgroup needs to break off of main group
+        if self.gender == 0 and self.age > 10:
+            self.male_subgroup()
+
         # Birth
         if (self.gender == 1 and 10 <= self.age <= 25):
             if self.last_birth_interval >= 3:
                 self.family_size += 1
-                self.birth(self.pos, self.family_size, self.family_id, self.unique_id)
+                self.birth(self.pos, self.family_size, self.family_id, self.unique_id, self.list_of_family_members)
                 self.last_birth_interval = 0
 
         # Death
@@ -188,13 +196,22 @@ class Monkey(Family):
             demographic_structure_list[(self.age_category)] -= 1
             demographic_structure_list[(self.age_category + 1)] += 1
             self.age_category += 1
+            
+            if self.age_category == 4 and self.gender == 0:
+                # that is, if a male has just turned 10 years old,
+                # determine if he breaks off into an all-male subgroup
+                male_subgroup_choice = random.uniform(0, 1)
+                if male_subgroup_choice < 0.4:
+                    self.family_id = 0
+                    self.family_type = 'all_male'
+                    male_subgroup_list.append(self.unique_id)
 
     def check_recent_death_infant(self):
         if self.unique_id in recent_death_infant:
             self.last_birth_interval = random.uniform(2, 2.3)
             recent_death_infant.remove(self.unique_id)
 
-    def birth(self, parent_pos, new_family_size, parent_family, mother_id):
+    def birth(self, parent_pos, new_family_size, parent_family, mother_id, list_of_family):
         # birth from the perspective of a new monkey agent
         last = self.model.number_of_monkeys
         pos = parent_pos
@@ -208,10 +225,13 @@ class Monkey(Family):
         else:
             last_birth_interval = -9999
         mother = mother_id
+        list_of_family_members = list_of_family
+        list_of_family_members.append(last + 1)
         if mother == 0:
             mother = random.choice(random_mother_list)
-        new_monkey = Monkey(last + 1, self.model, pos, family_size, gender, age, age_category, family_id,
-                            last_birth_interval, mother)
+        family_type = 'traditional'
+        new_monkey = Monkey(last + 1, self.model, pos, family_size, list_of_family_members, family_type,
+                            gender, age, age_category, family_id, last_birth_interval, mother)
         self.model.schedule.add(new_monkey)
         self.model.number_of_monkeys += 1
         self.model.monkey_birth_count += 1
@@ -223,8 +243,22 @@ class Monkey(Family):
         self.model.number_of_monkeys -= 1
         self.model.monkey_death_count += 1
 
+    def male_subgroup(self):
+        # breaks off
+        if len(male_subgroup_list) > random.randint(10, 15):
+            from model import global_family_id_list
+            new_family_id = int(global_family_id_list[-1] + 1)
+            global_family_id_list.append(new_family_id)
+            family_type = 'all_male'
+            male_family = Family(new_family_id, self.model, self.pos, len(male_subgroup_list), male_subgroup_list,
+                                 family_type)
+            self.model.grid.place_agent(male_family, self.pos)
+            print(self.model.time, 'test')
+            self.model.schedule.add(male_family)
+            del male_subgroup_list[:]
 
-# environmental pixels
+
+        # environmental pixels
 
 class Red(Maxent):
 
