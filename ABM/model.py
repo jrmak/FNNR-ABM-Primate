@@ -24,11 +24,13 @@ class Movement(Model):
     number_of_gray = 0
 
     def __init__(self, width = 104, height = 104, torus = False,
-                 time = 0, number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
+                 time = 0, step_in_year = 0,
+                 number_of_families = 0, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0):
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
         self.time = time
+        self.step_in_year = step_in_year  # 1-73
         self.number_of_families = number_of_families
         self.number_of_monkeys = number_of_monkeys
         self.monkey_birth_count = monkey_birth_count
@@ -73,6 +75,7 @@ class Movement(Model):
         superlist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
                     + masterdict['Blue'] + masterdict['Purple']
 
+        self.number_of_families = 8  # set here
         if self.time == 0:  # only do this on the first step
             for i in range(self.number_of_families):
                 pos = random.choice(superlist)
@@ -129,6 +132,8 @@ class Movement(Model):
                                     gender, age, age_category, family_id, last_birth_interval, mother)
 
                     self.number_of_monkeys += 1
+                    # print(demographic_structure_list[4])
+                    # print(self.number_of_monkeys)
                     self.schedule.add(monkey)
                     list_of_family_members.append(monkey.unique_id)
 
@@ -136,6 +141,9 @@ class Movement(Model):
     def step(self):
         # necessary; tells model to move forward
         self.time += (1/73)
+        self.step_in_year += 1
+        if self.step_in_year == 73:
+            self.step_in_year = 0  # start new year
         self.schedule.step()
         self.datacollector.collect(self)
         self.datacollector2.collect(self)
@@ -173,9 +181,3 @@ class Movement(Model):
                     val += 1
                     setattr(self, attr_name, val)
                     counter += 1
-
-
-model = Movement()
-time = 400
-for t in range(time):
-    model.step()
