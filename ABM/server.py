@@ -75,13 +75,13 @@ def movement_portrayal(agent):
     elif type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "white"
-        portrayal["r"] = 5
+        portrayal["r"] = 3
         portrayal["Layer"] = 1
 
     elif type(agent) is Family and agent.family_type == 'all_male':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "aqua"
-        portrayal["r"] = 5
+        portrayal["r"] = 3
         portrayal["Layer"] = 1
 
     return portrayal

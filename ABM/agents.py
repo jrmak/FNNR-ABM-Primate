@@ -22,13 +22,47 @@ class Family(Agent):
         # movement
         from model import masterdict  # can't do this at the beginning
         neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
-        pos = self.neighbor_choice(neig, masterdict)  # chooses from weighted choice
-        self.move_to(pos)  # moves to chosen neighboring pixel
-
-        # pos = random.choice(neig)
+        poslist = list(self.pos)
+        newneig = []
+        try:
+            for neighbor in neig:
+                neighbor = list(neighbor)
+                direction_east = poslist[0] - neighbor[0]
+                direction_north = poslist[1] - neighbor[1]
+                if poslist[0] < 100:
+                    neighbor[0] += direction_east * 5
+                if poslist[1] < 100:
+                    neighbor[1] += direction_north * 5
+                neighbor = tuple(neighbor)
+                newneig.append(neighbor)
+            pos = self.neighbor_choice(newneig, masterdict)
+            self.move_to(pos)
+        except:
+            pass
+        if 14 < self.model.step_in_year < 25 or  44 < self.model.step_in_year < 55:
+            pos = self.head_to_yangaoping(self.pos)  # chooses from weighted choice
+            self.move_to(pos)  # moves to chosen neighboring pixel
 
         if self.family_size == 0:
             self.model.grid._remove_agent(self.pos, self)
+
+    def head_to_yangaoping(self, pos):
+        # moves towards northeast portion of reserve
+        pos = list(pos)
+        topchoice = random.randint(40, 80)
+        eastchoice = random.randint(40, 70)
+        if pos[0] < eastchoice:
+            pos[0] += 5
+        if pos[1] < topchoice:
+            pos[1] += 5
+        else:
+            pass
+            if pos[0] > 104:
+                pos[0] = 100
+            if pos[1] > 104:
+                pos[1] = 100
+        pos = tuple(pos)
+        return pos
 
     def neighbor_choice(self, neighborlist, neighbordict):
         # agent chooses a neighbor to move to based on weights
@@ -47,13 +81,15 @@ class Family(Agent):
                         color = list(neighbordict.keys())[list(neighbordict.values()).index(nposlist)]
         if color != None:
             neighborcolor.append(color)
+
+        # sets weights
         for color in neighborcolor:
             if color == 'Red':  # elevation 1900+
                 weight = 1
             elif color == 'Orange':  # elevation 1700-1900
                 weight = 11
             elif color == 'Yellow':  # elevation 1500-1700
-                weight = 3
+                weight = 5
             elif color == 'Green':  # elevation 1300-1500
                 weight = 10
             elif color == 'Blue':  # elevation 1100-1300
@@ -67,9 +103,10 @@ class Family(Agent):
             choicelist.append(weight)
         if choicelist != [] and choicelist != [0, 0, 0, 0, 0, 0, 0, 0]:
             try:
-                # the below takes care of edges
+                # this takes care of edges
                 while len(choicelist) < 8:
                     choicelist.append(0)
+
                 # random choice plays a role, but each neighbor choice is affected by weights
                 # the next few dozen lines determine which weighted % category the random choice falls into
                 chance = random.uniform(0, 1)
@@ -113,10 +150,6 @@ class Family(Agent):
         if pos != None:
             self.model.grid.move_agent(self, pos)
 
-    def assign_family(self, member_id):
-        self.member = member_id
-        member_id.family_id = self.unique_id
-
 class Monkey(Family):
 
     def __init__(self, unique_id, model, pos, family_size, list_of_family_members, family_type,
@@ -131,26 +164,25 @@ class Monkey(Family):
 
     def step(self):
 
-        # to-do list:
-        # ! screenshot and print elevation legend
-        # ! modify height and width of grid to be mutable
-
         # Aging
         self.check_age_category()
+        self.age += (1/73)
 
         if (self.gender == 1 and 10 <= self.age <= 25):
             random_mother_list.append(self.unique_id)
 
-        # Check if mother of recently dead infant
+        # Check if mother of recently dead infant and count time since last birth
         if (self.gender == 1 and 10 <= self.age <= 25):
             self.check_recent_death_infant()
+            self.last_birth_interval += 1/73
 
         # Check if male subgroup needs to break off of main group
         if self.gender == 0 and self.age > 10:
             self.male_subgroup()
 
         # Birth
-        if (self.gender == 1 and 10 <= self.age <= 25):
+        if (18 < self.model.step_in_year < 25) or (48 < self.model.step_in_year < 55)   \
+            and (self.gender == 1 and 10 <= self.age <= 25):
             if self.last_birth_interval >= 3:
                 self.family_size += 1
                 self.birth(self.pos, self.family_size, self.family_id, self.unique_id, self.list_of_family_members)
@@ -161,28 +193,30 @@ class Monkey(Family):
         # formula may be fixed later
         if self.age <= 1 and chance <= 0.00305:
             self.death()
+            demographic_structure_list[0] -= 1
             recent_death_infant.append(self.mother)
             # 0.99695^73 = 80% chance to survive first year with ticks every 5 days
             # later add: find mother for immediate rebirthing
-        elif 1 < self.age < 8 and chance <= 0.0007:
+        elif 1 < self.age < 10 and chance <= 0.0007:
             self.death()
+            if 1 < self.age <= 3:
+                demographic_structure_list[1] -= 1
+            elif 3 < self.age <= 7:
+                demographic_structure_list[2] -= 1
+            elif 7 < self.age <= 10:
+                demographic_structure_list[3] -= 1
             # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
-        elif 8 < self.age < 10 and chance <= 0.0013:
+        elif 10 < self.age <= 30 and chance <= 0.0013:
             self.death()
+            if 10 < self.age <= 25:
+                demographic_structure_list[4] -= 1
+            elif 25 < self.age < 30:
+                demographic_structure_list[5] -= 1
             # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-        elif 10 < self.age < 25 and chance <= 0.00025:
+        elif self.age > 30 and chance <= 0.00393:
             self.death()
-            # 0.99975^73 = 98% chance to survive each year with ticks every 5 days
-        elif self.age > 25 and chance <= 0.0039:
-            self.death()
-            # 0.9961^73 = 75% chance to survive each year with ticks every 5 days
-        elif self.age > 30 and chance <= 0.0218:
-            self.death()
-            # 0.9782^73 = 20% chance to survive each year with ticks every 5 days
-
-        self.age += (1/73)
-        if self.gender == 1 and 10 < self.age < 25:
-            self.last_birth_interval += 1/73
+            demographic_structure_list[5] -= 1
+            # 0.99607^73 = 75% chance to survive each year with ticks every 5 days
 
     def check_age_category(self):
         if (self.age <= 1 and self.age_category == 0) or \
@@ -253,7 +287,6 @@ class Monkey(Family):
             male_family = Family(new_family_id, self.model, self.pos, len(male_subgroup_list), male_subgroup_list,
                                  family_type)
             self.model.grid.place_agent(male_family, self.pos)
-            print(self.model.time, 'test')
             self.model.schedule.add(male_family)
             del male_subgroup_list[:]
 
