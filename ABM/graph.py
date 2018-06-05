@@ -8,7 +8,7 @@ from excel_export_summary import *
 import matplotlib.pyplot as plt
 import numpy as np
 from model import *
-from agents import demographic_structure_list
+from agents import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list
 
 model = Movement()
 time = 73 * 10
@@ -16,7 +16,7 @@ erase_summary()
 for t in range(time):
     model.step()
     save_summary(t, show_monkey_population(model), show_monkey_birth_count(model), show_monkey_death_count(model),
-                 demographic_structure_list)
+                 demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
     print('Loading, Progress ', t, '/', time)
 
 
