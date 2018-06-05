@@ -26,7 +26,7 @@ class Movement(Model):
     def __init__(self, width = 104, height = 104, torus = False,
                  time = 0, step_in_year = 0,
                  number_of_families = 0, number_of_monkeys = 0, monkey_birth_count = 0,
-                 monkey_death_count = 0):
+                 monkey_death_count = 0, monkey_id_count = 0):
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
         self.time = time
@@ -35,6 +35,7 @@ class Movement(Model):
         self.number_of_monkeys = number_of_monkeys
         self.monkey_birth_count = monkey_birth_count
         self.monkey_death_count = monkey_death_count
+        self.monkey_id_count = monkey_id_count
 
         self.grid = MultiGrid(width, height, torus)
 
@@ -73,9 +74,9 @@ class Movement(Model):
         # create monkey agents - each pixel represents a family group of 25-45 monkeys
 
         superlist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
-                    + masterdict['Blue'] + masterdict['Purple']
+                    + masterdict['Blue']
 
-        self.number_of_families = 8  # set here
+        self.number_of_families = 10  # set here
         if self.time == 0:  # only do this on the first step
             for i in range(self.number_of_families):
                 pos = random.choice(superlist)
@@ -89,17 +90,20 @@ class Movement(Model):
                 self.schedule.add(family)
                 global_family_id_list.append(family_id)
 
-                from agents import Monkey
-                for monkey_id in range(family_size):
+                for monkey_family_member in range(family_size):   # actually creates the amount of monkeys indicated earlier
+                    id = self.number_of_monkeys + 1
                     gender = random.randint(0, 1)
                     if gender == 1:
+                        female_list.append(id)
                         last_birth_interval = random.uniform(0, 3)
                     else:
+                        male_maingroup_list.append(id)
                         last_birth_interval = -9999
                     mother = 0  # no parent check for first generation
-                    choice = random.random()  # 0 - 1 float
+                    death_flag = 0
+                    choice = random.random()  # 0 - 1 float - age is determined randomly based on weights
                     if choice <= 0.11:
-                        age = random.uniform(0, 1)
+                        age = random.uniform(0, 1)  # the parameters indicate the age range
                         age_category = 0
                         demographic_structure_list[0] += 1
                     elif 0.11 < choice <= 0.27:
@@ -118,22 +122,26 @@ class Movement(Model):
                         age = random.uniform(10, 25)
                         age_category = 4
                         demographic_structure_list[4] += 1
+                        if gender == 1:
+                            if id not in reproductive_female_list:
+                                reproductive_female_list.append(id)
                         # starting representation of male defection
                         structure_convert = random.random()
                         if structure_convert > 0.25:
                             gender = 1
+                            if id not in reproductive_female_list:
+                                reproductive_female_list.append(id)
                     elif 0.96 < choice:
                         age = random.uniform(25, 30)
                         age_category = 5
                         demographic_structure_list[5] += 1
                         gender = 1
-
-                    monkey = Monkey(monkey_id, self, pos, family_size, list_of_family_members, family_type,
-                                    gender, age, age_category, family_id, last_birth_interval, mother)
+                    monkey = Monkey(id, self, pos, family_size, list_of_family_members, family_type,
+                                    gender, age, age_category, family_id, last_birth_interval, mother,
+                                    death_flag)
 
                     self.number_of_monkeys += 1
-                    # print(demographic_structure_list[4])
-                    # print(self.number_of_monkeys)
+                    self.monkey_id_count += 1
                     self.schedule.add(monkey)
                     list_of_family_members.append(monkey.unique_id)
 
