@@ -10,7 +10,7 @@ If you have errors running the code and it is library-related, make sure Mesa's 
 Monkey movements are semi-randomized, and based on the weighted value of their 8-neighbor surroundings. This weighted value is currently determined by elevation (changeable in code; requires a raster layer converted to an ASCII file).
 A visual key will launch with the web browser in a later update.
 
-b. Run 'graph.py' to see population demographic charts after 1 year, or 73 time-steps (changeable in code).
+3. b. Run 'graph.py' to see population demographic charts after 1 year, or 73 time-steps (changeable in code).
 
 This project is incomplete.
 For more information, contact the owner of this repository.
