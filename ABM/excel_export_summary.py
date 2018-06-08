@@ -3,7 +3,6 @@
 import csv
 import inspect
 import os
-from model_for_graph import *
 
 """
 Exports FNNR summary data of monkey demographics into Excel.

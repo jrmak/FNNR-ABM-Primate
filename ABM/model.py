@@ -1,3 +1,5 @@
+# !/usr/bin/python
+
 from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
@@ -5,12 +7,12 @@ from mesa.datacollection import DataCollector
 from agents import *
 
 masterdict = {'Red':[], 'Orange':[], 'Yellow':[], 'Green':[], 'Blue':[],
-              'Purple':[], 'Black':[], 'Gray':[]}  # master dictionary
+              'Purple':[], 'Black':[], 'Gray':[]}  # master dictionary for elevations and colors; unneeded with maxent
 global_family_id_list = []
+filename = 'aggregated_dem.txt'
 
 # dictionary keys: land suitability (or elevation, etc.) categorized by color
 # dictionary values: grid coordinates that belong to that land type
-
 
 class Movement(Model):
 
@@ -23,12 +25,14 @@ class Movement(Model):
     number_of_purple = 0
     number_of_gray = 0
 
-    def __init__(self, width = 104, height = 104, torus = False,
+    def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
-                 number_of_families = 0, number_of_monkeys = 0, monkey_birth_count = 0,
+                 number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0, monkey_id_count = 0):
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
+        self.width = width
+        self.height = height
         self.time = time
         self.step_in_year = step_in_year  # 1-73
         self.number_of_families = number_of_families
@@ -36,6 +40,11 @@ class Movement(Model):
         self.monkey_birth_count = monkey_birth_count
         self.monkey_death_count = monkey_death_count
         self.monkey_id_count = monkey_id_count
+
+        # generate land
+        gridlist = self._readASCII(filename)[0]
+        width = self._readASCII(filename)[1]
+        height = self._readASCII(filename)[2]
 
         self.grid = MultiGrid(width, height, torus)
 
@@ -46,17 +55,14 @@ class Movement(Model):
         self.datacollector3 = DataCollector({"Monkey": lambda m: m.monkey_death_count})
         self.datacollector4 = DataCollector({"Monkey": lambda m: demographic_structure_list})
 
-        # generate land
-        gridlist = self._readASCII('aggregated_dem.txt')
-
-        self._populate(gridlist, Red)
-        self._populate(gridlist, Orange)
-        self._populate(gridlist, Yellow)
-        self._populate(gridlist, Green)
-        self._populate(gridlist, Blue)
-        self._populate(gridlist, Purple)
-        self._populate(gridlist, Black)
-        self._populate(gridlist, Gray)
+        self._populate(gridlist, Red, width, height)
+        self._populate(gridlist, Orange, width, height)
+        self._populate(gridlist, Yellow, width, height)
+        self._populate(gridlist, Green, width, height)
+        self._populate(gridlist, Blue, width, height)
+        self._populate(gridlist, Purple, width, height)
+        self._populate(gridlist, Black, width, height)
+        self._populate(gridlist, Gray, width, height)
 
         """
         # create monkey agents - early version, each pixel = 1 monkey, no families
@@ -76,7 +82,6 @@ class Movement(Model):
         superlist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
                     + masterdict['Blue']
 
-        self.number_of_families = 10  # set here
         if self.time == 0:  # only do this on the first step
             for i in range(self.number_of_families):
                 pos = random.choice(superlist)
@@ -162,20 +167,24 @@ class Movement(Model):
         # reads in a text file that determines the environmental grid setup
         # currently unused; grid is randomly generated
         f = open(text, 'r')
-        abody = f.readlines()[6:]  # ASCII file with a header
+        body = f.readlines()
+        width = body[0][-4:]  # last 3 characters of line: 870
+        height = body[1][-5:]
+        #height = str(f.readlines()[0])[-4:]  # last 4 characters of line: 1000
+        abody = body[6:]  # ASCII file with a header
         f.close()
         abody = reversed(abody)
         cells = []  # list of cities
         for line in abody:
             cells.append(line.split(" "))
-        return cells
+        return [cells, int(width), int(height)]
 
-    def _populate(self, grid, land_type):
+    def _populate(self, grid, land_type, width, height):
         # places land tiles on the grid
         prefix = "number_of_{}"
         counter = 0  # sets agent ID
-        for y in range(104):
-            for x in range(89):
+        for y in range(height):
+            for x in range(width):
                 elev = int(round(float(grid[y][x])))  # .index()
                 pos = x, y
                 land = land_type(counter, self)

@@ -1,4 +1,4 @@
-from model import *
+# !/usr/bin/python
 
 def show_monkey_population(model):
     """Returns the total population of modeled monkeys in the FNNR"""
@@ -14,4 +14,4 @@ def show_monkey_death_count(model):
 
 def show_demographic_structure_list(model):
     """Returns a list that shows population structure of modeled monkeys in the FNNR"""
-    return demographic_structure_list
+    return model.demographic_structure_list

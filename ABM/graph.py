@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from model import *
 from agents import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list
+from model_for_graph import *
 
 model = Movement()
 time = 73 * 10

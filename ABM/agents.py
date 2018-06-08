@@ -1,7 +1,8 @@
-import random
+# !/usr/bin/python
 
 from mesa.agent import Agent
 from maxent import Maxent
+import random
 
 demographic_structure_list = [0] * 6
 recent_death_infant = []
@@ -10,6 +11,7 @@ male_maingroup_list = []
 male_subgroup_list = []
 female_list = []
 reproductive_female_list = [0]
+
 
 class Family(Agent):
     # the pixel that represents each group of monkeys with the same family id.
@@ -22,50 +24,80 @@ class Family(Agent):
         self.family_type = family_type
 
     def step(self):
-        # movement
-        from model import masterdict  # can't do this at the beginning
+        # movement rules for each each step
+        from model import masterdict  # can't import this at the beginning, statement must be here
         neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
         poslist = list(self.pos)
         newneig = []
-        try:
+        from model import filename  # can't import at the beginning - import statement must be here
+        cell_height = self.model._readASCII(filename)[1]
+        try:  # sets position for pixels to move to - every step (5 days), they move 5 grids in a chosen direction
             for neighbor in neig:
                 neighbor = list(neighbor)
                 direction_east = poslist[0] - neighbor[0]
                 direction_north = poslist[1] - neighbor[1]
                 if poslist[0] < 100:
-                    neighbor[0] += direction_east * 5
+                    neighbor[0] += direction_east * int(cell_height / 10)
                 if poslist[1] < 100:
-                    neighbor[1] += direction_north * 5
+                    neighbor[1] += direction_north * int(cell_height / 10)
                 neighbor = tuple(neighbor)
                 newneig.append(neighbor)
             pos = self.neighbor_choice(newneig, masterdict)
             self.move_to(pos)
         except:
             pass
-        if 14 < self.model.step_in_year < 25 or  44 < self.model.step_in_year < 55:
-            pos = self.head_to_yangaoping(self.pos)  # chooses from weighted choice
-            self.move_to(pos)  # moves to chosen neighboring pixel
-
+        if 12 < self.model.step_in_year < 25 or  42 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
+            pos = self.move_to_yangaoping(self.pos, cell_height)
+            try:
+                self.move_to(pos)  # moves to chosen neighboring pixel
+            except:
+                # print(pos, 'to')
+                pass
+        elif 25 < self.model.step_in_year < 30 or 55 < self.model.step_in_year < 60:
+            pos = self.move_from_yangaoping(self.pos, cell_height)
+            try:
+                self.move_to(pos)
+            except:
+                # print(pos, 'from')
+                pass
         if self.family_size == 0:
-            self.model.grid._remove_agent(self.pos, self)
+            self.model.grid._remove_agent(self.pos, self)  # if everyone in a family dies, the pixel is removed
 
-    def head_to_yangaoping(self, pos):
+    def move_to_yangaoping(self, pos, height):
         # moves towards northeast portion of reserve
         pos = list(pos)
-        topchoice = random.randint(45, 75)
-        eastchoice = random.randint(45, 80)
+        northchoice = random.randint(int(height * 0.3), int(height * 0.8))  # numbers determined by proportion to grid
+        eastchoice = random.randint(int(height * 0.3), int(height * 0.8))  # range 40, 68
         if pos[0] < eastchoice:
-            pos[0] += 5
-        if pos[1] < topchoice:
-            pos[1] += 5
+            pos[0] += int(height / 14) # 6 for height 89
+        if pos[1] < northchoice:
+            pos[1] += int(height / 14)
         else:
-            pass
-            if pos[0] > 104:
-                pos[0] = 99
-            if pos[1] > 104:
-                pos[1] = 99
+            if pos[0] > height * 0.8:
+                pos[0] = int(height * 0.8)
+            if pos[1] > height * 0.8:
+                pos[1] = int(height * 0.8)
         pos = tuple(pos)
         return pos
+
+    def move_from_yangaoping(self, pos, height):
+        # moves away from northeast portion of reserve
+        pos = list(pos)
+        southchoice = random.randint(int(height * 0.2), int(height * 0.3))
+        westchoice = random.randint(int(height * 0.2), int(height * 0.3))
+        if pos[0] > westchoice:
+            pos[0] -= int(height / 14)
+        if pos[1] > southchoice:
+            pos[1] -= int(height / 14)
+        else:
+            pass
+            if pos[0] < height * 0.3:  # 29
+                pos[0] = int(height * 0.3)
+            if pos[1] < height * 0.3:
+                pos[1] = int(height * 0.3)
+        pos = tuple(pos)
+        return pos
+
 
     def neighbor_choice(self, neighborlist, neighbordict):
         # agent chooses a neighbor to move to based on weights
@@ -155,6 +187,9 @@ class Family(Agent):
 
 class Monkey(Family):
 
+    #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions
+    #  such as being born, aging, mating, dying, etc. in a different submodel
+
     def __init__(self, unique_id, model, pos, family_size, list_of_family_members, family_type,
                  gender, age, age_category, family_id, last_birth_interval, mother, death_flag):
         super().__init__(unique_id, model, pos, family_size, list_of_family_members, family_type)
@@ -171,7 +206,7 @@ class Monkey(Family):
         if self.death_flag == 0:
 
             # Aging
-            self.age += (1/73)
+            self.age += (1/73)  # every step is 5 days, or 1/73rd of a year
             self.check_age_category()
 
             # Check if mother of recently dead infant and count time since last birth
