@@ -1,13 +1,17 @@
-from mesa.visualization.modules import CanvasGrid  #, ChartModule
+# !/usr/bin/python
+
+# Running server.py runs the visualization; running graph.py shows the plots and writes the Excel file
+# The visualization shows family agents as moving pixels; the graphs display the aging of monkey agents
+
+from CanvasGridVisualization import CanvasGrid  #, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
 from mesa.visualization.UserParam import UserSettableParameter
 
-from agents import Red, Orange, Yellow, Green, Blue, Purple, Black, Gray, Family
-from model import Movement
+from model import *
 
-# should be a square
-width = 104
-height = 104
+# grid should be a square
+width = Movement._readASCII(Movement, filename)[2]  # width = height in this case, even if ASCII file isn't
+height = Movement._readASCII(Movement, filename)[2]
 
 def movement_portrayal(agent):
 
@@ -75,29 +79,31 @@ def movement_portrayal(agent):
     elif type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "white"
-        portrayal["r"] = 3
+        portrayal["r"] = int(height / 25)
         portrayal["Layer"] = 1
 
     elif type(agent) is Family and agent.family_type == 'all_male':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "aqua"
-        portrayal["r"] = 3
+        portrayal["r"] = int(height / 25)
         portrayal["Layer"] = 1
 
     return portrayal
 
 # monkey_movement_chart = {"Label": "Golden Monkey", "Color": "purple"}
 
-agent_slider = UserSettableParameter('slider', "Number of Families", 5, 1, 20, 1)
+agent_slider = UserSettableParameter('slider', "Number of Families", 10, 1, 20, 1)
+# note: add more later
 
 canvas_width = 700
 canvas_height = 700
+
 canvas = CanvasGrid(movement_portrayal, width, height, canvas_width, canvas_height)
 # chart_count = ChartModule([monkey_movement_chart])
 model_params = {"number_of_families": agent_slider}
 
 server = ModularServer(Movement, [canvas], "FNNR: an ABM of Guizhou Golden Monkey Movement", model_params)
-        # deleted ', chart_count' after canvvas
+        # deleted ', chart_count' after canvas
 
 
 server.launch()
