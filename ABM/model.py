@@ -4,16 +4,12 @@ from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
+from environment import *
 from agents import *
 
-masterdict = {'Red':[], 'Orange':[], 'Yellow':[], 'Green':[], 'Blue':[],
-              'Purple':[], 'Black':[], 'Gray':[]}
-# master dictionary for elevations and colors; unneeded with maxent
-# dictionary keys: land suitability (or elevation, etc.) categorized by color
-# dictionary values: grid coordinates that belong to that land type
-
+masterdict = {}
 global_family_id_list = []
-filename = 'aggregated_dem.txt'  # change this filename to another file in the same directory as needed
+filename = 'maxent87100.txt'  # change this filename to another file in the same directory as needed
 # this file determines the environmental 'grid' the agents move on;
 # currently, a resolution of 87 x 100 (width x height) takes ~10 seconds to run;
 # a resolution of 174 x 200 takes ~2-3 minutes to run;
@@ -22,19 +18,10 @@ filename = 'aggregated_dem.txt'  # change this filename to another file in the s
 
 class Movement(Model):
 
-    number_of_black = 0
-    number_of_red = 0
-    number_of_orange = 0
-    number_of_yellow = 0
-    number_of_green = 0
-    number_of_blue = 0
-    number_of_purple = 0
-    number_of_gray = 0
-
     def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
                  number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
-                 monkey_death_count = 0, monkey_id_count = 0):
+                 monkey_death_count = 0, monkey_id_count = 0, setting = 0):
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
         self.width = width
@@ -46,6 +33,7 @@ class Movement(Model):
         self.monkey_birth_count = monkey_birth_count
         self.monkey_death_count = monkey_death_count
         self.monkey_id_count = monkey_id_count
+        self.setting = setting
 
         # generate land
         gridlist = self._readASCII(filename)[0]  # see readASCII function below
@@ -61,19 +49,43 @@ class Movement(Model):
         self.datacollector3 = DataCollector({"Monkey": lambda m: m.monkey_death_count})
         self.datacollector4 = DataCollector({"Monkey": lambda m: demographic_structure_list})
 
-        self._populate(gridlist, Red, width, height)
-        self._populate(gridlist, Orange, width, height)
-        self._populate(gridlist, Yellow, width, height)
-        self._populate(gridlist, Green, width, height)
-        self._populate(gridlist, Blue, width, height)
-        self._populate(gridlist, Purple, width, height)
-        self._populate(gridlist, Black, width, height)
-        self._populate(gridlist, Gray, width, height)
-
         # create monkey agents - each pixel represents a family group of 25-45 monkeys
 
-        superlist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
+        self.setting = 'maxent'
+
+        if self.setting.lower() == 'elevation':  # for test purposes only
+
+            masterdict = {'Red': [], 'Orange': [], 'Yellow': [], 'Green': [], 'Blue': [],
+                          'Purple': [], 'Black': [], 'Gray': []}
+            # master dictionary for elevations and colors; unneeded with maxent
+            # dictionary keys: land suitability (or elevation, etc.) categorized by color
+            # dictionary values: grid coordinates that belong to that land type
+
+            number_of_black = 0
+            number_of_red = 0
+            number_of_orange = 0
+            number_of_yellow = 0
+            number_of_green = 0
+            number_of_blue = 0
+            number_of_purple = 0
+            number_of_gray = 0
+
+            for x in [Red, Orange, Yellow, Green, Blue, Purple, Black, Gray]:
+                self._populate(gridlist, x, width, height)
+            superlist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
                     + masterdict['Blue']
+
+        elif self.setting.lower() == 'maxent':
+            masterdict = {'Shade1': [], 'Shade2': [], 'Shade3': [], 'Shade4': [], 'Shade5': [],
+                          'Shade6': [], 'Shade7': [], 'Shade8': []}
+            # master dictionary for maxent
+            # dictionary keys: land suitability categorized by shade of grey
+            # dictionary values: grid coordinates that belong to that land type
+
+            for x in [Shade1, Shade2, Shade3, Shade4, Shade5, Shade6, Shade7, Shade8]:
+                self._populate(masterdict, gridlist, x, width, height)
+            superlist = masterdict['Shade2'] + masterdict['Shade3'] + masterdict['Shade4'] \
+                    + masterdict['Shade5'] + masterdict['Shade6'] + masterdict['Shade7']
 
         # superlist represents elevations where monkeys are likely to be found--used as a collection
         # from which starting points are randomly chosen
@@ -146,7 +158,6 @@ class Movement(Model):
                     self.schedule.add(monkey)
                     list_of_family_members.append(monkey.unique_id)
 
-
     def step(self):
         # necessary; tells model to move forward
         self.time += (1/73)
@@ -168,27 +179,34 @@ class Movement(Model):
         abody = body[6:]  # ASCII file with a header
         f.close()
         abody = reversed(abody)
-        cells = []  # list of cities
+        cells = []
+        # averagelist = []
         for line in abody:
             cells.append(line.split(" "))
+        #    newline = line.replace("-9999", "")
+        #    newline.split(" ").remove('')
+        #     for item in newline.split():
+        #         averagelist.append(float(item))
+        # mean = sum(averagelist)/len(averagelist)  # this code is for calculating mean values; not needed
         return [cells, int(width), int(height)]
 
-    def _populate(self, grid, land_type, width, height):
+
+    def _populate(self, masterdict, grid, land_type, width, height):
         # places land tiles on the grid - connects color/land cover category with ASCII file values
-        prefix = "number_of_{}"
+        # prefix = "number_of_{}"
         counter = 0  # sets agent ID
         for y in range(height):
             for x in range(width):
-                elev = int(round(float(grid[y][x])))  # .index()
+                value = float(grid[y][x])  # .index()
                 pos = x, y
                 land = land_type(counter, self)
-                if land_type.min_elev < elev < land_type.max_elev:
+                if land_type.lower_bound < value < land_type.upper_bound:
                     self.grid.place_agent(land, pos)
                     self.schedule.add(land)
-                    land_name = land_type.__name__.lower()
-                    attr_name = prefix.format(land_name)
+                    # land_name = land_type.__name__.lower()
+                    # attr_name = prefix.format(land_name)
                     masterdict[land.__class__.__name__].append(pos)
-                    val = getattr(self, attr_name)
-                    val += 1
-                    setattr(self, attr_name, val)
+                    # val = getattr(self, attr_name)
+                    # val += 1
+                    # setattr(self, attr_name, val)
                     counter += 1

@@ -1,7 +1,7 @@
 # !/usr/bin/python
 
 from mesa.agent import Agent
-from maxent import Maxent
+from environment import Environment
 import random
 
 demographic_structure_list = [0] * 6
@@ -118,7 +118,7 @@ class Family(Agent):
         if color != None:
             neighborcolor.append(color)
 
-        # sets weights
+        # sets weights - elevation only
         for color in neighborcolor:
             if color == 'Red':  # elevation 1900+
                 weight = 1
@@ -136,7 +136,28 @@ class Family(Agent):
                 weight = 0.1
             elif color == 'Gray':  # elevation -9999, outside FNNR
                 weight = 0
+
+            # sets weight for maxent
+            elif color == 'Shade1':
+                weight = 0.1
+            elif color == 'Shade2':
+                weight = 0.5
+            elif color == 'Shade3':
+                weight = 1
+            elif color == 'Shade4':
+                weight = 2
+            elif color == 'Shade5':
+                weight = 3.5
+            elif color == 'Shade6':
+                weight = 6
+            elif color == 'Shade7':
+                weight = 10
+            elif color == 'Shade8':
+                weight = 0
+
             choicelist.append(weight)
+
+
         if choicelist != [] and choicelist != [0, 0, 0, 0, 0, 0, 0, 0]:
             try:
                 # this takes care of edges
@@ -359,46 +380,3 @@ class Monkey(Family):
             self.model.grid.place_agent(male_family, self.pos)
             self.model.schedule.add(male_family)
             del male_subgroup_list[:]
-
-
-# environmental pixels for elevation-based grid; each color represents an elevation category (in meters)
-
-class Red(Maxent):
-
-    min_elev = 1899
-    max_elev = 3000
-
-class Orange(Maxent):
-
-    min_elev = 1699
-    max_elev = 1900
-
-class Yellow(Maxent):
-
-    min_elev = 1499
-    max_elev = 1700
-
-class Green(Maxent):
-
-    min_elev = 1299
-    max_elev = 1500
-
-class Blue(Maxent):
-
-    min_elev = 1099
-    max_elev = 1300
-
-class Purple(Maxent):
-
-    min_elev = 899
-    max_elev = 1100
-
-class Black(Maxent):
-
-    min_elev = 0
-    max_elev = 900
-
-class Gray(Maxent):
-
-    min_elev = -10000
-    max_elev = -9998

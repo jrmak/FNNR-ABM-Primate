@@ -20,6 +20,8 @@ def movement_portrayal(agent):
 
     portrayal = {"Shape": "rect", "Filled": "true", "w": 1, "h": 1, "Layer": 0}
 
+# for elevation-based grid
+
     if type(agent) is Red:
         portrayal["Shape"] = "rect"
         portrayal["Color"] = "red"
@@ -76,15 +78,66 @@ def movement_portrayal(agent):
         portrayal["h"] = 1
         portrayal["Layer"] = 0
 
+# for maxent-based grid
+
+    elif type(agent) is Shade1:
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "#000000"  # black
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+        portrayal["Layer"] = 0
+    elif type(agent) is Shade2:
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "#292929"  # very dark grey
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+        portrayal["Layer"] = 0
+    elif type(agent) is Shade3:
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "#545454"  # dark grey
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+        portrayal["Layer"] = 0
+    elif type(agent) is Shade4:
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "#808080"  # grey
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+        portrayal["Layer"] = 0
+    elif type(agent) is Shade5:
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "#a8a8a8"  # light grey
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+        portrayal["Layer"] = 0
+    elif type(agent) is Shade6:
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "#d4d4d4"  # very light grey
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+        portrayal["Layer"] = 0
+    elif type(agent) is Shade7:
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "#ffffff"  # white
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+        portrayal["Layer"] = 0
+    elif type(agent) is Shade8:
+        portrayal["Shape"] = "rect"
+        portrayal["Color"] = "#fafafa"  # off-white
+        portrayal["w"] = 1
+        portrayal["h"] = 1
+        portrayal["Layer"] = 0
+
     elif type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
-        portrayal["Color"] = "white"
+        portrayal["Color"] = "navy"
         portrayal["r"] = int(height / 25)
         portrayal["Layer"] = 1
 
     elif type(agent) is Family and agent.family_type == 'all_male':
         portrayal["Shape"] = "circle"
-        portrayal["Color"] = "aqua"
+        portrayal["Color"] = "darkgreen"
         portrayal["r"] = int(height / 25)
         portrayal["Layer"] = 1
 
