@@ -54,7 +54,10 @@ class CanvasGrid(VisualizationElement):
         template: "canvas_module.html" stores the module's HTML template.
 
     """
-    package_includes = ["GridDraw.js", "CanvasModule2.js"]
+    local_includes = ["GridDraw.js", "CanvasModule2.js"]
+
+    # changing the line above is the reason why CanvasGridVisualization.py has been modified.
+    # CanvasModule and GridDraw now do not include the grid when drawing the model image.
 
     def __init__(self, portrayal_method, grid_width, grid_height,
                  canvas_width=500, canvas_height=500):
