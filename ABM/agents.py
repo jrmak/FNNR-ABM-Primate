@@ -4,14 +4,14 @@ from mesa.agent import Agent
 from environment import Environment
 import random
 
-demographic_structure_list = [0] * 6
-recent_death_infant = []
-random_mother_list = []  # for assigning random 'rebirth'-ready mothers for the first infants to die
-male_maingroup_list = []
-male_subgroup_list = []  # male subgroup = broken off from main group
-female_list = []
-reproductive_female_list = [0]
-moved_list = []  # records all points moved to; for calculating heatmap
+demographic_structure_list = [0] * 6  # each index represents an age category count: 0-1, 1-3, 3-7, 7-10, 10-25, 25+
+recent_death_infant = []  # lists ids of mothers who can give birth soon after their infant has died early
+random_mother_list = []  # for assigning random 'rebirth'-ready mothers for the first-generation infants to die
+male_maingroup_list = []  # lists ids of all males in the main group
+male_subgroup_list = []  # lists ids of all males in the all-male subgroup broken off from the main group
+female_list = []  # lists ids of all females
+reproductive_female_list = [0]  # lists ids of all females aged 10-25
+moved_list = []  # records all points moved to; used for calculating heatmap
 
 
 class Family(Agent):
@@ -33,33 +33,29 @@ class Family(Agent):
         newneig = []
         from model import filename  # can't import at the beginning - import statement must be here
         cell_height = self.model._readASCII(filename)[1]
-        try:  # sets position for pixels to move to - every step (5 days), they move some grids in a chosen direction
-            for neighbor in neig:  # this block of code dictates that multiple grids are traveled per step
-                neighbor = list(neighbor)
-                direction_east = poslist[0] - neighbor[0]
-                direction_north = poslist[1] - neighbor[1]
-                if poslist[0] < cell_height * 0.9:  # if the position isn't too high,
-                    neighbor[0] += direction_east * int(cell_height / 10)  # it can potentially go east
-                if poslist[1] < cell_height * 0.9:  # otherwise, it doesn't move
-                    neighbor[1] += direction_north * int(cell_height / 10)
-                neighbor = tuple(neighbor)
-                newneig.append(neighbor)
-            pos = self.neighbor_choice(newneig, masterdict)  # this function determines where to move (which neighbor)
-            self.move_to(pos)  # moves to chosen direction/neighbor
-        except:
-            pass
-        if 12 < self.model.step_in_year < 25 or  42 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
+        # sets position for pixels to move to - every step (5 days), they move some grids in a chosen direction
+        for neighbor in neig:  # this block of code dictates that multiple grids are traveled per step
+            neighbor = list(neighbor)
+            direction_east = poslist[0] - neighbor[0]  # if positive, direction is east; if negative, west
+            direction_north = poslist[1] - neighbor[1]  # if positive, direction is north; if negative, south
+            if poslist[0] < cell_height * 0.87:  # if the position isn't too high,
+                neighbor[0] += direction_east * int(cell_height * 0.1)  # it can potentially go east or west
+            if poslist[1] < cell_height * 0.87:
+                neighbor[1] += direction_north * int(cell_height * 0.1)  # or north and south
+            neighbor = tuple(neighbor)
+            newneig.append(neighbor)
+        pos = self.neighbor_choice(newneig, masterdict)  # this function determines where to move (which neighbor)
+
+        if 16 < self.model.step_in_year < 25 or  46 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
+            # April: steps 19-25
+            # September: steps 49-55
             pos = self.move_to_yangaoping(self.pos, cell_height)
-            try:
-                self.move_to(pos)  # moves to chosen neighboring pixel
-            except:
-                pass
+
         elif 28 < self.model.step_in_year < 32 or 58 < self.model.step_in_year < 62: # head back to rest of reserve
+            self.move_to(pos)  # moves to chosen direction/neighbor
             pos = self.move_from_yangaoping(self.pos, cell_height)
-            try:
-                self.move_to(pos)
-            except:
-                pass
+
+        self.move_to(pos)  # moves to chosen direction/neighbor
         moved_list.append(pos)
         if self.family_size == 0:
             self.model.grid._remove_agent(self.pos, self)  # if everyone in a family dies, the pixel is removed
@@ -67,35 +63,35 @@ class Family(Agent):
     def move_to_yangaoping(self, pos, height):
         # moves towards northeast portion of reserve
         pos = list(pos)
-        northchoice = random.randint(int(height * 0.3), int(height * 0.86))  # numbers determined by proportion to grid
-        eastchoice = random.randint(int(height * 0.3), int(height * 0.86))  # range 40, 71 if height is 89
-        if pos[0] < eastchoice:
-            pos[0] += int(height / 14) # 6 for height 89
+        northchoice = random.randint(int(height * 0.6), int(height * 0.8))  # numbers determined by proportion to grid
+        eastchoice = random.randint(int(height * 0.6), int(height * 0.8))
+        if pos[0] < eastchoice:  # if the current position is not too close to the edge of the grid,
+            pos[0] += random.randint(int(height * 0.1), int(height * 0.2))  # move around 6-8 spaces (for 87x100) east
         if pos[1] < northchoice:
-            pos[1] += int(height / 14)  # 6
+            pos[1] += random.randint(int(height * 0.1), int(height * 0.2)) # and also north
         else:
-            if pos[0] > random.uniform(height * 0.89, height * 0.92):
-                pos[0] = random.randint(int(height * 0.8), int(height * 0.9))
-            if pos[1] > random.uniform(height * 0.89, height * 0.92):
-                pos[1] = random.randint(int(height * 0.8), int(height * 0.9))
+            if pos[0] > random.uniform(height * 0.6, height * 0.8):
+                pos[0] = random.randint(int(height * 0.5), int(height * 0.8))
+            if pos[1] > random.uniform(height * 0.6, height * 0.9):
+                pos[1] = random.randint(int(height * 0.6), int(height * 0.8))
         pos = tuple(pos)
         return pos
 
     def move_from_yangaoping(self, pos, height):
         # moves away from northeast portion of reserve
         pos = list(pos)
-        southchoice = random.randint(int(height * 0.2), int(height * 0.3))
-        westchoice = random.randint(int(height * 0.2), int(height * 0.3))
+        southchoice = random.uniform(int(height * 0.2), int(height * 0.3))
+        westchoice = random.uniform(int(height * 0.2), int(height * 0.3))
         if pos[0] > westchoice:
-            pos[0] -= int(height / 14)
+            pos[0] -= random.randint(int(height * 0.01), int(height * 0.2))
         if pos[1] > southchoice:
-            pos[1] -= int(height / 14)
+            pos[1] -= random.randint(int(height * 0.15), int(height * 0.3))
         else:
             pass
             if pos[0] < height * 0.3:  # 29
-                pos[0] = int(height * 0.3)
+                pos[0] = random.randint(int(height * 0.3), int(height * 0.4))
             if pos[1] < height * 0.3:
-                pos[1] = int(height * 0.3)
+                pos[1] = random.randint(int(height * 0.3), int(height * 0.4))
         pos = tuple(pos)
         return pos
 
@@ -104,7 +100,7 @@ class Family(Agent):
         # agent chooses a neighbor to move to based on weights
         choicelist = []
         # picks a weighted neighbor to move to
-
+        from model import setting
         color = None
         weight = None
         neighborcolor = []
@@ -118,42 +114,44 @@ class Family(Agent):
         if color != None:
             neighborcolor.append(color)
 
-        # sets weights - elevation only
+        # sets weights - elevation only - adjustable
         for color in neighborcolor:
-            if color == 'Red':  # elevation 1900+
-                weight = 1
-            elif color == 'Orange':  # elevation 1700-1900
-                weight = 11
-            elif color == 'Yellow':  # elevation 1500-1700
-                weight = 5
-            elif color == 'Green':  # elevation 1300-1500
-                weight = 10
-            elif color == 'Blue':  # elevation 1100-1300
-                weight = 7
-            elif color == 'Purple':  # elevation 900-1100
-                weight = 1
-            elif color == 'Black':  # elevation 900-
-                weight = 0.1
-            elif color == 'Gray':  # elevation -9999, outside FNNR
-                weight = 0
+            if setting == 'elevation':
+                if color == 'Red':  # elevation 1900+
+                    weight = 1
+                elif color == 'Orange':  # elevation 1700-1900
+                    weight = 11
+                elif color == 'Yellow':  # elevation 1500-1700
+                    weight = 5
+                elif color == 'Green':  # elevation 1300-1500
+                    weight = 10
+                elif color == 'Blue':  # elevation 1100-1300
+                    weight = 7
+                elif color == 'Purple':  # elevation 900-1100
+                    weight = 1
+                elif color == 'Black':  # elevation 900-
+                    weight = 0.1
+                elif color == 'Gray':  # elevation -9999, outside FNNR
+                    weight = 0
 
+            elif setting == 'maxent':
             # sets weight for maxent
-            elif color == 'Shade1':
-                weight = 0.1
-            elif color == 'Shade2':
-                weight = 0.5
-            elif color == 'Shade3':
-                weight = 1
-            elif color == 'Shade4':
-                weight = 2
-            elif color == 'Shade5':
-                weight = 3.5
-            elif color == 'Shade6':
-                weight = 6
-            elif color == 'Shade7':
-                weight = 10
-            elif color == 'Shade8':
-                weight = 0
+                if color == 'Shade1':  # lowest maxent suitability/darkest shade of grey (black)
+                    weight = 0.01
+                elif color == 'Shade2':
+                    weight = 0.1
+                elif color == 'Shade3':
+                    weight = 1
+                elif color == 'Shade4':
+                    weight = 5
+                elif color == 'Shade5':
+                    weight = 10
+                elif color == 'Shade6':
+                    weight = 15
+                elif color == 'Shade7':  # highest maxent suitability/lightest shade of grey (white)
+                    weight = 20
+                elif color == 'Shade8':  # -9999 values; represents boundaries outside of FNNR
+                    weight = 0
 
             choicelist.append(weight)
 
@@ -257,13 +255,14 @@ class Monkey(Family):
             # the current formula uses: chance that a monkey does NOT die^73 = survival rate in one year
             # this gives a lower result than a similar formula that considers [yearly mortality rate]/73
             # formula may be changed later
-            if self.age <= 1 and chance <= 0.00305:
+            if self.age <= 1 and chance <= 0.00222: # 0.00222 = 1 - 0.99778; see below
                 self.death()
                 demographic_structure_list[0] -= 1
                 recent_death_infant.append(self.mother)
-                # 0.99695^73 = 80% chance to survive first year with ticks every 5 days
+                # 0.99778^73 = 85% chance to survive first year with ticks every 5 days, or 15% yearly mortality
+                # 0.99695^73 = 80% chance to survive first year with ticks every 5 days, or 20$ yearly mortality
                 # if a monkey dies, mother can give birth again the following season
-            elif 1 < self.age < 10 and chance <= 0.0007:
+            elif 1 < self.age < 10 and chance <= 0.0007:  # 0.0007 = 1 - 0.9993; see below
                 self.death()
                 if 1 < self.age <= 3:
                     demographic_structure_list[1] -= 1
@@ -272,14 +271,15 @@ class Monkey(Family):
                 elif 7 < self.age <= 10:
                     demographic_structure_list[3] -= 1
                 # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
-            elif 10 < self.age <= 30 and chance <= 0.0013:
+            elif 10 < self.age <= 30 and chance <= 0.00222:  # 0.00222 = 1 - 0.99778; see below
                 self.death()
                 if 10 < self.age <= 25:
                     demographic_structure_list[4] -= 1
                 elif 25 < self.age < 30:
                     demographic_structure_list[5] -= 1
+                # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-            elif self.age > 30 and chance <= 0.00393:
+            elif self.age > 30 and chance <= 0.00393:  # 0.00393 = 1 - 0.99607; see below
                 self.death()
                 demographic_structure_list[5] -= 1
                 # 0.99607^73 = 75% chance to survive each year with ticks every 5 days
@@ -288,6 +288,7 @@ class Monkey(Family):
             pass
 
     def check_age_category(self):
+        # sorts monkeys in the right age category as they age; breaks some males off into all-male subgroup at age 10
         if (self.age <= 1 and self.age_category == 0) or \
                 (1 < self.age <= 3 and self.age_category == 1) or \
                 (3 < self.age <= 7 and self.age_category == 2) or \
@@ -316,15 +317,17 @@ class Monkey(Family):
                         male_subgroup_list.append(self.unique_id)
 
             elif self.age_category == 5 and self.gender == 1:  # female becomes too old to give birth
-                reproductive_female_list.remove(self.unique_id)
+                if self.unique_id in reproductive_female_list:
+                    reproductive_female_list.remove(self.unique_id)
 
     def check_recent_death_infant(self):
+        # allow mothers who have recently lost an infant to give birth again in a short period
         if self.unique_id in recent_death_infant:
             self.last_birth_interval = random.uniform(2, 2.5)
             recent_death_infant.remove(self.unique_id)
 
     def birth(self, parent_pos, new_family_size, parent_family, mother_id, list_of_family):
-        # birth from the perspective of a new monkey agent
+        # birth from the agent-perspective of the new monkey agent
         last = self.model.monkey_id_count
         pos = parent_pos
         family_size = new_family_size
@@ -369,7 +372,7 @@ class Monkey(Family):
             random_mother_list.remove(self.unique_id)
 
     def create_male_subgroup(self):
-        # breaks off
+        # male subgroup forms a new family and shows up in the visualization under a new, differently-colored pixel
         if len(male_subgroup_list) > random.randint(10, 15):
             from model import global_family_id_list
             new_family_id = int(global_family_id_list[-1] + 1)

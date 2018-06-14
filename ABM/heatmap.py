@@ -26,7 +26,7 @@ extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
 
 # Plot heatmap
 plt.clf()
-plt.title('10-Year Monkey Position Heatmap')
+plt.title('Cumulative Monkey Position Heatmap')
 plt.ylabel('y')
 plt.xlabel('x')
 plt.imshow(heatmap, extent=extent, origin = 'lower')
