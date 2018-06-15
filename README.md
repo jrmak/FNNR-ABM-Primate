@@ -1,5 +1,14 @@
-# FNNR-Primate-ABM
+# FNNR-ABM-Primate
 
+Welcome! This project seeks to understand population demographics and factors affecting the movement of Guizhou golden monkeys endemic to the Fanjingshan National Nature Reserve in Guizhou, China.
+It uses Mesa, a library framework with tools designed to support agent-based modeling in Python 3.X.
+
+An overview of Mesa can be found at: https://mesa.readthedocs.io/en/master/overview.html
+A more through doc can be found at: https://media.readthedocs.org/pdf/mesa/latest/mesa.pdf
+
+Documentation for this project--as well as the source code available for download--can be found on this page.
+
+Instructions for Running the Code:
 1. Have Python 3.X installed, as well as the Mesa (which comes with dependencies such as numpy, pandas, and tornado) and matplotlib libraries.
 If you have errors running the code and it is library-related, make sure Mesa's edition is 0.8.3, and tornado's edition is 4.5.2.
 
