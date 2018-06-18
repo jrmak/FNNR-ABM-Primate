@@ -6,23 +6,25 @@ from mesa.time import RandomActivation
 from mesa.datacollection import DataCollector
 from environment import *
 from agents import *
+import pickle
 
 global_family_id_list = []
 # filename = 'aggregated_dem.txt'  # change this filename to another file in the same directory as needed
 # setting = 'elevation'  # change the input environmental grid setting (elevation or maxent); change txt file as well
 
 filename = 'maxent87100.txt'  # change this filename to another file in the same directory as needed
+# use 'maxent87100.txt' for low resolution
 setting = 'maxent'  # change the input environmental grid setting (elevation or maxent); change txt file as well
 
 if setting.lower() == 'elevation':  # for test purposes only
-    masterdict = {'Red': [], 'Orange': [], 'Yellow': [], 'Green': [], 'Blue': [],
+    empty_masterdict = {'Red': [], 'Orange': [], 'Yellow': [], 'Green': [], 'Blue': [],
                   'Purple': [], 'Black': [], 'Gray': []}
     # master dictionary for elevations and colors; unneeded with maxent
     # dictionary keys: land suitability (or elevation, etc.) categorized by color
     # dictionary values: grid coordinates that belong to that land type
 
 elif setting.lower() == 'maxent':
-    masterdict = {'Shade1': [], 'Shade2': [], 'Shade3': [], 'Shade4': [], 'Shade5': [],
+    empty_masterdict = {'Shade1': [], 'Shade2': [], 'Shade3': [], 'Shade4': [], 'Shade5': [],
                 'Shade6': [], 'Shade7': [], 'Shade8': []}
     # master dictionary for maxent
     # dictionary keys: land suitability categorized by shade of grey - Shade7 is highest (white)
@@ -57,7 +59,7 @@ class Movement(Model):
         width = self._readASCII(filename)[1]  # width as listed at the beginning of the ASCII file
         height = self._readASCII(filename)[2]  # height as listed at the beginning of the ASCII file
 
-        self.grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
+        self.starting_grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
 
         self.schedule = RandomActivation(self)  # Mesa: Random vs. Staged Activation
         # similar to NetLogo's Ask Agents - determines order (or lack of) in which each agents act
@@ -69,17 +71,28 @@ class Movement(Model):
         # will update later - not necessary to model at the moment - Mesa feature
 
         # the code blocks from here on out create monkey agents - each pixel represents a family group of 25-45 monkeys
-
         if setting.lower() == 'elevation':
             for x in [Red, Orange, Yellow, Green, Blue, Purple, Black, Gray]:  # elevation categories - see agent.py
                 self._populate(masterdict, gridlist, x, width, height)
             startinglist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
                     + masterdict['Blue']  # starting locations only at likely categories
 
-        elif setting.lower() == 'maxent':
+        if setting.lower() == 'maxent':
             for x in [Shade1, Shade2, Shade3, Shade4, Shade5, Shade6, Shade7, Shade8]:
-                self._populate(masterdict, gridlist, x, width, height)
-                self._populate(masterdict, gridlist, x, width, height)
+               self._populate(empty_masterdict, gridlist, x, width, height)
+               self._populate(empty_masterdict, gridlist, x, width, height)
+
+            # self.saveLoad(empty_masterdict, 'masterdict', 'save')
+            # self.saveLoad(self.starting_grid, 'grid', 'save')
+            # self.saveLoad(self.schedule, 'schedule', 'save')
+
+            masterdict = empty_masterdict
+            self.grid = self.starting_grid
+            # masterdict = self.saveLoad(empty_masterdict, 'masterdict', 'load')
+            # self.grid = self.saveLoad(self.starting_grid, 'grid', 'load')
+            # self.saveLoad(self.schedule, 'schedule', 'load')
+
+            # when loading, the first parameter actually isn't used
             startinglist = masterdict['Shade2'] + masterdict['Shade3'] + masterdict['Shade4'] \
                     + masterdict['Shade5'] + masterdict['Shade6'] + masterdict['Shade7']
             # starting locations only at likely categories
@@ -87,73 +100,72 @@ class Movement(Model):
         # startinglist represents elevations where monkeys are likely to be found--used as a collection
         # from which starting points are randomly chosen
 
-        if self.time == 0:  # only create the preset number of families and agents on the first step
-            for i in range(self.number_of_families):  # the following code block create families
-                pos = random.choice(startinglist)
-                from agents import Family
-                family_size = random.randint(25, 45)  # sets family size for each group
-                family_id = i
-                list_of_family_members = []
-                family_type = 'traditional'  # as opposed to an all-male subgroup
-                family = Family(family_id, self, pos, family_size, list_of_family_members, family_type)
-                self.grid.place_agent(family, pos)
-                self.schedule.add(family)
-                global_family_id_list.append(family_id)
+        for i in range(self.number_of_families):  # the following code block create families
+            pos = random.choice(startinglist)
+            from agents import Family
+            family_size = random.randint(25, 45)  # sets family size for each group
+            family_id = i
+            list_of_family_members = []
+            family_type = 'traditional'  # as opposed to an all-male subgroup
+            family = Family(family_id, self, pos, family_size, list_of_family_members, family_type)
+            self.grid.place_agent(family, pos)
+            self.schedule.add(family)
+            global_family_id_list.append(family_id)
 
-                for monkey_family_member in range(family_size):   # creates the amount of monkeys indicated earlier
-                    id = self.number_of_monkeys + 1
-                    gender = random.randint(0, 1)
-                    if gender == 1:  # gender = 1 is female, gender = 0 is male
-                        female_list.append(id)
-                        last_birth_interval = random.uniform(0, 3)
-                    else:
-                        male_maingroup_list.append(id)  # as opposed to the all-male subgroup
-                        last_birth_interval = -9999  # males will never give birth
-                    mother = 0  # no parent check for first generation
-                    death_flag = 0
-                    choice = random.random()  # 0 - 1 float - age is determined randomly based on weights
-                    if choice <= 0.11:  # 11% of starting monkey population
-                        age = random.uniform(0, 1)  # are randomly aged befween
-                        age_category = 0  # ages 0-1
-                        demographic_structure_list[0] += 1
-                    elif 0.11 < choice <= 0.27:  # 16% of starting monkey population
-                        age = random.uniform(1, 3)  # are randomly aged befween
-                        age_category = 1  # ages 1-3
-                        demographic_structure_list[1] += 1
-                    elif 0.27 < choice <= 0.42:  # 15% of starting monkey population
-                        age = random.uniform(3, 7)  # are randomly aged befween
-                        age_category = 2  # ages 3-7
-                        demographic_structure_list[2] += 1
-                    elif 0.42 < choice <= 0.62:  # 11% of starting monkey population
-                        age = random.uniform(7, 10)  # are randomly aged befween
-                        age_category = 3  # ages 7-10
-                        demographic_structure_list[3] += 1
-                    elif 0.62 < choice <= 0.96:  # 34% of starting monkey population
-                        age = random.uniform(10, 25)  # are randomly aged befween
-                        age_category = 4  # ages 10-25
-                        demographic_structure_list[4] += 1
-                        if gender == 1:
-                            if id not in reproductive_female_list:
-                                reproductive_female_list.append(id)
-                        # starting representation of male defection/gender ratio
-                        structure_convert = random.random()
-                        if structure_convert > 0.25:
-                            gender = 1  # 75% of those aged 10-25 are female
-                            if id not in reproductive_female_list:
-                                reproductive_female_list.append(id)
-                    elif 0.96 < choice:  # 4% of starting monkey population
-                        age = random.uniform(25, 30)  # are randomly aged between
-                        age_category = 5  # ages 25-30
-                        demographic_structure_list[5] += 1
-                        gender = 1
-                    monkey = Monkey(id, self, pos, family_size, list_of_family_members, family_type,
-                                    gender, age, age_category, family_id, last_birth_interval, mother,
-                                    death_flag)
+            for monkey_family_member in range(family_size):   # creates the amount of monkeys indicated earlier
+                id = self.number_of_monkeys + 1
+                gender = random.randint(0, 1)
+                if gender == 1:  # gender = 1 is female, gender = 0 is male
+                    female_list.append(id)
+                    last_birth_interval = random.uniform(0, 3)
+                else:
+                    male_maingroup_list.append(id)  # as opposed to the all-male subgroup
+                    last_birth_interval = -9999  # males will never give birth
+                mother = 0  # no parent check for first generation
+                death_flag = 0
+                choice = random.random()  # 0 - 1 float - age is determined randomly based on weights
+                if choice <= 0.11:  # 11% of starting monkey population
+                    age = random.uniform(0, 1)  # are randomly aged befween
+                    age_category = 0  # ages 0-1
+                    demographic_structure_list[0] += 1
+                elif 0.11 < choice <= 0.27:  # 16% of starting monkey population
+                    age = random.uniform(1, 3)  # are randomly aged befween
+                    age_category = 1  # ages 1-3
+                    demographic_structure_list[1] += 1
+                elif 0.27 < choice <= 0.42:  # 15% of starting monkey population
+                    age = random.uniform(3, 7)  # are randomly aged befween
+                    age_category = 2  # ages 3-7
+                    demographic_structure_list[2] += 1
+                elif 0.42 < choice <= 0.62:  # 11% of starting monkey population
+                    age = random.uniform(7, 10)  # are randomly aged befween
+                    age_category = 3  # ages 7-10
+                    demographic_structure_list[3] += 1
+                elif 0.62 < choice <= 0.96:  # 34% of starting monkey population
+                    age = random.uniform(10, 25)  # are randomly aged befween
+                    age_category = 4  # ages 10-25
+                    demographic_structure_list[4] += 1
+                    if gender == 1:
+                        if id not in reproductive_female_list:
+                            reproductive_female_list.append(id)
+                    # starting representation of male defection/gender ratio
+                    structure_convert = random.random()
+                    if structure_convert > 0.25:
+                        gender = 1  # 75% of those aged 10-25 are female
+                        if id not in reproductive_female_list:
+                            reproductive_female_list.append(id)
+                elif 0.96 < choice:  # 4% of starting monkey population
+                    age = random.uniform(25, 30)  # are randomly aged between
+                    age_category = 5  # ages 25-30
+                    demographic_structure_list[5] += 1
+                    gender = 1
+                monkey = Monkey(id, self, pos, family_size, list_of_family_members, family_type,
+                                gender, age, age_category, family_id, last_birth_interval, mother,
+                                death_flag)
 
-                    self.number_of_monkeys += 1
-                    self.monkey_id_count += 1
-                    self.schedule.add(monkey)
-                    list_of_family_members.append(monkey.unique_id)
+                self.number_of_monkeys += 1
+                self.monkey_id_count += 1
+                self.schedule.add(monkey)
+                list_of_family_members.append(monkey.unique_id)
 
     def step(self):
         # necessary; tells model to move forward
@@ -201,12 +213,27 @@ class Movement(Model):
                     # for example, if the environmental grid was based on elevation, the above inequality would be
                     # something like 1300 < x < 1500; if x was found to be within range, x was assigned a color
                     # category. x represents an environmental pixel on the grid
-                    self.grid.place_agent(land, pos)
+                    import time
+                    start_time = time.time()
+                    self.starting_grid.place_agent(land, pos)
+                    # print("Placing agents on the grid took", time.time() - start_time, "to run")
+                    new_start_time = time.time()
                     self.schedule.add(land)
-                    # land_name = land_type.__name__.lower()  # ignore the following commented lines - Mesa legacy
-                    # attr_name = prefix.format(land_name)
+                    # print("Adding it to the schedule", time.time() - new_start_time, "to run")
+                    newer_start_time = time.time()
                     masterdict[land.__class__.__name__].append(pos)
-                    # val = getattr(self, attr_name)
-                    # val += 1
-                    # setattr(self, attr_name, val)
+                    # print("Building masterdict", time.time() - newer_start_time, "to run")
                     counter += 1
+
+    def saveLoad(self, grid_dict, name, option):
+        if option == "save":
+            f = open(name, 'wb')
+            pickle.dump(grid_dict, f)
+            f.close()
+            'data saved'
+        elif option == "load":
+            f = open(name, 'rb')
+            new_grid_dict = pickle.load(f)
+            return new_grid_dict
+        else:
+            print('Invalid saveLoad option')

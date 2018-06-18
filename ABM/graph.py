@@ -13,7 +13,7 @@ from model_for_graph import *
 
 
 model = Movement()  # run the model
-time = 73 * 10  # 73 time-steps of 5 days each for 10 years, 730 steps total
+time = 73 * 1  # 73 time-steps of 5 days each for 10 years, 730 steps total
 erase_summary()  # clears the Excel file to overwrite
 for t in range(time):  # for each time-step in the time we just defined,
     model.step()  # see model.step() in model.py; monkey agents age, family-pixel agents move
@@ -54,6 +54,9 @@ plt.ylabel('# of Monkeys')
 print('Gender Structure Count || Reproductive Females: %i | Total Females: %i | Main-group Males: %i' %
       (len(reproductive_female_list), len(female_list), len(male_maingroup_list)))
 
+from heatmap import *  # see heatmap.py
+
+
 monkey_population.plot()
 plt.title('GGM Population in the FNNR')
 plt.xlabel('5-Day Intervals (Steps)')
@@ -64,11 +67,9 @@ plt.title('GGM Births in the FNNR')
 plt.xlabel('5-Day Intervals (Steps)')
 plt.ylabel('Number of Births')
 
-monkey_death.plot()  # currently not showing
+monkey_death.plot()
 plt.title('GGM Deaths in the FNNR')
 plt.xlabel('5-Day Intervals (Steps)')
 plt.ylabel('Number of Deaths')
-
-from heatmap import *  # see heatmap.py
 
 plt.show()  # shows all plots at once
