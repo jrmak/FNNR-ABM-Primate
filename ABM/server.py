@@ -22,13 +22,7 @@ def movement_portrayal(agent):
 
 # for elevation-based grid only
     if setting == 'elevation':
-        portrayal["Color"] = str(type(agent)).lower()
-    # former code:
-    #    if type(agent) is Red:
-    #        portrayal["Color"] = "red"
-    #    elif type(agent) is Orange:
-    #        portrayal["Color"] = "orange"
-    # etc.
+        portrayal["Color"] = str(type(agent).__name__.lower())
 
 # for maxent-based grid only
     elif setting == 'maxent':
@@ -45,19 +39,19 @@ def movement_portrayal(agent):
         elif type(agent) is Shade6:
             portrayal["Color"] = "#d4d4d4"  # very light grey
         elif type(agent) is Shade7:
-            portrayal["Color"] = "#ffffff"  # white
-        elif type(agent) is Shade8:
             portrayal["Color"] = "#fafafa"  # off-white
+        elif type(agent) is Shade8:
+            portrayal["Color"] = "#ffffff"  # white
 
     if type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
-        portrayal["Color"] = "navy"
+        portrayal["Color"] = "white"
         portrayal["r"] = int(height / 30)
         portrayal["Layer"] = 1
 
     elif type(agent) is Family and agent.family_type == 'all_male':
         portrayal["Shape"] = "circle"
-        portrayal["Color"] = "darkgreen"
+        portrayal["Color"] = "brown"
         portrayal["r"] = int(height / 30)
         portrayal["Layer"] = 1
 
