@@ -2,8 +2,6 @@
 
 from mesa.agent import Agent
 
-masterdict = {}
-
 class Environment(Agent):
 
     # Environment becomes less suitable during winter: less land, more firewood usage
@@ -16,7 +14,8 @@ class Environment(Agent):
         pass
         # will add seasonal variations to environment later, if vegetation data is imported
 
-# environmental pixels for elevation-based grid; each shade represents a suitability category
+# environmental pixels for Maxent-value-based grid; each shade represents a suitability category
+# Maxent values range from 0-1, with a number closer to 1 representing higher suitability for monkeys
 
 class Shade1(Environment):
 
