@@ -263,14 +263,16 @@ class Monkey(Family):
             # the current formula uses: chance that a monkey does NOT die^73 = survival rate in one year
             # this gives a lower result than a similar formula that considers [yearly mortality rate]/73
             # formula may be changed later
-            if self.age <= 1 and chance <= 0.00222: # 0.00222 = 1 - 0.99778; see below
+            if self.age <= 1 and chance <= 0.0007: # 0.0007 = 1 - 0.9993; see below
                 self.death()
                 demographic_structure_list[0] -= 1
                 recent_death_infant.append(self.mother)
+                # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
+                # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
                 # 0.99778^73 = 85% chance to survive first year with ticks every 5 days, or 15% yearly mortality
                 # 0.99695^73 = 80% chance to survive first year with ticks every 5 days, or 20$ yearly mortality
                 # if a monkey dies, mother can give birth again the following season
-            elif 1 < self.age < 10 and chance <= 0.0007:  # 0.0007 = 1 - 0.9993; see below
+            elif 1 < self.age < 10 and chance <= 0.00043:  # 0.00043 = 1 - 0.99958; see below
                 self.death()
                 if 1 < self.age <= 3:
                     demographic_structure_list[1] -= 1
@@ -278,8 +280,10 @@ class Monkey(Family):
                     demographic_structure_list[2] -= 1
                 elif 7 < self.age <= 10:
                     demographic_structure_list[3] -= 1
+                # 0.99973^73 = 98% chance to survive each year with ticks every 5 days
+                # 0.99958^73 = 97% chance to survive each year with ticks every 5 days
                 # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
-            elif 10 < self.age <= 30 and chance <= 0.00222:  # 0.00222 = 1 - 0.99778; see below
+            elif 10 < self.age <= 30 and chance <= 0.0013:  # 0.0013 = 1 - 0.9987; see below
                 self.death()
                 if 10 < self.age <= 25:
                     demographic_structure_list[4] -= 1
@@ -287,12 +291,16 @@ class Monkey(Family):
                     demographic_structure_list[5] -= 1
                 # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-            elif self.age > 30 and chance <= 0.00393:  # 0.00393 = 1 - 0.99607; see below
+            elif self.age > 30 and chance <= 0.00222:  # 0.00222 = 1 - 0.99778; see below
                 self.death()
                 demographic_structure_list[5] -= 1
+                # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.99607^73 = 75% chance to survive each year with ticks every 5 days
+            else:
+                pass
 
         else:
+            print('schedule')
             pass
 
     def check_age_category(self):

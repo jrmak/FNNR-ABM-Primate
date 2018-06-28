@@ -4,8 +4,6 @@ from mesa.agent import Agent
 
 class Environment(Agent):
 
-    # Environment becomes less suitable during winter: less land, more firewood usage
-
     def __init__(self, unique_id, model, pos=None):
         super().__init__(unique_id, model)
         self.pos = pos
@@ -98,3 +96,11 @@ class Gray(Environment):
 
     lower_bound = -10000
     upper_bound = -9998
+
+# human pixels
+
+class Household(Environment):
+    pass
+
+class Farm(Environment):
+    pass
