@@ -10,8 +10,8 @@ from mesa.visualization.UserParam import UserSettableParameter
 from model import *
 
 # grid should be a square
-width = Movement._readASCII(Movement, filename)[2]  # width = height in this case, even if ASCII file isn't
-height = Movement._readASCII(Movement, filename)[2]
+width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
+height = Movement._readASCII(Movement, vegetation_file)[2]
 
 def movement_portrayal(agent):
 
@@ -21,37 +21,36 @@ def movement_portrayal(agent):
     portrayal = {"Shape": "rect", "Filled": "true", "w": 1, "h": 1, "Layer": 0}
 
 # for elevation-based grid only
-    if setting == 'elevation':
-        portrayal["Color"] = str(type(agent).__name__.lower())
+# portrayal["Color"] = str(type(agent).__name__.lower())
 
-# for maxent-based grid only
-    elif setting == 'maxent':
-        if type(agent) is Shade1:
-            portrayal["Color"] = "#000000"  # black
-        elif type(agent) is Shade2:
-            portrayal["Color"] = "#292929"  # very dark grey
-        elif type(agent) is Shade3:
-            portrayal["Color"] = "#545454"  # dark grey
-        elif type(agent) is Shade4:
-            portrayal["Color"] = "#808080"  # grey
-        elif type(agent) is Shade5:
-            portrayal["Color"] = "#a8a8a8"  # light grey
-        elif type(agent) is Shade6:
-            portrayal["Color"] = "#d4d4d4"  # very light grey
-        elif type(agent) is Shade7:
-            portrayal["Color"] = "#fafafa"  # off-white
-        elif type(agent) is Shade8:
-            portrayal["Color"] = "#ffffff"  # white
+    if type(agent) is Bamboo:
+        portrayal["Color"] = "Green"  # 0.8
+    elif type(agent) is Coniferous:
+        portrayal["Color"] = "DarkGreen"  # 1
+    elif type(agent) is Broadleaf:
+        portrayal["Color"] = "ForestGreen"  # 1
+    elif type(agent) is Mixed:
+        portrayal["Color"] = "LimeGreen"  # 1
+    elif type(agent) is Lichen:
+        portrayal["Color"] = "GreenYellow"  # 0.8
+    elif type(agent) is Deciduous:
+        portrayal["Color"] = "LightGreen"  # 1
+    elif type(agent) is Shrublands:
+        portrayal["Color"] = "YellowGreen"  # 0.8
+    elif type(agent) is Clouds:
+        portrayal["Color"] = "White"  # 0-1 random
+    elif type(agent) is Farmland:
+        portrayal["Color"] = "Dark Red"  # 0
 
     if type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
-        portrayal["Color"] = "white"
+        portrayal["Color"] = "darkgoldenrod"
         portrayal["r"] = int(height / 30)
         portrayal["Layer"] = 1
 
     elif type(agent) is Family and agent.family_type == 'all_male':
         portrayal["Shape"] = "circle"
-        portrayal["Color"] = "aqua"
+        portrayal["Color"] = "tan"
         portrayal["r"] = int(height / 30)
         portrayal["Layer"] = 1
 

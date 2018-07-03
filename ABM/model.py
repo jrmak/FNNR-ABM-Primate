@@ -9,19 +9,10 @@ from agents import *
 import pickle
 
 global_family_id_list = []
-filename = 'agg_dem_87100.txt'  # change this filename to another file in the same directory as needed
-setting = 'elevation'  # change the input environmental grid setting (elevation or maxent); change txt file as well
+vegetation_file = 'agg_veg60.txt'  # change this filename to another file in the same directory as needed
+elevation_file = 'agg_dem_87100.txt'
 
-# filename = 'maxent_87100.txt'  # change this filename to another file in the same directory as needed
-# setting = 'maxent'  # change the input environmental grid setting (elevation or maxent); change txt file as well
-
-
-# this file determines the environmental 'grid' the agents move on;
-# currently, a resolution of 87 x 100 (width x height) takes ~10 seconds to run;
-# a resolution of 174 x 200 takes ~2-3 minutes to run;
-# and a resolution of 870 x 1000 (full resolution for maxent/DEM) does not launch even after running for over an hour.
-
-
+masterdict = {}
 class Movement(Model):
 
     def __init__(self, width = 0, height = 0, torus = False,
@@ -41,50 +32,60 @@ class Movement(Model):
         self.monkey_id_count = monkey_id_count
 
         # generate land
-        gridlist = self._readASCII(filename)[0]  # list of all coordinate values; see readASCII function below
-        width = self._readASCII(filename)[1]  # width as listed at the beginning of the ASCII file
-        height = self._readASCII(filename)[2]  # height as listed at the beginning of the ASCII file
+        gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function below
+        gridlist2 = self._readASCII(elevation_file)[0]  # list of all coordinate values; see readASCII function below
+
+        width = self._readASCII(vegetation_file)[1]  # width as listed at the beginning of the ASCII file
+        height = self._readASCII(vegetation_file)[2]  # height as listed at the beginning of the ASCII file
 
         self.starting_grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
 
         self.schedule = RandomActivation(self)  # Mesa: Random vs. Staged Activation
         # similar to NetLogo's Ask Agents - determines order (or lack of) in which each agents act
 
+        empty_masterdict = {'Bamboo': [], 'Coniferous': [], 'Broadleaf': [], 'Mixed': [], 'Lichen': [],
+                            'Deciduous': [], 'Shrublands': [], 'Clouds': [], 'Farmland': []}
+
+        for x in [Bamboo, Coniferous, Broadleaf, Mixed, Lichen, Deciduous, Shrublands, Clouds, Farmland]:
+            self._populate(empty_masterdict, gridlist, x, width, height)
+
         # the code blocks from here on out create monkey agents - each pixel represents a family group of 25-45 monkeys
-        if setting.lower() == 'elevation':
-            empty_masterdict = {'Red': [], 'Orange': [], 'Yellow': [], 'Green': [], 'Blue': [],
-                                'Purple': [], 'Black': [], 'Gray': []}
+        #if setting.lower() == 'elevation':
+        #    empty_masterdict = {'Red': [], 'Orange': [], 'Yellow': [], 'Green': [], 'Blue': [],
+        #                        'Purple': [], 'Black': [], 'Gray': []}
             # master dictionary for elevations and colors; unneeded with maxent
             # dictionary keys: land suitability (or elevation, etc.) categorized by color
             # dictionary values: grid coordinates that belong to that land type
             #for x in [Red, Orange, Yellow, Green, Blue, Purple, Black, Gray]:  # elevation categories - see agent.py
             #    self._populate(empty_masterdict, gridlist, x, width, height)
 
-            # self.saveLoad(empty_masterdict, 'masterdict_elevation', 'save')
-            # self.saveLoad(self.starting_grid, 'grid_elevation', 'save')
-            # self.saveLoad(self.schedule, 'schedule_elevation', 'save')
+            # self.saveLoad(empty_masterdict, 'masterdict_veg', 'save')
+            # self.saveLoad(self.starting_grid, 'grid_veg', 'save')
+            # self.saveLoad(self.schedule, 'schedule_veg', 'save')
 
             load_dict = {}
-            empty_masterdict = self.saveLoad(load_dict, 'masterdict_elevation', 'load')
-            self.starting_grid = self.saveLoad(self.starting_grid, 'grid_elevation', 'load')
-            self.schedule = self.saveLoad(self.schedule, 'schedule_elevation', 'load')
+            empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
+            self.starting_grid = self.saveLoad(self.starting_grid, 'grid_veg', 'load')
+            self.schedule = self.saveLoad(self.schedule, 'schedule_veg', 'load')
             # when loading, the first parameter actually isn't used
 
         masterdict = empty_masterdict
         self.grid = self.starting_grid
 
-        startinglist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
-                + masterdict['Blue']  # starting locations only at likely categories
+        startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
 
-        if setting.lower() == 'maxent':
-            empty_masterdict = {'Shade1': [], 'Shade2': [], 'Shade3': [], 'Shade4': [], 'Shade5': [],
-                                'Shade6': [], 'Shade7': [], 'Shade8': []}
+        #startinglist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
+        #        + masterdict['Blue']  # starting locations only at likely categories
+
+        #if setting.lower() == 'maxent':
+        #    empty_masterdict = {'Shade1': [], 'Shade2': [], 'Shade3': [], 'Shade4': [], 'Shade5': [],
+        #                        'Shade6': [], 'Shade7': [], 'Shade8': []}
             # master dictionary for maxent
             # dictionary keys: land suitability categorized by shade of grey - Shade7 is highest (white)
             # dictionary values: grid coordinates that belong to that land type
 
-            for x in [Shade1, Shade2, Shade3, Shade4, Shade5, Shade6, Shade7, Shade8]:
-                self._populate(empty_masterdict, gridlist, x, width, height)
+        #    for x in [Shade1, Shade2, Shade3, Shade4, Shade5, Shade6, Shade7, Shade8]:
+        #        self._populate(empty_masterdict, gridlist, x, width, height)
 
             # self.saveLoad(empty_masterdict, 'masterdict_maxent', 'save')
             # self.saveLoad(self.starting_grid, 'grid_maxent', 'save')
@@ -95,12 +96,12 @@ class Movement(Model):
             # self.saveLoad(self.schedule, 'schedule_maxent', 'load')
             # when loading, the first parameter actually isn't used
 
-            masterdict = empty_masterdict
-            self.grid = self.starting_grid
+         #   masterdict = empty_masterdict
+         #   self.grid = self.starting_grid
 
-            startinglist = masterdict['Shade2'] + masterdict['Shade3'] + masterdict['Shade4'] \
-                           + masterdict['Shade5'] + masterdict['Shade6'] + masterdict['Shade7']
-                            # starting locations only at likely categories
+          #  startinglist = masterdict['Shade2'] + masterdict['Shade3'] + masterdict['Shade4'] \
+          #                 + masterdict['Shade5'] + masterdict['Shade6'] + masterdict['Shade7']
+          #                  # starting locations only at likely categories
 
         for i in range(self.number_of_families):  # the following code block create families
             pos = random.choice(startinglist)
@@ -211,18 +212,18 @@ class Movement(Model):
                 value = float(grid[y][x])  # value from the ASCII file for that coordinate/pixel, e.g. 1550 elevation
                 pos = x, y
                 land = land_type(counter, self)
-                if land_type.lower_bound < value < land_type.upper_bound:
+                if land_type.type == value:
                     # for example, if the environmental grid was based on elevation, the above inequality would be
                     # something like 1300 < x < 1500; if x was found to be within range, x was assigned a color
                     # category. x represents an environmental pixel on the grid
-                    import time
-                    start_time = time.time()
+                    #import time
+                    #start_time = time.time()
                     self.starting_grid.place_agent(land, pos)
                     # print("Placing agents on the grid took", time.time() - start_time, "to run")
-                    new_start_time = time.time()
+                    #new_start_time = time.time()
                     self.schedule.add(land)
                     # print("Adding it to the schedule", time.time() - new_start_time, "to run")
-                    newer_start_time = time.time()
+                    #newer_start_time = time.time()
                     masterdict[land.__class__.__name__].append(pos)
                     # print("Building masterdict", time.time() - newer_start_time, "to run")
                     counter += 1

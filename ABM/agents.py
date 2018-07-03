@@ -27,30 +27,34 @@ class Family(Agent):
     def step(self):
         # movement rules for each pixel-agent at each step
         load_dict = {}
-        empty_masterdict = self.model.saveLoad(load_dict, 'masterdict_elevation', 'load')
+        empty_masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
         neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
         selfposlist = list(self.pos)
         newneig = []
 
         # below sets movement behaviors for monkeys outside of mating season
-        from model import filename  # can't import at the beginning - import statement must be here
-        cell_height = self.model._readASCII(filename)[1]
+        from model import vegetation_file  # can't import at the beginning - import statement must be here
+        cell_height = self.model._readASCII(vegetation_file)[1]
         # sets position for pixels to move to - every step (5 days), they move some grids in a chosen direction
         for neighbor in neig:  # this block of code dictates that multiple grids are traveled per step
             neighbor = list(neighbor)
             direction_east = selfposlist[0] - neighbor[0]  # if positive, direction is east; if negative, west
             direction_north = selfposlist[1] - neighbor[1]  # if positive, direction is north; if negative, south
             # direction_east and direction_north are always either -1, 0, or 1
-            if selfposlist[0] < cell_height * 0.6:  # if the position isn't too far, it can potentially go east or west
-                neighbor[0] += direction_east * random.randint(int(cell_height * 0.05), int(cell_height * 0.1))
+            if selfposlist[0] < cell_height * 0.4 and selfposlist[1] > cell_height * 0.7:  # or north and south
+                neighbor[1] += direction_east * random.randint(int(cell_height * 0.05), int(cell_height * 0.05))
+            elif selfposlist[0] < cell_height * 0.4 and selfposlist[1] < cell_height * 0.7:
+                neighbor[1] += direction_east
 
-            if selfposlist[1] < cell_height * 0.7 and selfposlist[0] > cell_height * 0.3:  # or north and south
-                neighbor[1] += direction_north * random.randint(int(cell_height * 0.05), int(cell_height * 0.1))
-            elif selfposlist[1] < cell_height * 0.7 and selfposlist[0] < cell_height * 0.3:
+
+            if selfposlist[1] < cell_height * 0.7 and selfposlist[0] > cell_height * 0.4:  # or north and south
+                neighbor[1] += direction_north * random.randint(int(cell_height * 0.05), int(cell_height * 0.05))
+            elif selfposlist[1] < cell_height * 0.7 and selfposlist[0] < cell_height * 0.4:
                 neighbor[1] += direction_north
 
             neighbor = tuple(neighbor)
             newneig.append(neighbor)
+
         pos = self.neighbor_choice(newneig, empty_masterdict)  # this function determines where to move (which neighbor)
 
 
@@ -108,58 +112,39 @@ class Family(Agent):
         # agent chooses a neighbor to move to based on weights
         choicelist = []
         # picks a weighted neighbor to move to
-        from model import setting
-        color = None
+        vegetation = None
         weight = None
-        neighborcolor = []
+        neighbor_veg = []
         for ng in neighborlist:
-            if color != None:
-                neighborcolor.append(color)
+            if vegetation != None:
+                neighbor_veg.append(vegetation)
             for nposlist in neighbordict.values():
                 for n in nposlist:
                     if ng == n:
-                        color = list(neighbordict.keys())[list(neighbordict.values()).index(nposlist)]
-        if color != None:
-            neighborcolor.append(color)
+                        vegetation = list(neighbordict.keys())[list(neighbordict.values()).index(nposlist)]
+        if vegetation != None:
+            neighbor_veg.append(vegetation)
 
-        # sets weights - elevation only - adjustable
-        for color in neighborcolor:
-            if setting == 'elevation':
-                if color == 'Red':  # elevation 1900+
-                    weight = 1
-                elif color == 'Orange':  # elevation 1700-1900
-                    weight = 11
-                elif color == 'Yellow':  # elevation 1500-1700
-                    weight = 5
-                elif color == 'Green':  # elevation 1300-1500
-                    weight = 10
-                elif color == 'Blue':  # elevation 1100-1300
-                    weight = 7
-                elif color == 'Purple':  # elevation 900-1100
-                    weight = 1
-                elif color == 'Black':  # elevation 900-
-                    weight = 0.1
-                elif color == 'Gray':  # elevation -9999, outside FNNR
-                    weight = 0
-
-            elif setting == 'maxent':
-            # sets weight for maxent
-                if color == 'Shade1':  # lowest maxent suitability/darkest shade of grey (black)
-                    weight = 0.01
-                elif color == 'Shade2':
-                    weight = 0.1
-                elif color == 'Shade3':
-                    weight = 1
-                elif color == 'Shade4':
-                    weight = 5
-                elif color == 'Shade5':
-                    weight = 10
-                elif color == 'Shade6':
-                    weight = 15
-                elif color == 'Shade7':  # highest maxent suitability/lightest shade of grey (white)
-                    weight = 20
-                elif color == 'Shade8':  # -9999 values; represents boundaries outside of FNNR
-                    weight = 0
+        # comments are for past elevation code only - adjusted - will update later - ignore
+        for vegetation in neighbor_veg:
+            if vegetation == 'Bamboo':  # elevation 1900+
+                weight = 0.8
+            elif vegetation == 'Coniferous':  # elevation 1700-1900
+                weight = 1
+            elif vegetation == 'Broadleaf':  # elevation 1500-1700
+                weight = 1
+            elif vegetation == 'Mixed':  # elevation 1300-1500
+                weight = 1
+            elif vegetation == 'Lichen':  # elevation 1100-1300
+                weight = 0.8
+            elif vegetation == 'Deciduous':  # elevation 900-1100
+                weight = 1
+            elif vegetation == 'Shrublands':  # elevation 900-
+                weight = 0.8
+            elif vegetation == 'Clouds':  # elevation -9999, outside FNNR
+                weight = random.uniform(0, 1)
+            elif vegetation == 'Farmland':  # elevation -9999, outside FNNR
+                weight = 0
 
             choicelist.append(weight)
 
@@ -388,7 +373,7 @@ class Monkey(Family):
             random_mother_list.remove(self.unique_id)
 
     def create_male_subgroup(self):
-        # male subgroup forms a new family and shows up in the visualization under a new, differently-colored pixel
+        # male subgroup forms a new family and shows up in the visualization under a new, differently-vegetationed pixel
         if len(male_subgroup_list) > random.randint(10, 15):
             from model import global_family_id_list
             new_family_id = int(global_family_id_list[-1] + 1)
