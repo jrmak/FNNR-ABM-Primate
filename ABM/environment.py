@@ -97,6 +97,45 @@ class Gray(Environment):
     lower_bound = -10000
     upper_bound = -9998
 
+
+# vegetation
+
+class Bamboo(Environment):
+    type = 1
+
+
+class Coniferous(Environment):
+    type = 2
+
+
+class Broadleaf(Environment):
+    type = 3
+
+
+class Mixed(Environment):
+    type = 4
+
+
+class Lichen(Environment):
+    type = 5
+
+
+class Deciduous(Environment):
+    type = 6
+
+
+class Shrublands(Environment):
+    type = 7
+
+
+class Clouds(Environment):
+    type = 8
+
+
+class Farmland(Environment):
+    type = 9
+
+
 # human pixels
 
 class Household(Environment):
