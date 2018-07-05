@@ -5,13 +5,17 @@
 
 from CanvasGridVisualization import CanvasGrid  #, ChartModule
 from mesa.visualization.ModularVisualization import ModularServer
+from mesa.visualization.modules import TextElement
 from mesa.visualization.UserParam import UserSettableParameter
 
 from model import *
 
 # grid should be a square
-width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
-height = Movement._readASCII(Movement, vegetation_file)[2]
+#width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
+#height = Movement._readASCII(Movement, vegetation_file)[2]
+
+width = 101
+height = 101
 
 def movement_portrayal(agent):
 
@@ -23,52 +27,92 @@ def movement_portrayal(agent):
 # for elevation-based grid only
 # portrayal["Color"] = str(type(agent).__name__.lower())
 
-    if type(agent) is Bamboo:
-        portrayal["Color"] = "Green"  # 0.8
+    if type(agent) is Elevation_Out_of_Bound:
+        portrayal["Color"] = "brown"  # 0
+        portrayal["Layer"] = 1
+
+    elif type(agent) is Household:
+        portrayal["Color"] = "#fafafa"  # 0
+        portrayal["Layer"] = 2
+    elif type(agent) is PES:
+        portrayal["Color"] = "#a8a8a8"  # 0.2
+        portrayal["Layer"] = 2
+    elif type(agent) is Farm:
+        portrayal["Color"] = "#545454"  # 0.05
+        portrayal["Layer"] = 2
+    elif type(agent) is Forest:
+        portrayal["Color"] = "#000000"  # 0.2?
+        portrayal["Layer"] = 2
+
+    elif type(agent) is Bamboo:
+        portrayal["Color"] = "#BEF75C"  # 0.8
+        portrayal["Layer"] = 0
     elif type(agent) is Coniferous:
-        portrayal["Color"] = "DarkGreen"  # 1
+        portrayal["Color"] = "#8BED39"  # 1
+        portrayal["Layer"] = 0
     elif type(agent) is Broadleaf:
-        portrayal["Color"] = "ForestGreen"  # 1
+        portrayal["Color"] = "#38E009"  # 1
+        portrayal["Layer"] = 0
     elif type(agent) is Mixed:
-        portrayal["Color"] = "LimeGreen"  # 1
+        portrayal["Color"] = "#3EC74E"  # 1
+        portrayal["Layer"] = 0
     elif type(agent) is Lichen:
-        portrayal["Color"] = "GreenYellow"  # 0.8
+        portrayal["Color"] = "#37AB7E"  # 0.8
+        portrayal["Layer"] = 0
     elif type(agent) is Deciduous:
-        portrayal["Color"] = "LightGreen"  # 1
+        portrayal["Color"] = "#1A93AB"  # 1
+        portrayal["Layer"] = 0
     elif type(agent) is Shrublands:
-        portrayal["Color"] = "YellowGreen"  # 0.8
+        portrayal["Color"] = "#22639C"  # 0.8
+        portrayal["Layer"] = 0
     elif type(agent) is Clouds:
-        portrayal["Color"] = "White"  # 0-1 random
+        portrayal["Color"] = "#ffffff"  # 0-1 random
+        portrayal["Layer"] = 0
     elif type(agent) is Farmland:
-        portrayal["Color"] = "Dark Red"  # 0
+        portrayal["Color"] = "#0C1078"  # 0
+        portrayal["Layer"] = 0
+    elif type(agent) is Outside_FNNR:
+        portrayal["Color"] = "#ffffff"  # 0
+        portrayal["Layer"] = 0
+
 
     if type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "darkgoldenrod"
         portrayal["r"] = int(height / 30)
-        portrayal["Layer"] = 1
+        portrayal["Layer"] = 3
 
     elif type(agent) is Family and agent.family_type == 'all_male':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "tan"
         portrayal["r"] = int(height / 30)
-        portrayal["Layer"] = 1
+        portrayal["Layer"] = 3
 
     return portrayal
 
 # monkey_movement_chart = {"Label": "Golden Monkey", "Color": "purple"}
 
-agent_slider = UserSettableParameter('slider', "Number of Families", 10, 1, 20, 1)
+agent_slider = UserSettableParameter('slider', "Number of Families", 5, 1, 20, 1)
 # note: add more later
 
 canvas_width = 700
 canvas_height = 700
 
+class MapLegend(TextElement):
+    def __init__(self):
+        pass
+
+    def render(self, model):
+        # image created on MS Paint and uploaded to internet, but also featured in this folder for reference
+        return ("<center><img src = 'http://i64.tinypic.com/2u4tyzq.png'></center>" + "<br>"
+                + "<br><br></h3>")
+
+text0 = MapLegend()
 canvas = CanvasGrid(movement_portrayal, width, height, canvas_width, canvas_height)
 # chart_count = ChartModule([monkey_movement_chart])
 model_params = {"number_of_families": agent_slider}
 
-server = ModularServer(Movement, [canvas], "FNNR: an ABM of Guizhou Golden Monkey Movement", model_params)
+server = ModularServer(Movement, [canvas, text0], "FNNR: an ABM of Guizhou Golden Monkey Movement", model_params)
         # deleted ', chart_count' after canvas
 
 
