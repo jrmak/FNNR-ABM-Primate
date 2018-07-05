@@ -4,101 +4,14 @@ from mesa.agent import Agent
 
 class Environment(Agent):
 
-    def __init__(self, unique_id, model, pos=None):
+    def __init__(self, unique_id, model, pos = None, elevation = None):
         super().__init__(unique_id, model)
         self.pos = pos
+        self.elevation = elevation
 
     def step(self):
         pass
-        # will add seasonal variations to environment later, if vegetation data is imported
-
-# environmental pixels for Maxent-value-based grid; each shade represents a suitability category
-# Maxent values range from 0-1, with a number closer to 1 representing higher suitability for monkeys
-
-class Shade1(Environment):
-
-    lower_bound = 0.000170539
-    upper_bound = 0.040741642
-
-class Shade2(Environment):
-
-    lower_bound = 0.040741642
-    upper_bound = 0.132026623
-
-class Shade3(Environment):
-
-    lower_bound = 0.132026623
-    upper_bound = 0.257120857
-
-class Shade4(Environment):
-
-    lower_bound = 0.257120857
-    upper_bound = 0.392357867
-
-class Shade5(Environment):
-
-    lower_bound = 0.392357867
-    upper_bound = 0.527594877
-
-class Shade6(Environment):
-
-    lower_bound = 0.527594877
-    upper_bound = 0.662831886
-
-class Shade7(Environment):
-
-    lower_bound = 0.662831886
-    upper_bound = 1
-
-class Shade8(Environment):
-
-    lower_bound = -10000
-    upper_bound = -9998
-
-# environmental pixels for elevation-based grid; each color represents an elevation category (in meters)
-
-class Red(Environment):
-
-    lower_bound = 1899
-    upper_bound = 3000
-
-class Orange(Environment):
-
-    lower_bound = 1699
-    upper_bound = 1900
-
-class Yellow(Environment):
-
-    lower_bound = 1499
-    upper_bound = 1700
-
-class Green(Environment):
-
-    lower_bound = 1299
-    upper_bound = 1500
-
-class Blue(Environment):
-
-    lower_bound = 1099
-    upper_bound = 1300
-
-class Purple(Environment):
-
-    lower_bound = 899
-    upper_bound = 1100
-
-class Black(Environment):
-
-    lower_bound = 0
-    upper_bound = 900
-
-class Gray(Environment):
-
-    lower_bound = -10000
-    upper_bound = -9998
-
-
-# vegetation
+        # will add seasonal variations to environment later
 
 class Bamboo(Environment):
     type = 1
@@ -136,10 +49,27 @@ class Farmland(Environment):
     type = 9
 
 
+class Outside_FNNR(Environment):
+    type = -9999
+
+
 # human pixels
 
 class Household(Environment):
-    pass
+    type = 10
 
 class Farm(Environment):
-    pass
+    type = 11
+
+class PES(Environment):
+    type = 12
+
+class Forest(Environment):
+    type = 13
+
+# elevation
+
+class Elevation_Out_of_Bound(Environment):
+    lower_bound = 1000
+    upper_bound = 2200
+

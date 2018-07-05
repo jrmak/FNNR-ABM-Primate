@@ -30,44 +30,28 @@ class Family(Agent):
         empty_masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
         neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
         selfposlist = list(self.pos)
-        newneig = []
-
-        # below sets movement behaviors for monkeys outside of mating season
         from model import vegetation_file  # can't import at the beginning - import statement must be here
         cell_height = self.model._readASCII(vegetation_file)[1]
-        # sets position for pixels to move to - every step (5 days), they move some grids in a chosen direction
-        for neighbor in neig:  # this block of code dictates that multiple grids are traveled per step
-            neighbor = list(neighbor)
-            direction_east = selfposlist[0] - neighbor[0]  # if positive, direction is east; if negative, west
-            direction_north = selfposlist[1] - neighbor[1]  # if positive, direction is north; if negative, south
-            # direction_east and direction_north are always either -1, 0, or 1
-            if selfposlist[0] < cell_height * 0.4 and selfposlist[1] > cell_height * 0.7:  # or north and south
-                neighbor[1] += direction_east * random.randint(int(cell_height * 0.05), int(cell_height * 0.05))
-            elif selfposlist[0] < cell_height * 0.4 and selfposlist[1] < cell_height * 0.7:
-                neighbor[1] += direction_east
-
-
-            if selfposlist[1] < cell_height * 0.7 and selfposlist[0] > cell_height * 0.4:  # or north and south
-                neighbor[1] += direction_north * random.randint(int(cell_height * 0.05), int(cell_height * 0.05))
-            elif selfposlist[1] < cell_height * 0.7 and selfposlist[0] < cell_height * 0.4:
-                neighbor[1] += direction_north
-
-            neighbor = tuple(neighbor)
-            newneig.append(neighbor)
-
-        pos = self.neighbor_choice(newneig, empty_masterdict)  # this function determines where to move (which neighbor)
-
+        pos = self.neighbor_choice(neig, empty_masterdict)  # this function determines where to move (which neighbor)
 
         if 16 < self.model.step_in_year < 25 or  46 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
             # April: steps 19-25
             # September: steps 49-55
+            self.move_to(pos)  # moves to chosen direction/neighbor
             pos = self.move_to_yangaoping(self.pos, cell_height)
 
         if 28 < self.model.step_in_year < 31 or 58 < self.model.step_in_year < 61: # head back to rest of reserve
             self.move_to(pos)  # moves to chosen direction/neighbor
             pos = self.move_from_yangaoping(self.pos, cell_height)
+            self.move_to(pos)  # moves to chosen direction/neighbor
+            pos = self.neighbor_choice(neig, empty_masterdict)  # this function determines where to move (which neighbor)
 
         self.move_to(pos)  # moves to chosen direction/neighbor
+        for i in range(random.randint(0, 5)):
+            neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels again
+            pos = self.neighbor_choice(neig, empty_masterdict)  # this function determines where to move (which neighbor)
+            self.move_to(pos)  # moves to chosen direction/neighbor
+
         moved_list.append(pos)
         if self.family_size == 0:
             self.model.grid._remove_agent(self.pos, self)  # if everyone in a family dies, the pixel is removed
@@ -78,14 +62,14 @@ class Family(Agent):
         northchoice = random.randint(int(height * 0.8), int(height * 0.85))  # numbers determined by proportion to grid
         eastchoice = random.randint(int(height * 0.6), int(height * 0.7))
         if pos[0] < eastchoice:  # if the current position is not too close to the edge of the grid,
-            pos[0] += random.randint(int(height * 0.1), int(height * 0.2))  # move around 6-8 spaces (for 87x100) east
+            pos[0] += random.randint(int(height * 0), int(height * 0.2))  # move around 6-8 spaces (for 87x100) east
         if pos[1] < northchoice:
-            pos[1] += random.randint(int(height * 0.1), int(height * 0.2)) # and also north
+            pos[1] += random.randint(int(height * 0), int(height * 0.2)) # and also north
         else:
-            if pos[0] > random.uniform(height * 0.7, height * 0.8):
-                pos[0] = random.randint(int(height * 0.6), int(height * 0.65))
-            if pos[1] > random.uniform(height * 0.7, height * 0.8):
-                pos[1] = random.randint(int(height * 0.6), int(height * 0.75))
+            if pos[0] > random.uniform(height * 0.7, height * 0.85):
+                pos[0] = random.randint(int(height * 0.6), int(height * 0.8))
+            if pos[1] > random.uniform(height * 0.7, height * 0.85):
+                pos[1] = random.randint(int(height * 0.6), int(height * 0.8))
         pos = tuple(pos)
         return pos
 
@@ -95,9 +79,9 @@ class Family(Agent):
         southchoice = random.uniform(int(height * 0.2), int(height * 0.3))
         westchoice = random.uniform(int(height * 0.2), int(height * 0.3))
         if pos[0] > westchoice:
-            pos[0] -= random.randint(int(height * 0.1), int(height * 0.2))
+            pos[0] -= random.randint(int(height * 0), int(height * 0.2))
         if pos[1] > southchoice:
-            pos[1] -= random.randint(int(height * 0.1), int(height * 0.2))
+            pos[1] -= random.randint(int(height * 0), int(height * 0.2))
         else:
             pass
             if pos[0] < height * 0.3:  # 29
@@ -127,7 +111,9 @@ class Family(Agent):
 
         # comments are for past elevation code only - adjusted - will update later - ignore
         for vegetation in neighbor_veg:
-            if vegetation == 'Bamboo':  # elevation 1900+
+            if vegetation == 'Elevation_Out_of_Bound':
+                weight = 0
+            elif vegetation == 'Bamboo':  # elevation 1900+
                 weight = 0.8
             elif vegetation == 'Coniferous':  # elevation 1700-1900
                 weight = 1
@@ -145,7 +131,8 @@ class Family(Agent):
                 weight = random.uniform(0, 1)
             elif vegetation == 'Farmland':  # elevation -9999, outside FNNR
                 weight = 0
-
+            elif vegetation == 'Outside_FNNR':  # elevation -9999, outside FNNR
+                weight = 0
             choicelist.append(weight)
 
 

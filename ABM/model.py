@@ -3,7 +3,6 @@
 from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
-from mesa.datacollection import DataCollector
 from environment import *
 from agents import *
 import pickle
@@ -11,14 +10,20 @@ import pickle
 global_family_id_list = []
 vegetation_file = 'agg_veg60.txt'  # change this filename to another file in the same directory as needed
 elevation_file = 'agg_dem_87100.txt'
+household_file = 'hh_ascii400.txt'
+farm_file = 'farm_ascii300.txt'
+pes_file = 'pes_ascii200.txt'
+forest_file = 'forest_ascii200.txt'
 
 masterdict = {}
+
 class Movement(Model):
 
     def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
                  number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0, monkey_id_count = 0):
+        # change the # of families here for graph.py, but use server.py to change # of families in movement model
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
         self.width = width
@@ -34,9 +39,15 @@ class Movement(Model):
         # generate land
         gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function below
         gridlist2 = self._readASCII(elevation_file)[0]  # list of all coordinate values; see readASCII function below
+        gridlist3 = self._readASCII(household_file)[0]  # list of all coordinate values; see readASCII function below
+        gridlist4 = self._readASCII(pes_file)[0]  # list of all coordinate values; see readASCII function below
+        gridlist5 = self._readASCII(farm_file)[0]  # list of all coordinate values; see readASCII function below
+        gridlist6 = self._readASCII(forest_file)[0]  # list of all coordinate values; see readASCII function below
 
-        width = self._readASCII(vegetation_file)[1]  # width as listed at the beginning of the ASCII file
-        height = self._readASCII(vegetation_file)[2]  # height as listed at the beginning of the ASCII file
+        # width = self._readASCII(vegetation_file)[1] + 5 # width as listed at the beginning of the ASCII file
+        # height = self._readASCII(vegetation_file)[2] + 5 # height as listed at the beginning of the ASCII file
+        width = 85
+        height = 100
 
         self.starting_grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
 
@@ -44,64 +55,42 @@ class Movement(Model):
         # similar to NetLogo's Ask Agents - determines order (or lack of) in which each agents act
 
         empty_masterdict = {'Bamboo': [], 'Coniferous': [], 'Broadleaf': [], 'Mixed': [], 'Lichen': [],
-                            'Deciduous': [], 'Shrublands': [], 'Clouds': [], 'Farmland': []}
+                            'Deciduous': [], 'Shrublands': [], 'Clouds': [], 'Farmland': [], 'Outside_FNNR': [],
+                            'Elevation_Out_of_Bound': [], 'Household': [], 'PES': [], 'Farm': [], 'Forest': []}
 
-        for x in [Bamboo, Coniferous, Broadleaf, Mixed, Lichen, Deciduous, Shrublands, Clouds, Farmland]:
+        """
+        for x in [Elevation_Out_of_Bound]:
+            self._populate(empty_masterdict, gridlist2, x, width, height)
+        for x in [Household]:
+            self._populate(empty_masterdict, gridlist3, x, width, height)
+        for x in [PES]:
+            self._populate(empty_masterdict, gridlist4, x, width, height)
+        for x in [Farm]:
+            self._populate(empty_masterdict, gridlist5, x, width, height)
+        for x in [Forest]:
+            self._populate(empty_masterdict, gridlist6, x, width, height)
+        for x in [Bamboo, Coniferous, Broadleaf, Mixed, Lichen, Deciduous, Shrublands, Clouds, Farmland, Outside_FNNR]:
             self._populate(empty_masterdict, gridlist, x, width, height)
+        self.saveLoad(empty_masterdict, 'masterdict_veg', 'save')
+        self.saveLoad(self.starting_grid, 'grid_veg', 'save')
+        self.saveLoad(self.schedule, 'schedule_veg', 'save')
+        """
+        """ Lines 62-76 are commented out using Lines 61 and 77, but they must be re-enabled if a new environmental grid
+         is put in. Otherwise, the model will load a 'pickled', or saved, environment from the disk. """
 
-        # the code blocks from here on out create monkey agents - each pixel represents a family group of 25-45 monkeys
-        #if setting.lower() == 'elevation':
-        #    empty_masterdict = {'Red': [], 'Orange': [], 'Yellow': [], 'Green': [], 'Blue': [],
-        #                        'Purple': [], 'Black': [], 'Gray': []}
-            # master dictionary for elevations and colors; unneeded with maxent
-            # dictionary keys: land suitability (or elevation, etc.) categorized by color
-            # dictionary values: grid coordinates that belong to that land type
-            #for x in [Red, Orange, Yellow, Green, Blue, Purple, Black, Gray]:  # elevation categories - see agent.py
-            #    self._populate(empty_masterdict, gridlist, x, width, height)
 
-            # self.saveLoad(empty_masterdict, 'masterdict_veg', 'save')
-            # self.saveLoad(self.starting_grid, 'grid_veg', 'save')
-            # self.saveLoad(self.schedule, 'schedule_veg', 'save')
 
-            load_dict = {}
-            empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
-            self.starting_grid = self.saveLoad(self.starting_grid, 'grid_veg', 'load')
-            self.schedule = self.saveLoad(self.schedule, 'schedule_veg', 'load')
-            # when loading, the first parameter actually isn't used
+        load_dict = {}  # placeholder for model parameters, leave this here even though it does nothing
+        empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
+        self.starting_grid = self.saveLoad(self.starting_grid, 'grid_veg', 'load')
+        self.schedule = self.saveLoad(self.schedule, 'schedule_veg', 'load')
+        # when loading, the first parameter actually isn't used
 
         masterdict = empty_masterdict
         self.grid = self.starting_grid
 
         startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
-
-        #startinglist = masterdict['Orange'] + masterdict['Yellow'] + masterdict['Green'] \
-        #        + masterdict['Blue']  # starting locations only at likely categories
-
-        #if setting.lower() == 'maxent':
-        #    empty_masterdict = {'Shade1': [], 'Shade2': [], 'Shade3': [], 'Shade4': [], 'Shade5': [],
-        #                        'Shade6': [], 'Shade7': [], 'Shade8': []}
-            # master dictionary for maxent
-            # dictionary keys: land suitability categorized by shade of grey - Shade7 is highest (white)
-            # dictionary values: grid coordinates that belong to that land type
-
-        #    for x in [Shade1, Shade2, Shade3, Shade4, Shade5, Shade6, Shade7, Shade8]:
-        #        self._populate(empty_masterdict, gridlist, x, width, height)
-
-            # self.saveLoad(empty_masterdict, 'masterdict_maxent', 'save')
-            # self.saveLoad(self.starting_grid, 'grid_maxent', 'save')
-            # self.saveLoad(self.schedule, 'schedule_maxent', 'save')
-
-            # self.saveLoad(empty_masterdict, 'masterdict_maxent', 'load')
-            # self.grid = self.saveLoad(self.starting_grid, 'grid_maxent', 'load')
-            # self.saveLoad(self.schedule, 'schedule_maxent', 'load')
-            # when loading, the first parameter actually isn't used
-
-         #   masterdict = empty_masterdict
-         #   self.grid = self.starting_grid
-
-          #  startinglist = masterdict['Shade2'] + masterdict['Shade3'] + masterdict['Shade4'] \
-          #                 + masterdict['Shade5'] + masterdict['Shade6'] + masterdict['Shade7']
-          #                  # starting locations only at likely categories
+        # startinglist_test = masterdict['Elevation_Out_of_Bound']
 
         for i in range(self.number_of_families):  # the following code block create families
             pos = random.choice(startinglist)
@@ -177,10 +166,6 @@ class Movement(Model):
         if self.step_in_year > 73:
             self.step_in_year = 1  # start new year
         self.schedule.step()
-        # self.datacollector.collect(self)
-        # self.datacollector2.collect(self)
-        # self.datacollector3.collect(self)
-        # self.datacollector4.collect(self)
 
     def _readASCII(self, text):
         # reads in a text file that determines the environmental grid setup
@@ -192,41 +177,39 @@ class Movement(Model):
         f.close()
         abody = reversed(abody)
         cells = []
-        # averagelist = []
         for line in abody:
             cells.append(line.split(" "))
-        #    newline = line.replace("-9999", "")
-        #    newline.split(" ").remove('')
-        #     for item in newline.split():
-        #         averagelist.append(float(item))
-        # mean = sum(averagelist)/len(averagelist)  # this code is for calculating mean values; not needed
         return [cells, int(width), int(height)]
 
 
     def _populate(self, masterdict, grid, land_type, width, height):
         # places land tiles on the grid - connects color/land cover category with ASCII file values
-        # prefix = "number_of_{}"
         counter = 0  # sets agent ID - not currently used
         for y in range(height):  # for each pixel,
             for x in range(width):
                 value = float(grid[y][x])  # value from the ASCII file for that coordinate/pixel, e.g. 1550 elevation
                 pos = x, y
                 land = land_type(counter, self)
-                if land_type.type == value:
-                    # for example, if the environmental grid was based on elevation, the above inequality would be
-                    # something like 1300 < x < 1500; if x was found to be within range, x was assigned a color
-                    # category. x represents an environmental pixel on the grid
-                    #import time
-                    #start_time = time.time()
-                    self.starting_grid.place_agent(land, pos)
-                    # print("Placing agents on the grid took", time.time() - start_time, "to run")
-                    #new_start_time = time.time()
-                    self.schedule.add(land)
-                    # print("Adding it to the schedule", time.time() - new_start_time, "to run")
-                    #newer_start_time = time.time()
-                    masterdict[land.__class__.__name__].append(pos)
-                    # print("Building masterdict", time.time() - newer_start_time, "to run")
-                    counter += 1
+                if land_type.__name__ == 'Elevation_Out_of_Bound':
+                    if (value < land_type.lower_bound or value > land_type.upper_bound) and value != -9999:
+                        # if elevation is not 1000-2200, but is within the bounds of the FNNR, mark as 'elevation OOB'
+                        self.starting_grid.place_agent(land, pos)
+                        self.schedule.add(land)
+                        masterdict[land.__class__.__name__].append(pos)
+                        counter += 1
+                elif land_type.__name__ == 'Household' or 'PES' or 'Farm' or 'Forest'   \
+                        and self.model.grid.is_cell_empty == True:
+                    if land_type.type == value:
+                        self.starting_grid.place_agent(land, pos)
+                        self.schedule.add(land)
+                        masterdict[land.__class__.__name__].append(pos)
+                        counter += 1
+                else:  # vegetation background
+                    if land_type.type == value and self.model.grid.is_cell_empty == True:
+                        self.starting_grid.place_agent(land, pos)
+                        self.schedule.add(land)
+                        masterdict[land.__class__.__name__].append(pos)
+                        counter += 1
 
     def saveLoad(self, grid_dict, name, option):
         if option == "save":
