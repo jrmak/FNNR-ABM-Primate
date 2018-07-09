@@ -28,7 +28,7 @@ def movement_portrayal(agent):
 # portrayal["Color"] = str(type(agent).__name__.lower())
 
     if type(agent) is Elevation_Out_of_Bound:
-        portrayal["Color"] = "brown"  # 0
+        portrayal["Color"] = "tan"  # 0
         portrayal["Layer"] = 1
 
     elif type(agent) is Household:
