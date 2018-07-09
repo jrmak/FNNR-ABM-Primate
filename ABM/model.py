@@ -101,7 +101,7 @@ class Movement(Model):
         human_id = 0
         for x in [73, 85, 128]:
             human_id += 1
-            human = Human(human_id, self, pos, x, random.randint(15, 59))
+            human = Human(human_id, self, pos, x, random.randint(15, 59), 0)
         self.grid.place_agent(human, pos)
         self.schedule.add(human)
 
