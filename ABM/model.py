@@ -5,6 +5,7 @@ from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 from environment import *
 from agents import *
+from humans import *
 import pickle
 
 global_family_id_list = []
@@ -95,6 +96,15 @@ class Movement(Model):
             if coordinate in startinglist:
                 startinglist.remove(coordinate)
 
+        human_startinglist = masterdict['Household']
+        pos = random.choice(human_startinglist)
+        human_id = 0
+        for x in [73, 85, 128]:
+            human_id += 1
+            human = Human(human_id, self, pos, x, random.randint(15, 59))
+        self.grid.place_agent(human, pos)
+        self.schedule.add(human)
+
         for i in range(self.number_of_families):  # the following code block create families
             pos = random.choice(startinglist)
             from agents import Family
@@ -161,6 +171,21 @@ class Movement(Model):
                 self.monkey_id_count += 1
                 self.schedule.add(monkey)
                 list_of_family_members.append(monkey.unique_id)
+
+        pos1 = (65, 79)
+        bamboo1 = Herbs(1, self, pos1)
+        self.grid.place_agent(bamboo1, pos1)
+        self.schedule.add(bamboo1)
+
+        pos2 = (67, 77)
+        bamboo2 = Herbs(2, self, pos2)
+        self.grid.place_agent(bamboo2, pos2)
+        self.schedule.add(bamboo2)
+
+        pos3 = (57, 57)
+        herb1 = Herbs(3, self, pos3)
+        self.grid.place_agent(herb1, pos3)
+        self.schedule.add(herb1)
 
     def step(self):
         # necessary; tells model to move forward

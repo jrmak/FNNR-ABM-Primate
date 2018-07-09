@@ -4,6 +4,10 @@
 This document imports human data from the excel file.
 """
 
+from mesa.agent import Agent
+import random
+
+
 def _readCSV(self, text):
     # reads in a text file that determines the environmental grid setup
     f = open(text, 'r')
@@ -26,15 +30,66 @@ class Human(Agent):
     def step(self):
         self.age += 1
 
+        neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels again
+        pos = random.choice(neig)
+        self.move_to(pos)
+
         if self.age > 70:
-            if random.randint()
+            pass
+            # if random.uniform(0, 1) > 0.95:
+            #     self.death()
 
     def death(self):
         self.model.schedule.remove(self)
-        self.model.number_of_monkeys -= 1
-        self.model.monkey_death_count += 1
-        if self.unique_id in female_list:
-            female_list.remove(self.unique_id)
+
+    def move_to(self, pos):
+        if pos != None:
+            self.model.grid.move_agent(self, pos)
+
+class Bamboo(Agent):
+
+    def __init__(self, unique_id, model, pos = None):
+        super().__init__(unique_id, model)
+        self.pos = pos
+
+    def step(self):
+        pass
+
+class Herbs(Agent):
+
+    def __init__(self, unique_id, model, pos = None):
+        super().__init__(unique_id, model)
+        self.pos = pos
+
+    def step(self):
+        pass
+
+class Fungi(Agent):
+
+    def __init__(self, unique_id, model, pos = None):
+        super().__init__(unique_id, model)
+        self.pos = pos
+
+    def step(self):
+        pass
+
+class Fodder(Agent):
+
+    def __init__(self, unique_id, model, pos = None):
+        super().__init__(unique_id, model)
+        self.pos = pos
+
+    def step(self):
+        pass
+
+class Fish(Agent):
+
+    def __init__(self, unique_id, model, pos = None):
+        super().__init__(unique_id, model)
+        self.pos = pos
+
+    def step(self):
+        pass
 
 class Fuelwood(Agent):
 
