@@ -27,22 +27,34 @@ def movement_portrayal(agent):
 # for elevation-based grid only
 # portrayal["Color"] = str(type(agent).__name__.lower())
 
-    if type(agent) is Elevation_Out_of_Bound:
-        portrayal["Color"] = "tan"  # 0
-        portrayal["Layer"] = 1
+    if type(agent) is Bamboo:
+        portrayal["Color"] = "Yellow"
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = int(height / 30)
+        portrayal["Layer"] = 6
+
+    if type(agent) is Herbs:
+        portrayal["Color"] = "Purple"
+        portrayal["Shape"] = "circle"
+        portrayal["r"] = int(height / 30)
+        portrayal["Layer"] = 6
 
     elif type(agent) is Household:
         portrayal["Color"] = "#fafafa"  # 0
-        portrayal["Layer"] = 2
+        portrayal["Layer"] = 5
     elif type(agent) is PES:
         portrayal["Color"] = "#a8a8a8"  # 0.2
-        portrayal["Layer"] = 2
+        portrayal["Layer"] = 4
     elif type(agent) is Farm:
         portrayal["Color"] = "#545454"  # 0.05
-        portrayal["Layer"] = 2
+        portrayal["Layer"] = 3
     elif type(agent) is Forest:
         portrayal["Color"] = "#000000"  # 0.2?
         portrayal["Layer"] = 2
+
+    elif type(agent) is Elevation_Out_of_Bound:
+        portrayal["Color"] = "tan"  # 0
+        portrayal["Layer"] = 1
 
     elif type(agent) is Bamboo:
         portrayal["Color"] = "#BEF75C"  # 0.8
@@ -75,18 +87,23 @@ def movement_portrayal(agent):
         portrayal["Color"] = "#ffffff"  # 0
         portrayal["Layer"] = 0
 
+    if type(agent) is Human:
+        portrayal["Shape"] = "circle"
+        portrayal["Color"] = "brown"
+        portrayal["r"] = int(height / 30)
+        portrayal["Layer"] = 8
 
     if type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "darkgoldenrod"
         portrayal["r"] = int(height / 30)
-        portrayal["Layer"] = 3
+        portrayal["Layer"] = 8
 
     elif type(agent) is Family and agent.family_type == 'all_male':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "tan"
         portrayal["r"] = int(height / 30)
-        portrayal["Layer"] = 3
+        portrayal["Layer"] = 8
 
     return portrayal
 
