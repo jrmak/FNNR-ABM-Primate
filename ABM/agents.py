@@ -28,69 +28,55 @@ class Family(Agent):
         # movement rules for each pixel-agent at each step
         load_dict = {}
         empty_masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
-        neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
-        selfposlist = list(self.pos)
-        from model import vegetation_file  # can't import at the beginning - import statement must be here
-        cell_height = self.model._readASCII(vegetation_file)[1]
-        pos = self.neighbor_choice(neig, empty_masterdict)  # this function determines where to move (which neighbor)
 
         if 16 < self.model.step_in_year < 25 or  46 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
             # April: steps 19-25
             # September: steps 49-55
-            self.move_to(pos)  # moves to chosen direction/neighbor
-            pos = self.move_to_yangaoping(self.pos, cell_height)
+            pos = self.move_to_yangaoping(self.pos, empty_masterdict)
+            moved_list.append(pos)
 
         if 28 < self.model.step_in_year < 31 or 58 < self.model.step_in_year < 61: # head back to rest of reserve
-            self.move_to(pos)  # moves to chosen direction/neighbor
-            pos = self.move_from_yangaoping(self.pos, cell_height)
-            self.move_to(pos)  # moves to chosen direction/neighbor
-            pos = self.neighbor_choice(neig, empty_masterdict)  # this function determines where to move (which neighbor)
+            pos = self.move_from_yangaoping(self.pos, empty_masterdict)
+            moved_list.append(pos)
 
-        self.move_to(pos)  # moves to chosen direction/neighbor
-        for i in range(random.randint(0, 5)):
-            neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels again
-            pos = self.neighbor_choice(neig, empty_masterdict)  # this function determines where to move (which neighbor)
-            self.move_to(pos)  # moves to chosen direction/neighbor
+        else:
+            for i in range(random.randint(5, 10)):
+                neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels again
+                pos = self.neighbor_choice(neig, empty_masterdict)  # this function determines where to move (which neighbor)
+                self.move_to(pos)  # moves to chosen direction/neighbor
+                moved_list.append(pos)
 
-        moved_list.append(pos)
         if self.family_size == 0:
             self.model.grid._remove_agent(self.pos, self)  # if everyone in a family dies, the pixel is removed
 
-    def move_to_yangaoping(self, pos, height):
+    def move_to_yangaoping(self, pos, emd):
         # moves towards northeast portion of reserve
-        pos = list(pos)
-        northchoice = random.randint(int(height * 0.8), int(height * 0.85))  # numbers determined by proportion to grid
-        eastchoice = random.randint(int(height * 0.6), int(height * 0.7))
-        if pos[0] < eastchoice:  # if the current position is not too close to the edge of the grid,
-            pos[0] += random.randint(int(height * 0), int(height * 0.2))  # move around 6-8 spaces (for 87x100) east
-        if pos[1] < northchoice:
-            pos[1] += random.randint(int(height * 0), int(height * 0.2)) # and also north
-        else:
-            if pos[0] > random.uniform(height * 0.7, height * 0.85):
-                pos[0] = random.randint(int(height * 0.6), int(height * 0.8))
-            if pos[1] > random.uniform(height * 0.7, height * 0.85):
-                pos[1] = random.randint(int(height * 0.6), int(height * 0.8))
-        pos = tuple(pos)
-        return pos
+        for i in range(random.randint(5, 10)):
+            newneig = []
+            neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
+            try:
+                newneig.append(neig[4])
+                newneig.append(neig[6])
+                newneig.append(neig[7])
+            except:
+                pos = self.neighbor_choice(neig, emd)  # this function determines where to move (which neighbor)
+            pos = self.neighbor_choice(newneig, emd)  # this function determines where to move (which neighbor)
+            self.move_to(pos)  # moves to chosen direction/neighbor
 
-    def move_from_yangaoping(self, pos, height):
+    def move_from_yangaoping(self, pos, emd):
         # moves away from northeast portion of reserve
-        pos = list(pos)
-        southchoice = random.uniform(int(height * 0.2), int(height * 0.3))
-        westchoice = random.uniform(int(height * 0.2), int(height * 0.3))
-        if pos[0] > westchoice:
-            pos[0] -= random.randint(int(height * 0), int(height * 0.2))
-        if pos[1] > southchoice:
-            pos[1] -= random.randint(int(height * 0), int(height * 0.2))
-        else:
-            pass
-            if pos[0] < height * 0.3:  # 29
-                pos[0] = random.randint(int(height * 0.3), int(height * 0.4))
-            if pos[1] < height * 0.3:
-                pos[1] = random.randint(int(height * 0.3), int(height * 0.4))
-        pos = tuple(pos)
-        return pos
+        for i in range(random.randint(5, 10)):
+            newneig = []
+            neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
+            try:
+                newneig.append(neig[0])
+                newneig.append(neig[1])
+                newneig.append(neig[3])
+            except:
+                pos = self.neighbor_choice(neig, emd)  # this function determines where to move (which neighbor)
 
+            pos = self.neighbor_choice(newneig, emd)  # this function determines where to move (which neighbor)
+            self.move_to(pos)  # moves to chosen direction/neighbor
 
     def neighbor_choice(self, neighborlist, neighbordict):
         # agent chooses a neighbor to move to based on weights

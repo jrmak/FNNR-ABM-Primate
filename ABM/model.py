@@ -90,7 +90,10 @@ class Movement(Model):
         self.grid = self.starting_grid
 
         startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
-        # startinglist_test = masterdict['Elevation_Out_of_Bound']
+        for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES']    \
+                + masterdict['Farm'] + masterdict['Forest']:
+            if coordinate in startinglist:
+                startinglist.remove(coordinate)
 
         for i in range(self.number_of_families):  # the following code block create families
             pos = random.choice(startinglist)
