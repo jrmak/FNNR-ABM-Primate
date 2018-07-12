@@ -1,7 +1,12 @@
 # !/usr/bin/python
 
+"""
+This file determines behavior for family agents in the visualization grid.
+"""
+
 from mesa.agent import Agent
 import random
+
 
 demographic_structure_list = [0] * 6  # each index represents an age category count: 0-1, 1-3, 3-7, 7-10, 10-25, 25+
 recent_death_infant = []  # lists ids of mothers who can give birth soon after their infant has died early
@@ -12,361 +17,208 @@ female_list = []  # lists ids of all females
 reproductive_female_list = [0]  # lists ids of all females aged 10-25
 moved_list = []  # records all points moved to; used for calculating heatmap
 
-
 class Family(Agent):
     # the pixel that represents each group of monkeys with the same family id.
     # it moves on the visualization grid, unlike individual monkey agents.
     # it is currently not important in the demographic model, just the visualization model.
-    def __init__(self, unique_id, model, pos, family_size, list_of_family_members, family_type):
+    def __init__(self, unique_id, model, current_position, family_size, list_of_family_members, family_type,
+                 saved_position):
         super().__init__(unique_id, model)
-        self.pos = pos
+        self.current_position = current_position
         self.family_size = family_size
         self.list_of_family_members = list_of_family_members
         self.family_type = family_type
+        self.saved_position = saved_position
 
     def step(self):
         # movement rules for each pixel-agent at each step
         load_dict = {}
-        empty_masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
-        neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels
-        selfposlist = list(self.pos)
-        from model import vegetation_file  # can't import at the beginning - import statement must be here
-        cell_height = self.model._readASCII(vegetation_file)[1]
+        masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
+
+        # Movement for families is defined below
 
         if 16 < self.model.step_in_year < 25 or 46 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
             # April: steps 19-25
             # September: steps 49-55
-            pos = self.move_to_yangaoping(self.pos, cell_height)
-            self.move_to(pos)  # moves to chosen direction/neighbor
+            yangaoping = [random.randint(50, 70), random.randint(70, 80)]
+            # The grid is drawn from the bottom, so even though it is currently 85 x 100,
+            # these numbers are relatively high because they indicate the top right corner of the grid
+            for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
+                current_position = self.move_to_point(yangaoping)
+                if current_position in masterdict['Elevation_Out_of_Bound'] or  \
+                    current_position in masterdict['Outside_FNNR']:
+                    for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
+                        current_position = self.move_to_point(yangaoping)
 
-        if 26 < self.model.step_in_year < random.randint(30, 31) \
-                or 56 < self.model.step_in_year < random.randint(60, 61):  # head back to rest of reserve
-            pos = self.move_from_yangaoping(self.pos, cell_height)
-            self.move_to(pos)  # moves to chosen direction/neighbor
+        elif 26 < self.model.step_in_year < 30 or 56 < self.model.step_in_year < 60:  # head back to rest of reserve
+            # after breeding season ends, head away from Yangaoping
+            rest_of_reserve_choice = random.choice(masterdict['Broadleaf'] + masterdict['Mixed']  \
+                                     + masterdict['Deciduous'])
+            for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES'] \
+                    + masterdict['Farm'] + masterdict['Forest'] + masterdict['Outsider_FNNR']:
+                if coordinate in rest_of_reserve_choice:
+                    rest_of_reserve_choice.remove(coordinate)  # only set acceptable (non-human) destinations
+            for i in range(random.randint(10, 15)):  # when returning to the rest of the reserve after Yangaoping
+                current_position = self.move_to_point(rest_of_reserve_choice)
+                if current_position in masterdict['Elevation_Out_of_Bound'] or  \
+                    current_position in masterdict['Outside_FNNR']:
+                    for i in range(random.randint(10, 15)):  # the monkeys move multiple pixels each step, not just one
+                        current_position = self.move_to_point(rest_of_reserve_choice)
 
         else:
+            # When it is not about to be breeding season, during it, or just past it, move according to vegetation
             for i in range(random.randint(5, 10)):
-                neig = self.model.grid.get_neighborhood(self.pos, True, False)  # gets neighboring pixels again
-                pos = self.neighbor_choice(neig,
-                                           empty_masterdict)  # this function determines where to move (which neighbor)
-                self.move_to(pos)  # moves to chosen direction/neighbor
+                if self.current_position is None:
+                    self.current_position = moved_list[-2]
+                neig = self.model.grid.get_neighborhood(self.current_position, True, False)
+                current_position = self.neighbor_choice(neig, masterdict)
+                from humans import human_avoidance_list
+                if current_position not in human_avoidance_list:
+                    self.move_to(current_position)
+                    self.current_position = current_position
 
-        moved_list.append(pos)
+        moved_list.append(current_position)  # moved_list records positions for the heatmap
 
-        if self.family_size == 0:
-            self.model.grid._remove_agent(self.pos, self)  # if everyone in a family dies, the pixel is removed
-
-    def move_to_yangaoping(self, pos, height):
-        # moves towards northeast portion of reserve
-        pos = list(pos)
-        northchoice = random.randint(int(height * 0.9), int(height * 0.95))  # numbers determined by proportion to grid
-        eastchoice = random.randint(int(height * 0.6), int(height * 0.7))
-        if pos[0] < eastchoice:  # if the current position is not too close to the edge of the grid,
-            pos[0] += random.randint(int(height * 0), int(height * 0.15))  # move around 6-8 spaces (for 87x100) east
-        if pos[1] < northchoice:
-            pos[1] += random.randint(int(height * 0), int(height * 0.15))  # and also north
-        else:
-            if pos[0] > height * 0.7:
-                pos[0] = random.randint(int(height * 0.65), int(height * 0.7))
-            if pos[1] > height * 0.95:
-                pos[1] = random.randint(int(height * 0.85), int(height * 0.9))
-        pos = tuple(pos)
-        return pos
-
-    def move_from_yangaoping(self, pos, height):
-        # moves away from northeast portion of reserve
-        pos = list(pos)
-        southchoice = random.uniform(int(height * 0.2), int(height * 0.3))
-        westchoice = random.uniform(int(height * 0.2), int(height * 0.3))
-        if pos[0] > westchoice:
-            pos[0] -= random.randint(int(height * 0), int(height * 0.2))
-        if pos[1] > southchoice:
-            pos[1] -= random.randint(int(height * 0), int(height * 0.2))
-        else:
+    def move_to_point(self, new_position):
+        current_position = list(self.current_position)  # current position
+        if current_position[0] < new_position[0]:  # if the current position is away from Yaogaoping,
+            current_position[0] = current_position[0] + 1  # move it closer
+        elif current_position[0] == new_position[0]:
             pass
-            if pos[0] < height * 0.3:  # 29
-                pos[0] = random.randint(int(height * 0.3), int(height * 0.4))
-            if pos[1] < height * 0.3:
-                pos[1] = random.randint(int(height * 0.3), int(height * 0.4))
-        pos = tuple(pos)
-        return pos
+        else:
+            current_position[0] = current_position[0] - 1
+        if current_position[1] < new_position[1]:
+            current_position[1] = current_position[1] + 1
+        elif current_position[1] == new_position[1]:
+            pass
+        else:
+            current_position[1] = current_position[1] - 1
+        current_position = tuple(current_position)
+        from humans import human_avoidance_list
+        if current_position not in human_avoidance_list:
+            self.move_to(current_position)
+            self.current_position = current_position
+
+    def check_vegetation_of_neighbor(self, neighborlist, neighbordict):
+        # returns a list of neighbors as vegetation
+        neighbor_veg = {}
+        neighbor_veg_list = []
+        for neighbor in neighborlist:
+            for nposlist in neighbordict.values():  # for all grid values, find neighbors of this particular grid,
+                for neighbor_position in nposlist:
+                    if neighbor == neighbor_position:
+                        vegetation = list(neighbordict.keys())[list(neighbordict.values()).index(nposlist)]
+                        neighbor_veg.setdefault(neighbor, []).append(vegetation)
+        for list_of_values in neighbor_veg.values():
+            if len(list_of_values) > 1:
+                for value in list_of_values:
+                    if value != 'Elevation_Out_of_Bound' and value != 'Outside_FNNR' and value != 'PES'  \
+                        and value != 'Forest' and value != 'Farm' and value != 'Household':
+                        list_of_values.remove(value)
+                    elif value == 'Outside_FNNR':
+                        list_of_values = ['Outside_FNNR']
+                    elif value == 'Elevation_Out_of_Bound':
+                        list_of_values = ['Elevation_Out_of_Bound']
+                    elif value == 'Household':
+                        list_of_values = ['Household']
+                    elif value == 'Farm':
+                        list_of_values = ['Farm']
+                    elif value == 'PES':
+                        list_of_values = ['PES']
+                    elif value == 'Forest':
+                        list_of_values = ['Forest']
+            for value in list_of_values:
+                neighbor_veg_list.append(value)
+        return neighbor_veg_list
 
     def neighbor_choice(self, neighborlist, neighbordict):
         # agent chooses a neighbor to move to based on weights
         choicelist = []
         # picks a weighted neighbor to move to
-        vegetation = None
-        weight = None
-        neighbor_veg = []
-        for ng in neighborlist:
-            if vegetation != None:
-                neighbor_veg.append(vegetation)
-            for nposlist in neighbordict.values():
-                for n in nposlist:
-                    if ng == n:
-                        vegetation = list(neighbordict.keys())[list(neighbordict.values()).index(nposlist)]
-        if vegetation != None:
-            neighbor_veg.append(vegetation)
-
-        # comments are for past elevation code only - adjusted - will update later - ignore
+        # neighbordict is a dictionary with all vegetation categories and their corresponding grid values
+        # neighborlist = list of 8-cell neighbors to the current position
+        neighbor_veg = self.check_vegetation_of_neighbor(neighborlist, neighbordict)
+        # weights below were taken from the pseudocode
         for vegetation in neighbor_veg:
             if vegetation == 'Elevation_Out_of_Bound':
                 weight = 0
-            elif vegetation == 'Bamboo':  # elevation 1900+
+            elif vegetation == 'Bamboo':
                 weight = 0.8
-            elif vegetation == 'Coniferous':  # elevation 1700-1900
+            elif vegetation == 'Coniferous':
                 weight = 1
-            elif vegetation == 'Broadleaf':  # elevation 1500-1700
+            elif vegetation == 'Broadleaf':
                 weight = 1
-            elif vegetation == 'Mixed':  # elevation 1300-1500
+            elif vegetation == 'Mixed':
                 weight = 1
-            elif vegetation == 'Lichen':  # elevation 1100-1300
+            elif vegetation == 'Lichen':
                 weight = 0.8
-            elif vegetation == 'Deciduous':  # elevation 900-1100
+            elif vegetation == 'Deciduous':
                 weight = 1
-            elif vegetation == 'Shrublands':  # elevation 900-
+            elif vegetation == 'Shrublands':
                 weight = 0.8
-            elif vegetation == 'Clouds':  # elevation -9999, outside FNNR
+            elif vegetation == 'Clouds':
                 weight = random.uniform(0, 1)
-            elif vegetation == 'Farmland':  # elevation -9999, outside FNNR
+            elif vegetation == 'Farmland':
                 weight = 0
-            elif vegetation == 'Outside_FNNR':  # elevation -9999, outside FNNR
+            elif vegetation == 'Outside_FNNR':
+                weight = 0
+            elif vegetation == 'Household':
+                weight = 0
+            elif vegetation == 'Farm':
+                weight = 0
+            elif vegetation == 'PES':
+                weight = 0
+            elif vegetation == 'Forest':
                 weight = 0
             choicelist.append(weight)
 
 
         if choicelist != [] and choicelist != [0, 0, 0, 0, 0, 0, 0, 0]:
-            try:
-                # this takes care of edges
-                while len(choicelist) < 8:
-                    choicelist.append(0)
-
-                # random choice plays a role, but each neighbor choice is affected by weights
-                # the next few dozen lines determine which weighted % category the random choice falls into
-                chance = random.uniform(0, 1)
-                oldsum = 0
-                newsum = choicelist[1] / sum(choicelist)
-                if oldsum < chance < newsum:
-                    direction = neighborlist[1]  # north neighbor
-                oldsum = newsum
-                newsum += choicelist[6] / sum(choicelist)
-                if oldsum < chance < newsum:
-                    direction = neighborlist[6]  # south neighbor
-                oldsum = newsum
-                newsum += choicelist[3] / sum(choicelist)
-                if oldsum < chance < newsum:
-                    direction = neighborlist[3]  # west neighbor
-                oldsum = newsum
-                newsum += choicelist[4] / sum(choicelist)
-                if oldsum < chance < newsum:
-                    direction = neighborlist[4]  # east neighbor
-                oldsum = newsum
-                newsum += choicelist[0] / sum(choicelist)
-                if oldsum < chance < newsum:
-                    direction = neighborlist[0]  # northwest neighbor
-                oldsum = newsum
-                newsum += choicelist[2] / sum(choicelist)
-                if oldsum < chance < newsum:
-                    direction = neighborlist[2]  # northeast neighbor
-                oldsum = newsum
-                newsum += choicelist[3] / sum(choicelist)
-                if oldsum < chance < newsum:
-                    direction = neighborlist[5]  # southwest neighbor
-                oldsum = newsum
-                newsum += choicelist[7] / sum(choicelist)
-                if oldsum < chance < newsum:
-                    direction = neighborlist[7]  # southeast neighbor
-                return direction
-            except:
-                pass
-
-    def move_to(self, pos):
-        if pos != None:
-            self.model.grid.move_agent(self, pos)
-
-class Monkey(Family):
-
-    #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions
-    #  such as being born, aging, mating, dying, etc. in a different submodel
-
-    def __init__(self, unique_id, model, pos, family_size, list_of_family_members, family_type,
-                 gender, age, age_category, family_id, last_birth_interval, mother, death_flag):
-        super().__init__(unique_id, model, pos, family_size, list_of_family_members, family_type)
-        self.gender = gender
-        self.age = age
-        self.age_category = age_category
-        self.family_id = family_id
-        self.last_birth_interval = last_birth_interval
-        self.mother = mother
-        self.death_flag = death_flag
-
-    def step(self):
-
-        if self.death_flag == 0:
-
-            # Aging
-            self.age += (1/73)  # every step is 5 days, or 1/73rd of a year
-            self.check_age_category()
-
-            # Check if mother of recently dead infant and count time since last birth
-            if self.unique_id in reproductive_female_list:
-                if self.unique_id not in random_mother_list:
-                    random_mother_list.append(self.unique_id)
-                self.check_recent_death_infant()
-                self.last_birth_interval += 1/73
-
-            # Check if male subgroup needs to break off of main group
-            self.create_male_subgroup()
-
-            # Birth
-            if (18 < self.model.step_in_year < 25) or (48 < self.model.step_in_year < 55)   \
-                and (self.gender == 1 and 10 <= self.age <= 25):
-                if self.last_birth_interval >= 3:
-                    self.family_size += 1
-                    self.birth(self.pos, self.family_size, self.family_id, self.unique_id, self.list_of_family_members)
-                    self.last_birth_interval = 0
-
-            # Death
+            # this takes care of edges
+            while len(choicelist) < 8:
+                choicelist.append(0)
+            # random choice plays a role, but each neighbor choice is affected by weights
+            # the next few dozen lines determine which weighted % category the random choice falls into
             chance = random.uniform(0, 1)
-            # Currently uses an exponential formula that considers death events as cumulative and dependent.
-            # In other words, once a death occurs, it can no longer occur that year.
-            # The model runs in time-steps of 5 days each, so there are 73 mortality checks per year.
-            # the current formula uses: chance that a monkey does NOT die^73 = survival rate in one year
-            # this gives a lower result than a similar formula that considers [yearly mortality rate]/73
-            # formula may be changed later
-            if self.age <= 1 and chance <= 0.0007: # 0.0007 = 1 - 0.9993; see below
-                self.death()
-                demographic_structure_list[0] -= 1
-                recent_death_infant.append(self.mother)
-                # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
-                # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-                # 0.99778^73 = 85% chance to survive first year with ticks every 5 days, or 15% yearly mortality
-                # 0.99695^73 = 80% chance to survive first year with ticks every 5 days, or 20$ yearly mortality
-                # if a monkey dies, mother can give birth again the following season
-            elif 1 < self.age < 10 and chance <= 0.00043:  # 0.00043 = 1 - 0.99958; see below
-                self.death()
-                if 1 < self.age <= 3:
-                    demographic_structure_list[1] -= 1
-                elif 3 < self.age <= 7:
-                    demographic_structure_list[2] -= 1
-                elif 7 < self.age <= 10:
-                    demographic_structure_list[3] -= 1
-                # 0.99973^73 = 98% chance to survive each year with ticks every 5 days
-                # 0.99958^73 = 97% chance to survive each year with ticks every 5 days
-                # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
-            elif 10 < self.age <= 30 and chance <= 0.0013:  # 0.0013 = 1 - 0.9987; see below
-                self.death()
-                if 10 < self.age <= 25:
-                    demographic_structure_list[4] -= 1
-                elif 25 < self.age < 30:
-                    demographic_structure_list[5] -= 1
-                # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
-                # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-            elif self.age > 30 and chance <= 0.00222:  # 0.00222 = 1 - 0.99778; see below
-                self.death()
-                demographic_structure_list[5] -= 1
-                # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
-                # 0.99607^73 = 75% chance to survive each year with ticks every 5 days
-            else:
-                pass
 
-        else:
-            print('schedule')
-            pass
+            oldsum = 0
+            newsum = choicelist[1] / sum(choicelist)  # defines the relative weight of the north neighbor
+            if oldsum < chance < newsum:
+                direction = neighborlist[1]  # north neighbor is selected
+            oldsum = newsum
+            newsum += choicelist[6] / sum(choicelist)  # defines the relative weight of the south neighbor
+            if oldsum < chance < newsum:
+                direction = neighborlist[6]  # south neighbor is selected
+            oldsum = newsum
+            newsum += choicelist[3] / sum(choicelist)  # defines the relative weight of the west neighbor
+            if oldsum < chance < newsum:
+                direction = neighborlist[3]  # west neighbor is selected
+            oldsum = newsum
+            newsum += choicelist[4] / sum(choicelist)  # defines the relative weight of the east neighbor
+            if oldsum < chance < newsum:
+                direction = neighborlist[4]  # east neighbor is selected
+            oldsum = newsum
+            newsum += choicelist[0] / sum(choicelist)  # defines the relative weight of the northwest neighbor
+            if oldsum < chance < newsum:
+                direction = neighborlist[0]  # northwest neighbor is selected
+            oldsum = newsum
+            newsum += choicelist[2] / sum(choicelist)  # defines the relative weight of the northeast neighbor
+            if oldsum < chance < newsum:
+                direction = neighborlist[2]  # northeast neighbor is selected
+            oldsum = newsum
+            newsum += choicelist[5] / sum(choicelist)  # defines the relative weight of the southwest neighbor
+            if oldsum < chance < newsum:
+                direction = neighborlist[5]  # southwest neighbor is selected
+            oldsum = newsum
+            newsum += choicelist[7] / sum(choicelist)  # defines the relative weight of the southeast neighbor
+            if newsum != 1 and newsum > 0.999:
+                newsum = 1
+            if oldsum < chance < newsum:
+                direction = neighborlist[7]  # southeast neighbor is selected
+            assert int(newsum) == 1
+            return direction
 
-    def check_age_category(self):
-        # sorts monkeys in the right age category as they age; breaks some males off into all-male subgroup at age 10
-        if (self.age <= 1 and self.age_category == 0) or \
-                (1 < self.age <= 3 and self.age_category == 1) or \
-                (3 < self.age <= 7 and self.age_category == 2) or \
-                (7 < self.age <= 10 and self.age_category == 3) or \
-                (10 < self.age <= 25 and self.age_category == 4) or \
-                (self.age > 25 and self.age_category == 5):
-                    pass
-        else:
-            demographic_structure_list[(self.age_category)] -= 1
-            demographic_structure_list[(self.age_category + 1)] += 1
-            self.age_category += 1
 
-            if self.age_category == 4 and self.gender == 1:
-                if self.unique_id not in reproductive_female_list:
-                    reproductive_female_list.append(self.unique_id)
-            
-            elif self.age_category == 4 and self.gender == 0:
-                # that is, if a male has just turned 10 years old,
-                # determine if he breaks off into an all-male subgroup
-                male_subgroup_choice = random.uniform(0, 1)
-                if male_subgroup_choice < 0.4:
-                    male_maingroup_list.remove(self.unique_id)  # male defects from main group
-                    self.family_id = 0
-                    self.family_type = 'all_male'
-                    if self.unique_id not in male_subgroup_list:
-                        male_subgroup_list.append(self.unique_id)
-
-            elif self.age_category == 5 and self.gender == 1:  # female becomes too old to give birth
-                if self.unique_id in reproductive_female_list:
-                    reproductive_female_list.remove(self.unique_id)
-
-    def check_recent_death_infant(self):
-        # allow mothers who have recently lost an infant to give birth again in a short period
-        if self.unique_id in recent_death_infant:
-            self.last_birth_interval = random.uniform(2, 2.5)
-            recent_death_infant.remove(self.unique_id)
-
-    def birth(self, parent_pos, new_family_size, parent_family, mother_id, list_of_family):
-        # birth from the agent-perspective of the new monkey agent
-        last = self.model.monkey_id_count
-        pos = parent_pos
-        family_size = new_family_size
-        gender = random.randint(0, 1)
-        age = 0
-        age_category = 0
-        family_id = parent_family
-        if gender == 1:
-            last_birth_interval = random.uniform(0, 3)
-            female_list.append(last + 1)
-        else:
-            last_birth_interval = -9999
-            male_maingroup_list.append(last + 1)
-        mother = mother_id
-        list_of_family_members = list_of_family
-        list_of_family_members.append(last + 1)  # last + 1 = unique id
-        if mother == 0 or mother == '0':
-            mother = random.choice(random_mother_list)
-        family_type = 'traditional'
-        death_flag = 0
-        new_monkey = Monkey(last + 1, self.model, pos, family_size, list_of_family_members, family_type,
-                            gender, age, age_category, family_id, last_birth_interval, mother, death_flag)
-        self.model.schedule.add(new_monkey)
-        self.model.number_of_monkeys += 1
-        self.model.monkey_id_count += 1
-        self.model.monkey_birth_count += 1
-        demographic_structure_list[0] += 1
-
-    def death(self):
-        # death from the perspective of a monkey agent
-        self.death_flag = 1
-        self.model.schedule.remove(self)
-        self.model.number_of_monkeys -= 1
-        self.model.monkey_death_count += 1
-        if self.unique_id in female_list:
-            female_list.remove(self.unique_id)
-        if self.unique_id in male_maingroup_list:
-            male_maingroup_list.remove(self.unique_id)
-        if self.unique_id in reproductive_female_list:
-            reproductive_female_list.remove(self.unique_id)
-        if self.unique_id in random_mother_list:
-            random_mother_list.remove(self.unique_id)
-
-    def create_male_subgroup(self):
-        # male subgroup forms a new family and shows up in the visualization under a new, differently-vegetationed pixel
-        if len(male_subgroup_list) > random.randint(10, 15):
-            from model import global_family_id_list
-            new_family_id = int(global_family_id_list[-1] + 1)
-            global_family_id_list.append(new_family_id)
-            family_type = 'all_male'
-            male_family = Family(new_family_id, self.model, self.pos, len(male_subgroup_list), male_subgroup_list,
-                                 family_type)
-            self.model.grid.place_agent(male_family, self.pos)
-            self.model.schedule.add(male_family)
-            del male_subgroup_list[:]
+    def move_to(self, current_position):
+        if current_position != None:
+            self.model.grid.move_agent(self, current_position)

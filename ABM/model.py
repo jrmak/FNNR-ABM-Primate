@@ -3,14 +3,26 @@
 from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
-from environment import *
-from agents import *
-from humans import *
+from monkeys import *
+from humans import _readCSV, Human, Resource
+from resource_dict import resource_dict
 import pickle
 
+
+"""
+Runs the main model.
+It creates the agents and defines their attributes.
+It also sets up the environmental grid using imported vegetation, elevation, and resource layers.
+Then every step, it calls for agents to act.
+"""
+
 global_family_id_list = []
-vegetation_file = 'agg_veg60.txt'  # change this filename to another file in the same directory as needed
-elevation_file = 'agg_dem_87100.txt'
+household_list = [2, 3, 5, 6, 8, 9, 11, 14, 15, 16, 17, 19, 22, 25, 27, 30, 31, 32, 34, 35, 36, 39, 41, 42, 43, 46,
+                 47, 48, 49, 53, 54, 55, 57, 63, 64, 71, 72, 85, 100, 101, 102, 103, 104, 108, 113, 118, 120, 121,
+                 123, 128, 129, 131, 132, 134, 135, 136, 137, 138, 140, 141, 142, 143, 144, 145, 146, 148, 149, 150,
+                 151, 153, 154, 155, 157, 159, 161, 163, 165, 166, 167, 169]
+vegetation_file = 'agg_veg60.txt'  # change these filenames to another file in the same directory as needed
+elevation_file = 'agg_dem_87100.txt'  # I will upload more versions of the buffer zones later
 household_file = 'hh_ascii400.txt'
 farm_file = 'farm_ascii300.txt'
 pes_file = 'pes_ascii200.txt'
@@ -24,12 +36,12 @@ class Movement(Model):
                  time = 0, step_in_year = 0,
                  number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0, monkey_id_count = 0):
-        # change the # of families here for graph.py, but use server.py to change # of families in movement model
+        # change the # of families here for graph.py, but use server.py to change # of families in the movement model
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
         self.width = width
         self.height = height
-        self.time = time
+        self.time = time # time increases by 1/73 (decimal) each step
         self.step_in_year = step_in_year  # 1-73; each step is 5 days, and 5 * 73 = 365 days in a year
         self.number_of_families = number_of_families
         self.number_of_monkeys = number_of_monkeys  # total, not in each family
@@ -37,29 +49,31 @@ class Movement(Model):
         self.monkey_death_count = monkey_death_count
         self.monkey_id_count = monkey_id_count
 
-        # generate land
-        gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function below
-        gridlist2 = self._readASCII(elevation_file)[0]  # list of all coordinate values; see readASCII function below
-        gridlist3 = self._readASCII(household_file)[0]  # list of all coordinate values; see readASCII function below
-        gridlist4 = self._readASCII(pes_file)[0]  # list of all coordinate values; see readASCII function below
-        gridlist5 = self._readASCII(farm_file)[0]  # list of all coordinate values; see readASCII function below
-        gridlist6 = self._readASCII(forest_file)[0]  # list of all coordinate values; see readASCII function below
-
-        # width = self._readASCII(vegetation_file)[1] + 5 # width as listed at the beginning of the ASCII file
-        # height = self._readASCII(vegetation_file)[2] + 5 # height as listed at the beginning of the ASCII file
+        # width = self._readASCII(vegetation_file)[1] # width as listed at the beginning of the ASCII file
+        # height = self._readASCII(vegetation_file)[2] # height as listed at the beginning of the ASCII file
         width = 85
-        height = 100
+        height = 101
 
         self.starting_grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
+        # MultiGrid is a mesa function that sets up the grid; options are between SingleGrid and MultiGrid
+        # MultiGrid allows you to put multiple layers on the grid
 
         self.schedule = RandomActivation(self)  # Mesa: Random vs. Staged Activation
         # similar to NetLogo's Ask Agents - determines order (or lack of) in which each agents act
 
-        empty_masterdict = {'Bamboo': [], 'Coniferous': [], 'Broadleaf': [], 'Mixed': [], 'Lichen': [],
-                            'Deciduous': [], 'Shrublands': [], 'Clouds': [], 'Farmland': [], 'Outside_FNNR': [],
-                            'Elevation_Out_of_Bound': [], 'Household': [], 'PES': [], 'Farm': [], 'Forest': []}
+        empty_masterdict = {'Outside_FNNR': [], 'Elevation_Out_of_Bound': [], 'Household': [], 'PES': [], 'Farm': [],
+                            'Forest': [], 'Bamboo': [], 'Coniferous': [], 'Broadleaf': [], 'Mixed': [], 'Lichen': [],
+                            'Deciduous': [], 'Shrublands': [], 'Clouds': [], 'Farmland': []}
 
         """
+        # generate land
+        gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function below
+        gridlist2 = self._readASCII(elevation_file)[0]  # list of all elevation values
+        gridlist3 = self._readASCII(household_file)[0]  # list of all household coordinate values
+        gridlist4 = self._readASCII(pes_file)[0]  # list of all PES coordinate values
+        gridlist5 = self._readASCII(farm_file)[0]  # list of all farm coordinate values
+        gridlist6 = self._readASCII(forest_file)[0]  # list of all managed forest coordinate values
+
         for x in [Elevation_Out_of_Bound]:
             self._populate(empty_masterdict, gridlist2, x, width, height)
         for x in [Household]:
@@ -76,11 +90,12 @@ class Movement(Model):
         self.saveLoad(self.starting_grid, 'grid_veg', 'save')
         self.saveLoad(self.schedule, 'schedule_veg', 'save')
         """
-        """ Lines 62-76 are commented out using Lines 61 and 77, but they must be re-enabled if a new environmental grid
-         is put in. Otherwise, the model will load a 'pickled', or saved, environment from the disk. """
 
+        """ Lines 68-92 are commented out, but they must be re-enabled if a new environmental grid
+         is put in. Otherwise, the model will load a 'pickled', or saved, environment from the disk, which will help
+         the model start up faster. """
 
-
+        # Pickling below
         load_dict = {}  # placeholder for model parameters, leave this here even though it does nothing
         empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
         self.starting_grid = self.saveLoad(self.starting_grid, 'grid_veg', 'load')
@@ -92,37 +107,61 @@ class Movement(Model):
 
         startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
         for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES']    \
-                + masterdict['Farm'] + masterdict['Forest']:
+            + masterdict['Farm'] + masterdict['Forest']:
             if coordinate in startinglist:
                 startinglist.remove(coordinate)
 
-        human_startinglist = masterdict['Household']
-        pos = random.choice(human_startinglist)
-        human_id = 0
-        for x in [73, 85, 128]:
-            human_id += 1
-            human = Human(human_id, self, pos, x, random.randint(15, 59), 0)
-        self.grid.place_agent(human, pos)
-        self.schedule.add(human)
+        # Creation of resources (yellow dots in simulation)
+        # These include Fuelwood, Herbs, Bamboo, etc., but right now resource type and frequency are not used
+        for line in _readCSV('hh_survey.csv')[1:]:
+            hh_id_match = line[0]
+            resource_name = line[1]
+            frequency = line[2]
+            y = line[5]
+            x = line[6]
+            resource = Resource(_readCSV('hh_survey.csv')[1:].index(line),
+                                self, (x, y), hh_id_match, resource_name, frequency)
+            self.grid.place_agent(resource, (int(x), int(y)))
 
+        # Creation of humans (brown dots in simulation)
+        human_id = 0
+        for line in _readCSV('household.csv')[1:]:
+            hh_id = line[0]  # household ID for that human
+            starting_position = (int(line[4]), int(line[3]))
+            try:
+                resource_position = random.choice(resource_dict[int(hh_id)])  # random resource point for human
+                # to travel to, among the list of resource points reported by that household; may change later
+                # to another randomly-picked resource
+            except KeyError:
+                resource_position = starting_position  # some households don't collect resources
+            human_id += 1
+            human = Human(human_id, self, starting_position, hh_id, random.randint(15, 59),  # ages 15-59 randomly
+                          0, starting_position, resource_position)  # currently, human age is not being used in the model
+            self.grid.place_agent(human, starting_position)
+            self.schedule.add(human)
+
+        # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block create families
-            pos = random.choice(startinglist)
+            starting_position = random.choice(startinglist)
+            saved_position = starting_position
             from agents import Family
-            family_size = random.randint(25, 45)  # sets family size for each group
+            family_size = random.randint(25, 45)  # sets family size for each group--random integer
             family_id = i
             list_of_family_members = []
             family_type = 'traditional'  # as opposed to an all-male subgroup
-            family = Family(family_id, self, pos, family_size, list_of_family_members, family_type)
-            self.grid.place_agent(family, pos)
+            family = Family(family_id, self, starting_position, family_size, list_of_family_members, family_type,
+                            saved_position)
+            self.grid.place_agent(family, starting_position)
             self.schedule.add(family)
             global_family_id_list.append(family_id)
 
+            # Creation of individual monkeys (not in the visualization submodel, but for the demographic submodel)
             for monkey_family_member in range(family_size):   # creates the amount of monkeys indicated earlier
                 id = self.number_of_monkeys + 1
                 gender = random.randint(0, 1)
                 if gender == 1:  # gender = 1 is female, gender = 0 is male
                     female_list.append(id)
-                    last_birth_interval = random.uniform(0, 3)
+                    last_birth_interval = random.uniform(0, 3.25)
                 else:
                     male_maingroup_list.append(id)  # as opposed to the all-male subgroup
                     last_birth_interval = -9999  # males will never give birth
@@ -138,7 +177,7 @@ class Movement(Model):
                     age_category = 1  # ages 1-3
                     demographic_structure_list[1] += 1
                 elif 0.27 < choice <= 0.42:  # 15% of starting monkey population
-                    age = random.uniform(3, 7)  # are randomly aged befween
+                    age = random.uniform(3, 7)  # are randomly aged between
                     age_category = 2  # ages 3-7
                     demographic_structure_list[2] += 1
                 elif 0.42 < choice <= 0.62:  # 11% of starting monkey population
@@ -156,6 +195,7 @@ class Movement(Model):
                     structure_convert = random.random()
                     if structure_convert > 0.25:
                         gender = 1  # 75% of those aged 10-25 are female
+                        last_birth_interval = random.uniform(0, 3.25)
                         if id not in reproductive_female_list:
                             reproductive_female_list.append(id)
                 elif 0.96 < choice:  # 4% of starting monkey population
@@ -163,8 +203,8 @@ class Movement(Model):
                     age_category = 5  # ages 25-30
                     demographic_structure_list[5] += 1
                     gender = 1
-                monkey = Monkey(id, self, pos, family_size, list_of_family_members, family_type,
-                                gender, age, age_category, family_id, last_birth_interval, mother,
+                monkey = Monkey(id, self, starting_position, family_size, list_of_family_members, family_type,
+                                saved_position, gender, age, age_category, family_id, last_birth_interval, mother,
                                 death_flag)
 
                 self.number_of_monkeys += 1
@@ -172,20 +212,6 @@ class Movement(Model):
                 self.schedule.add(monkey)
                 list_of_family_members.append(monkey.unique_id)
 
-        pos1 = (65, 79)
-        bamboo1 = Herbs(1, self, pos1)
-        self.grid.place_agent(bamboo1, pos1)
-        self.schedule.add(bamboo1)
-
-        pos2 = (67, 77)
-        bamboo2 = Herbs(2, self, pos2)
-        self.grid.place_agent(bamboo2, pos2)
-        self.schedule.add(bamboo2)
-
-        pos3 = (57, 57)
-        herb1 = Herbs(3, self, pos3)
-        self.grid.place_agent(herb1, pos3)
-        self.schedule.add(herb1)
 
     def step(self):
         # necessary; tells model to move forward
@@ -216,27 +242,42 @@ class Movement(Model):
         for y in range(height):  # for each pixel,
             for x in range(width):
                 value = float(grid[y][x])  # value from the ASCII file for that coordinate/pixel, e.g. 1550 elevation
-                pos = x, y
+                land_grid_coordinate = x, y
                 land = land_type(counter, self)
-                if land_type.__name__ == 'Elevation_Out_of_Bound':
+                if land_type.__name__ == 'Elevation_Out_of_Bound' and self.model.grid.is_cell_empty == True:
                     if (value < land_type.lower_bound or value > land_type.upper_bound) and value != -9999:
                         # if elevation is not 1000-2200, but is within the bounds of the FNNR, mark as 'elevation OOB'
-                        self.starting_grid.place_agent(land, pos)
-                        self.schedule.add(land)
-                        masterdict[land.__class__.__name__].append(pos)
+                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
-                elif land_type.__name__ == 'Household' or 'PES' or 'Farm' or 'Forest'   \
+                elif land_type.__name__ == 'Forest'   \
                         and self.model.grid.is_cell_empty == True:
                     if land_type.type == value:
-                        self.starting_grid.place_agent(land, pos)
-                        self.schedule.add(land)
-                        masterdict[land.__class__.__name__].append(pos)
+                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        masterdict[land.__class__.__name__].append(land_grid_coordinate)
+                        counter += 1
+                elif land_type.__name__ == 'PES'   \
+                        and self.model.grid.is_cell_empty == True:
+                    if land_type.type == value:
+                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        masterdict[land.__class__.__name__].append(land_grid_coordinate)
+                        counter += 1
+                elif land_type.__name__ == 'Farm'   \
+                        and self.model.grid.is_cell_empty == True:
+                    if land_type.type == value:
+                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        masterdict[land.__class__.__name__].append(land_grid_coordinate)
+                        counter += 1
+                elif land_type.__name__ == 'Household'   \
+                        and self.model.grid.is_cell_empty == True:
+                    if land_type.type == value:
+                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
                 else:  # vegetation background
                     if land_type.type == value and self.model.grid.is_cell_empty == True:
-                        self.starting_grid.place_agent(land, pos)
-                        self.schedule.add(land)
-                        masterdict[land.__class__.__name__].append(pos)
+                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
 
     def saveLoad(self, grid_dict, name, option):
