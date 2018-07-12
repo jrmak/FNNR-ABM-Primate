@@ -9,13 +9,11 @@ from mesa.visualization.modules import TextElement
 from mesa.visualization.UserParam import UserSettableParameter
 
 from model import *
+from environment import *
 
 # grid should be a square
-#width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
-#height = Movement._readASCII(Movement, vegetation_file)[2]
-
-width = 101
-height = 101
+width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
+height = Movement._readASCII(Movement, vegetation_file)[2]  # index 2 returns line 2 of the text file
 
 def movement_portrayal(agent):
 
@@ -27,14 +25,8 @@ def movement_portrayal(agent):
 # for elevation-based grid only
 # portrayal["Color"] = str(type(agent).__name__.lower())
 
-    if type(agent) is Bamboo:
+    if type(agent) is Resource:
         portrayal["Color"] = "Yellow"
-        portrayal["Shape"] = "circle"
-        portrayal["r"] = int(height / 30)
-        portrayal["Layer"] = 6
-
-    if type(agent) is Herbs:
-        portrayal["Color"] = "Purple"
         portrayal["Shape"] = "circle"
         portrayal["r"] = int(height / 30)
         portrayal["Layer"] = 6
@@ -58,40 +50,30 @@ def movement_portrayal(agent):
 
     elif type(agent) is Bamboo:
         portrayal["Color"] = "#BEF75C"  # 0.8
-        portrayal["Layer"] = 0
     elif type(agent) is Coniferous:
         portrayal["Color"] = "#8BED39"  # 1
-        portrayal["Layer"] = 0
     elif type(agent) is Broadleaf:
         portrayal["Color"] = "#38E009"  # 1
-        portrayal["Layer"] = 0
     elif type(agent) is Mixed:
         portrayal["Color"] = "#3EC74E"  # 1
-        portrayal["Layer"] = 0
     elif type(agent) is Lichen:
         portrayal["Color"] = "#37AB7E"  # 0.8
-        portrayal["Layer"] = 0
     elif type(agent) is Deciduous:
         portrayal["Color"] = "#1A93AB"  # 1
-        portrayal["Layer"] = 0
     elif type(agent) is Shrublands:
         portrayal["Color"] = "#22639C"  # 0.8
-        portrayal["Layer"] = 0
     elif type(agent) is Clouds:
-        portrayal["Color"] = "#ffffff"  # 0-1 random
-        portrayal["Layer"] = 0
+        portrayal["Color"] = "#1D269C"  # 0-1 random
     elif type(agent) is Farmland:
         portrayal["Color"] = "#0C1078"  # 0
-        portrayal["Layer"] = 0
     elif type(agent) is Outside_FNNR:
         portrayal["Color"] = "#ffffff"  # 0
-        portrayal["Layer"] = 0
 
     if type(agent) is Human:
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "brown"
-        portrayal["r"] = int(height / 30)
-        portrayal["Layer"] = 8
+        portrayal["r"] = int(height / 30)  # radius is based on height of landscape so that it remains the same total
+        portrayal["Layer"] = 8  # size, no matter what the resolution (individual pixel size) of the landscape is
 
     if type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
@@ -106,8 +88,6 @@ def movement_portrayal(agent):
         portrayal["Layer"] = 8
 
     return portrayal
-
-# monkey_movement_chart = {"Label": "Golden Monkey", "Color": "purple"}
 
 agent_slider = UserSettableParameter('slider', "Number of Families", 5, 1, 20, 1)
 # note: add more later

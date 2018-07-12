@@ -3,14 +3,14 @@
 import csv
 import inspect
 import os
-from model_for_graph import *
 
 """
-Exports FNNR summary data of monkey demographics into Excel.
+Contains two functions: save_summary and erase_summary.
+Exports FNNR summary data of monkey demographics into the Excel file 'abm_export_summary.csv'.
 """
 
 currentpath = str(inspect.getfile(inspect.currentframe()))[:-23]  # 'removes excel_export_summary.py' at end
-os.chdir(currentpath)
+os.chdir(currentpath)  # uses current directory path
 
 
 def save_summary(steps, number_of_monkeys, monkey_birth_count, monkey_death_count, demographic_structure_list,
@@ -57,7 +57,7 @@ def save_summary(steps, number_of_monkeys, monkey_birth_count, monkey_death_coun
 
 def erase_summary():
     try:
-        fnnr_export = open('abm_export_summary.csv', 'w+')  # a+ will create the file if it doesn't exist already
+        fnnr_export = open('abm_export_summary.csv', 'w+')  # w+ will create the file if it doesn't exist already
         fnnr_export.truncate()
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open

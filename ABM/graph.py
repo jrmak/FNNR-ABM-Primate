@@ -41,6 +41,15 @@ print('Age Structure Count || 0-1: %i | 1-3: %i | 3-7: %i | 7-10: %i | 10-25: %i
        demographic_structure_list[2], demographic_structure_list[3],
        demographic_structure_list[4], demographic_structure_list[5]))
 
+# Percentages of each age category
+print(
+str("Age 0-1: " + str(round(demographic_structure_list[0] / sum(demographic_structure_list) * 100), 2) + "% | "),
+str("Age 1-3: " + str(round(demographic_structure_list[1] / sum(demographic_structure_list) * 100), 2) + "% | "),
+str("Age 3-7: " + str(round(demographic_structure_list[2] / sum(demographic_structure_list) * 100), 2) + "% | "),
+str("Age 7-10: " + str(round(demographic_structure_list[3] / sum(demographic_structure_list) * 100), 2) + "% | "),
+str("Age 10-25: " + str(round(demographic_structure_list[4] / sum(demographic_structure_list) * 100), 2) + "% | "),
+str("Age 25+: " + str(round(demographic_structure_list[5] / sum(demographic_structure_list) * 100), 2) + "%"))
+
 plt.subplot(212)
 gender_category_list = ('Rep. Females', 'Total Females', 'Main Group Males')
 index2 = np.arange(len(gender_category_list))
@@ -52,25 +61,25 @@ plt.title('Gender Structure in the FNNR After ' + str(time) + ' Steps')
 plt.ylabel('# of Monkeys')
 print('Gender Structure Count || Reproductive Females: %i | Total Females: %i | Main-group Males: %i' %
       (len(reproductive_female_list), len(female_list), len(male_maingroup_list)))
-plt.tight_layout()
-plt.figure()
+plt.tight_layout()  # needed to make the graph look neat
+plt.figure()  # each instance of plt.figure() sets a graph in a new window
 
 from heatmap import *  # see heatmap.py
 plt.figure()
 
-plt.subplot(2,2,1)
+plt.subplot(2, 2, 1)
 plt.plot(np.array(range(time)), np.array(monkey_population_list))
 plt.title('GGM Population in the FNNR')
 plt.xlabel('5-Day Intervals (Steps)')
 plt.ylabel('Number of Monkeys')
 
-plt.subplot(2,2,2)
+plt.subplot(2, 2, 2)
 plt.plot(np.array(range(time)), np.array(monkey_birth_count))
 plt.title('GGM Births in the FNNR')
 plt.xlabel('5-Day Intervals (Steps)')
 plt.ylabel('Number of Births')
 
-plt.subplot(2,2,3)
+plt.subplot(2, 2, 3)
 plt.plot(np.array(range(time)), np.array(monkey_death_count))
 plt.title('GGM Deaths in the FNNR')
 plt.xlabel('5-Day Intervals (Steps)')

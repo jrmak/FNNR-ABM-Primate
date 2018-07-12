@@ -6,43 +6,59 @@ This document imports human data from the excel file.
 
 from mesa.agent import Agent
 import random
-originalpos = []
 
-def _readCSV(self, text):
-    # reads in a text file that determines the environmental grid setup
+human_avoidance_list = []  # sets coordinate positions the monkeys should not step on, because humans are on it.
+# Neighboring cells of human activity may also be added to this list.
+
+def _readCSV(text):
+    # reads in a .csv file
+    cells = []
     f = open(text, 'r')
     body = f.readlines()
     for line in body:
-        cells.append(line.split(" "))
+        cells.append(line.split(","))
     return cells
-
 
 class Human(Agent):
     # the pixel that represents each group of monkeys with the same family id.
     # it moves on the visualization grid, unlike individual monkey agents.
     # it is currently not important in the demographic model, just the visualization model.
-    def __init__(self, unique_id, model, pos, hh_id, age, resource_check):
+    def __init__(self, unique_id, model, current_position, hh_id, age, resource_check, home_position, resource_position):
         super().__init__(unique_id, model)
-        self.pos = pos
+        self.current_position = current_position
         self.hh_id = hh_id
         self.age = age
         self.resource_check = resource_check
+        self.home_position = home_position
+        self.resource_position = resource_position
 
     def step(self):
-        self.age += 1
-        for x in list(self.pos):
-            originalpos.append(x)
-        newpos = list(self.pos)  # current
-        pos = [57, 57]  # replace later
+        # self.age += 1  # currently not used; humans don't age
+        current_position = list(self.current_position)  # changes tuple into a list to edit; content remains the same
+        human_avoidance_list.append(self.current_position)
+        human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
+        for human_neighbor in human_neighboring_grids:
+            human_avoidance_list.append(human_neighbor)
+        if len(human_avoidance_list) > 93 * 9:
+            human_avoidance_list.remove(human_avoidance_list[0])
+        resource_position = self.resource_position
         if self.resource_check == 0:
-            self.move_to_point(newpos, pos)
+            self.move_to_point(resource_position)
         else:
-            self.move_to_point(newpos, (originalpos[0], originalpos[1]))
-            if self.pos[0] == originalpos[0] and self.pos[1] == originalpos[1]:
-                self.resource_check == 0
+            self.move_to_point(tuple(self.home_position))
+            if current_position[0] == list(self.home_position)[0] and current_position[1] == list(self.home_position)[1]:
+                # if you are back home, go out and collect resources again if frequency permits
+                self.resource_check = 0
+                from resource_dict import resource_dict
+                try:
+                    self.resource_position = random.choice(resource_dict[int(self.hh_id)])  # randomly choose resource
+                except KeyError:
+                    pass
+                    # not all households collect resources
 
         if self.age > 70:
             pass
+            # may input human aging later
             # if random.uniform(0, 1) > 0.95:
             #     self.death()
 
@@ -53,74 +69,35 @@ class Human(Agent):
         if pos != None:
             self.model.grid.move_agent(self, pos)
 
-    def move_to_point(self, newpos, pos):
-        if newpos[0] < pos[0]:
-            newpos[0] = newpos[0] + 1
-        elif newpos[0] == pos[0]:
+    def move_to_point(self, destination):
+        """Moves human agent to assigned point"""
+        current_position = list(self.current_position)
+        if current_position[0] < destination[0]:
+            current_position[0] = current_position[0] + 1
+        elif current_position[0] == destination[0]:
+            pass  # don't move
+        else:
+            current_position[0] = current_position[0] - 1
+        if current_position[1] < destination[1]:
+            current_position[1] = current_position[1] + 1
+        elif current_position[1] == destination[1]:
             pass
         else:
-            newpos[0] = newpos[0] - 1
-        if newpos[1] < pos[1]:
-            newpos[1] = newpos[1] + 1
-        elif newpos[1] == pos[1]:
-            pass
-        else:
-            newpos[1] = newpos[1] - 1
-        newpos = tuple(newpos)
-        self.move_to(newpos)
-        if newpos[0] == pos[0] and newpos[1] == pos[1]:
+            current_position[1] = current_position[1] - 1
+        current_position = tuple(current_position)
+        self.move_to(current_position)
+        self.current_position = current_position
+        if current_position[0] == destination[0] and current_position[1] == destination[1]:
             self.resource_check = 1
 
-class Bamboo(Agent):
-
-    def __init__(self, unique_id, model, pos = None):
+class Resource(Agent):
+    # right now, resources do not change, so they do not technically need to be an agent in the schedule.
+    def __init__(self, unique_id, model, pos, hh_id_match, type, frequency):
         super().__init__(unique_id, model)
         self.pos = pos
-
-    def step(self):
-        pass
-
-class Herbs(Agent):
-
-    def __init__(self, unique_id, model, pos = None):
-        super().__init__(unique_id, model)
-        self.pos = pos
-
-    def step(self):
-        pass
-
-class Fungi(Agent):
-
-    def __init__(self, unique_id, model, pos = None):
-        super().__init__(unique_id, model)
-        self.pos = pos
-
-    def step(self):
-        pass
-
-class Fodder(Agent):
-
-    def __init__(self, unique_id, model, pos = None):
-        super().__init__(unique_id, model)
-        self.pos = pos
-
-    def step(self):
-        pass
-
-class Fish(Agent):
-
-    def __init__(self, unique_id, model, pos = None):
-        super().__init__(unique_id, model)
-        self.pos = pos
-
-    def step(self):
-        pass
-
-class Fuelwood(Agent):
-
-    def __init__(self, unique_id, model, pos = None):
-        super().__init__(unique_id, model)
-        self.pos = pos
+        self.hh_id_match = hh_id_match
+        self.type = type
+        self.frequency = frequency
 
     def step(self):
         pass
