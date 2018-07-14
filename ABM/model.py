@@ -4,6 +4,7 @@ from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 from monkeys import *
+from environment import *
 from humans import _readCSV, Human, Resource
 from resource_dict import resource_dict
 import pickle
@@ -52,9 +53,9 @@ class Movement(Model):
         # width = self._readASCII(vegetation_file)[1] # width as listed at the beginning of the ASCII file
         # height = self._readASCII(vegetation_file)[2] # height as listed at the beginning of the ASCII file
         width = 85
-        height = 101
+        height = 100
 
-        self.starting_grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
+        self.grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
         # MultiGrid is a mesa function that sets up the grid; options are between SingleGrid and MultiGrid
         # MultiGrid allows you to put multiple layers on the grid
 
@@ -73,7 +74,6 @@ class Movement(Model):
         gridlist4 = self._readASCII(pes_file)[0]  # list of all PES coordinate values
         gridlist5 = self._readASCII(farm_file)[0]  # list of all farm coordinate values
         gridlist6 = self._readASCII(forest_file)[0]  # list of all managed forest coordinate values
-
         for x in [Elevation_Out_of_Bound]:
             self._populate(empty_masterdict, gridlist2, x, width, height)
         for x in [Household]:
@@ -87,23 +87,25 @@ class Movement(Model):
         for x in [Bamboo, Coniferous, Broadleaf, Mixed, Lichen, Deciduous, Shrublands, Clouds, Farmland, Outside_FNNR]:
             self._populate(empty_masterdict, gridlist, x, width, height)
         self.saveLoad(empty_masterdict, 'masterdict_veg', 'save')
-        self.saveLoad(self.starting_grid, 'grid_veg', 'save')
+        self.saveLoad(self.grid, 'grid_veg', 'save')
         self.saveLoad(self.schedule, 'schedule_veg', 'save')
         """
 
         """ Lines 68-92 are commented out, but they must be re-enabled if a new environmental grid
          is put in. Otherwise, the model will load a 'pickled', or saved, environment from the disk, which will help
-         the model start up faster. """
+         the model start up faster. They can also be modified to generate grid_without_humans or
+         masterdict_without_humans. """
 
         # Pickling below
         load_dict = {}  # placeholder for model parameters, leave this here even though it does nothing
-        empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
-        self.starting_grid = self.saveLoad(self.starting_grid, 'grid_veg', 'load')
-        self.schedule = self.saveLoad(self.schedule, 'schedule_veg', 'load')
-        # when loading, the first parameter actually isn't used
+
+        # empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
+        #  self.grid = self.saveLoad(self.grid, 'grid_veg', 'load')
+
+        empty_masterdict = self.saveLoad(load_dict, 'masterdict_without_humans', 'load')
+        self.grid = self.saveLoad(load_dict, 'grid_without_humans', 'load')
 
         masterdict = empty_masterdict
-        self.grid = self.starting_grid
 
         startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
         for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES']    \
@@ -137,8 +139,8 @@ class Movement(Model):
             human_id += 1
             human = Human(human_id, self, starting_position, hh_id, random.randint(15, 59),  # ages 15-59 randomly
                           0, starting_position, resource_position)  # currently, human age is not being used in the model
-            self.grid.place_agent(human, starting_position)
-            self.schedule.add(human)
+            # self.grid.place_agent(human, starting_position)
+            # self.schedule.add(human)
 
         # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block create families
@@ -244,39 +246,35 @@ class Movement(Model):
                 value = float(grid[y][x])  # value from the ASCII file for that coordinate/pixel, e.g. 1550 elevation
                 land_grid_coordinate = x, y
                 land = land_type(counter, self)
-                if land_type.__name__ == 'Elevation_Out_of_Bound' and self.model.grid.is_cell_empty == True:
+                if land_type.__name__ == 'Elevation_Out_of_Bound':
                     if (value < land_type.lower_bound or value > land_type.upper_bound) and value != -9999:
                         # if elevation is not 1000-2200, but is within the bounds of the FNNR, mark as 'elevation OOB'
-                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        self.grid.place_agent(land, land_grid_coordinate)
                         masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
-                elif land_type.__name__ == 'Forest'   \
-                        and self.model.grid.is_cell_empty == True:
+                elif land_type.__name__ == 'Forest':
                     if land_type.type == value:
-                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        self.grid.place_agent(land, land_grid_coordinate)
                         masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
-                elif land_type.__name__ == 'PES'   \
-                        and self.model.grid.is_cell_empty == True:
+                elif land_type.__name__ == 'PES':
                     if land_type.type == value:
-                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        self.grid.place_agent(land, land_grid_coordinate)
                         masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
-                elif land_type.__name__ == 'Farm'   \
-                        and self.model.grid.is_cell_empty == True:
+                elif land_type.__name__ == 'Farm':
                     if land_type.type == value:
-                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        self.grid.place_agent(land, land_grid_coordinate)
                         masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
-                elif land_type.__name__ == 'Household'   \
-                        and self.model.grid.is_cell_empty == True:
+                elif land_type.__name__ == 'Household':
                     if land_type.type == value:
-                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                        self.grid.place_agent(land, land_grid_coordinate)
                         masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
                 else:  # vegetation background
-                    if land_type.type == value and self.model.grid.is_cell_empty == True:
-                        self.starting_grid.place_agent(land, land_grid_coordinate)
+                    if land_type.type == value:
+                        self.grid.place_agent(land, land_grid_coordinate)
                         masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
 
@@ -285,7 +283,6 @@ class Movement(Model):
             f = open(name, 'wb')
             pickle.dump(grid_dict, f)
             f.close()
-            'data saved'
         elif option == "load":
             f = open(name, 'rb')
             new_grid_dict = pickle.load(f)

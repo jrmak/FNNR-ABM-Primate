@@ -21,8 +21,9 @@ for item in moved_list:
         pass
 
 # Create heatmap
-heatmap, xedges, yedges = numpy.histogram2d(xlist, ylist, bins=(64, 64))
-extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+print(len(xlist), len(ylist))
+heatmap, xedges, yedges = numpy.histogram2d(xlist, ylist, bins=50)
+extent = [0, 100, 0, 100]
 
 # Plot heatmap
 plt.clf()

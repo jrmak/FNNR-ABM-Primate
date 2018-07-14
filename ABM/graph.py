@@ -43,12 +43,12 @@ print('Age Structure Count || 0-1: %i | 1-3: %i | 3-7: %i | 7-10: %i | 10-25: %i
 
 # Percentages of each age category
 print(
-str("Age 0-1: " + str(round(demographic_structure_list[0] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 1-3: " + str(round(demographic_structure_list[1] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 3-7: " + str(round(demographic_structure_list[2] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 7-10: " + str(round(demographic_structure_list[3] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 10-25: " + str(round(demographic_structure_list[4] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 25+: " + str(round(demographic_structure_list[5] / sum(demographic_structure_list) * 100), 2) + "%"))
+str("Age 0-1: " + str(round(demographic_structure_list[0] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 1-3: " + str(round(demographic_structure_list[1] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 3-7: " + str(round(demographic_structure_list[2] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 7-10: " + str(round(demographic_structure_list[3] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 10-25: " + str(round(demographic_structure_list[4] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 25+: " + str(round(demographic_structure_list[5] / sum(demographic_structure_list) * 100, 2)) + "%"))
 
 plt.subplot(212)
 gender_category_list = ('Rep. Females', 'Total Females', 'Main Group Males')

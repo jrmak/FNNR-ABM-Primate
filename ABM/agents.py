@@ -52,24 +52,35 @@ class Family(Agent):
 
         elif 26 < self.model.step_in_year < 30 or 56 < self.model.step_in_year < 60:  # head back to rest of reserve
             # after breeding season ends, head away from Yangaoping
-            rest_of_reserve_choice = random.choice(masterdict['Broadleaf'] + masterdict['Mixed']  \
-                                     + masterdict['Deciduous'])
+            rest_of_reserve = {}
+            """
+            rest_of_reserve = masterdict['Broadleaf'] + masterdict['Mixed']  \
+                                     + masterdict['Deciduous']
             for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES'] \
-                    + masterdict['Farm'] + masterdict['Forest'] + masterdict['Outsider_FNNR']:
-                if coordinate in rest_of_reserve_choice:
-                    rest_of_reserve_choice.remove(coordinate)  # only set acceptable (non-human) destinations
-            for i in range(random.randint(10, 15)):  # when returning to the rest of the reserve after Yangaoping
+                    + masterdict['Farm'] + masterdict['Forest']:
+                if coordinate in rest_of_reserve:
+                    rest_of_reserve.remove(coordinate)  # only set acceptable (non-human) destinations
+            self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'save')
+            """
+            # The above process is commented out because it was pickled; I should move it to its own function
+            # when I have time
+            rest_of_reserve = self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'load')
+            rest_of_reserve_choice = random.choice(rest_of_reserve)
+            for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
                 current_position = self.move_to_point(rest_of_reserve_choice)
                 if current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     current_position in masterdict['Outside_FNNR']:
-                    for i in range(random.randint(10, 15)):  # the monkeys move multiple pixels each step, not just one
+                    for i in range(random.randint(2, 5)):  # the monkeys move multiple pixels each step, not just one
                         current_position = self.move_to_point(rest_of_reserve_choice)
 
         else:
             # When it is not about to be breeding season, during it, or just past it, move according to vegetation
             for i in range(random.randint(5, 10)):
                 if self.current_position is None:
-                    self.current_position = moved_list[-2]
+                    try:
+                        self.current_position = moved_list[-2]
+                    except:
+                        self.current_position = self.saved_position
                 neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                 current_position = self.neighbor_choice(neig, masterdict)
                 from humans import human_avoidance_list
@@ -80,6 +91,8 @@ class Family(Agent):
         moved_list.append(current_position)  # moved_list records positions for the heatmap
 
     def move_to_point(self, new_position):
+        if self.current_position is None:
+            self.current_position = moved_list[-2]
         current_position = list(self.current_position)  # current position
         if current_position[0] < new_position[0]:  # if the current position is away from Yaogaoping,
             current_position[0] = current_position[0] + 1  # move it closer
