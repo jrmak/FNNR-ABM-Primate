@@ -8,10 +8,8 @@ class Environment(Agent):
         super().__init__(unique_id, model)
         self.pos = pos
         self.elevation = elevation
-
     def step(self):
         pass
-        # will add seasonal variations to environment later
 
 class Bamboo(Environment):
     type = 1

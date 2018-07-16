@@ -36,7 +36,7 @@ class Movement(Model):
     def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
                  number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
-                 monkey_death_count = 0, monkey_id_count = 0):
+                 monkey_death_count = 0, monkey_id_count = 0, grid_type = None, run_type = None):
         # change the # of families here for graph.py, but use server.py to change # of families in the movement model
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
@@ -49,6 +49,19 @@ class Movement(Model):
         self.monkey_birth_count = monkey_birth_count
         self.monkey_death_count = monkey_death_count
         self.monkey_id_count = monkey_id_count
+        self.grid_type = grid_type   # with_humans or without_humans
+        self.run_type = run_type
+
+        """Select below which grid_type to run the model under."""
+        self.grid_type = 'with_humans'
+        # self.grid_type = 'without_humans'
+
+        """Select below which run type the model is operating on.
+        If you are running the model with fresh input files (updated human buffers, etc.), then choose 'first_run'.
+        This will generate new grid layers for the model to use.
+        Otherwise, choose normal_run."""
+        self.run_type = 'normal_run'
+        # self.run_type = 'first_run'
 
         # width = self._readASCII(vegetation_file)[1] # width as listed at the beginning of the ASCII file
         # height = self._readASCII(vegetation_file)[2] # height as listed at the beginning of the ASCII file
@@ -66,30 +79,29 @@ class Movement(Model):
                             'Forest': [], 'Bamboo': [], 'Coniferous': [], 'Broadleaf': [], 'Mixed': [], 'Lichen': [],
                             'Deciduous': [], 'Shrublands': [], 'Clouds': [], 'Farmland': []}
 
-        """
         # generate land
-        gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function below
-        gridlist2 = self._readASCII(elevation_file)[0]  # list of all elevation values
-        gridlist3 = self._readASCII(household_file)[0]  # list of all household coordinate values
-        gridlist4 = self._readASCII(pes_file)[0]  # list of all PES coordinate values
-        gridlist5 = self._readASCII(farm_file)[0]  # list of all farm coordinate values
-        gridlist6 = self._readASCII(forest_file)[0]  # list of all managed forest coordinate values
-        for x in [Elevation_Out_of_Bound]:
-            self._populate(empty_masterdict, gridlist2, x, width, height)
-        for x in [Household]:
-            self._populate(empty_masterdict, gridlist3, x, width, height)
-        for x in [PES]:
-            self._populate(empty_masterdict, gridlist4, x, width, height)
-        for x in [Farm]:
-            self._populate(empty_masterdict, gridlist5, x, width, height)
-        for x in [Forest]:
-            self._populate(empty_masterdict, gridlist6, x, width, height)
-        for x in [Bamboo, Coniferous, Broadleaf, Mixed, Lichen, Deciduous, Shrublands, Clouds, Farmland, Outside_FNNR]:
-            self._populate(empty_masterdict, gridlist, x, width, height)
-        self.saveLoad(empty_masterdict, 'masterdict_veg', 'save')
-        self.saveLoad(self.grid, 'grid_veg', 'save')
-        self.saveLoad(self.schedule, 'schedule_veg', 'save')
-        """
+        if self.run_type == 'first_run':
+            gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function below
+            gridlist2 = self._readASCII(elevation_file)[0]  # list of all elevation values
+            gridlist3 = self._readASCII(household_file)[0]  # list of all household coordinate values
+            gridlist4 = self._readASCII(pes_file)[0]  # list of all PES coordinate values
+            gridlist5 = self._readASCII(farm_file)[0]  # list of all farm coordinate values
+            gridlist6 = self._readASCII(forest_file)[0]  # list of all managed forest coordinate values
+            for x in [Elevation_Out_of_Bound]:
+                self._populate(empty_masterdict, gridlist2, x, width, height)
+            for x in [Household]:
+                self._populate(empty_masterdict, gridlist3, x, width, height)
+            for x in [PES]:
+                self._populate(empty_masterdict, gridlist4, x, width, height)
+            for x in [Farm]:
+                self._populate(empty_masterdict, gridlist5, x, width, height)
+            for x in [Forest]:
+                self._populate(empty_masterdict, gridlist6, x, width, height)
+            for x in [Bamboo, Coniferous, Broadleaf, Mixed, Lichen, Deciduous, Shrublands, Clouds, Farmland, Outside_FNNR]:
+                self._populate(empty_masterdict, gridlist, x, width, height)
+            self.saveLoad(empty_masterdict, 'masterdict_veg', 'save')
+            self.saveLoad(self.grid, 'grid_veg', 'save')
+            self.saveLoad(self.schedule, 'schedule_veg', 'save')
 
         """ Lines 68-92 are commented out, but they must be re-enabled if a new environmental grid
          is put in. Otherwise, the model will load a 'pickled', or saved, environment from the disk, which will help
@@ -99,13 +111,13 @@ class Movement(Model):
         # Pickling below
         load_dict = {}  # placeholder for model parameters, leave this here even though it does nothing
 
-        """ Of the next 5 lines, choose with version heatmap you would like to produce for this model run.
-        Comment out the other version you are not using (grid with humans, grid_veg, or grid without humans)."""
-        # empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
-        # self.grid = self.saveLoad(self.grid, 'grid_veg', 'load')
+        if self.grid_type == 'with_humans':
+            empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
+            self.grid = self.saveLoad(self.grid, 'grid_veg', 'load')
 
-        empty_masterdict = self.saveLoad(load_dict, 'masterdict_without_humans', 'load')
-        self.grid = self.saveLoad(load_dict, 'grid_without_humans', 'load')
+        if self.grid_type == 'without_humans':
+            empty_masterdict = self.saveLoad(load_dict, 'masterdict_without_humans', 'load')
+            self.grid = self.saveLoad(load_dict, 'grid_without_humans', 'load')
 
         masterdict = empty_masterdict
 
@@ -141,8 +153,9 @@ class Movement(Model):
             human_id += 1
             human = Human(human_id, self, starting_position, hh_id, random.randint(15, 59),  # ages 15-59 randomly
                           0, starting_position, resource_position)  # currently, human age is not being used in the model
-            self.grid.place_agent(human, starting_position)
-            # self.schedule.add(human)
+            if self.grid_type == 'with_humans':
+                self.grid.place_agent(human, starting_position)
+                self.schedule.add(human)
 
         # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block create families

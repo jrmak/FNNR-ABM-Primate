@@ -34,6 +34,9 @@ for key, value in sorted(count_y.items()):
 heatmap, xedges, yedges = numpy.histogram2d(xlist, ylist, bins = 40)
 extent = [0, 100, 0, 100]
 
+print(new_x)
+print(new_y)
+
 # Plot heatmap
 plt.clf()
 plt.title('Cumulative Monkey Position Heatmap')

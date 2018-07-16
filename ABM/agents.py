@@ -34,8 +34,10 @@ class Family(Agent):
     def step(self):
         # movement rules for each pixel-agent at each step
         load_dict = {}
-        # masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
-        masterdict = self.model.saveLoad(load_dict, 'masterdict_without_humans', 'load')
+        if self.model.grid_type == 'with_humans':
+            masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
+        elif self.model.grid_type == 'without_humans':
+            masterdict = self.model.saveLoad(load_dict, 'masterdict_without_humans', 'load')
 
         # Movement for families is defined below
 
@@ -60,17 +62,14 @@ class Family(Agent):
         elif 26 < self.model.step_in_year < 32 or 56 < self.model.step_in_year < 62:  # head back to rest of reserve
             # after breeding season ends, head away from Yangaoping
             rest_of_reserve = {}
-            """
-            rest_of_reserve = masterdict['Broadleaf'] + masterdict['Mixed']  \
-                                     + masterdict['Deciduous']
-            for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES'] \
-                    + masterdict['Farm'] + masterdict['Forest']:
-                if coordinate in rest_of_reserve:
-                    rest_of_reserve.remove(coordinate)  # only set acceptable (non-human) destinations
-            self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'save')
-            """
-            # The above process is commented out because it was pickled; I should move it to its own function
-            # when I have time
+            if self.model.run_type == 'first_run':
+                rest_of_reserve = masterdict['Broadleaf'] + masterdict['Mixed']  \
+                                         + masterdict['Deciduous']
+                for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES'] \
+                        + masterdict['Farm'] + masterdict['Forest']:
+                    if coordinate in rest_of_reserve:
+                        rest_of_reserve.remove(coordinate)  # only set acceptable (non-human) destinations
+                self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'save')
             rest_of_reserve = self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'load')
             rest_of_reserve_choice = random.choice(rest_of_reserve)
             center = [50, 50]
@@ -142,23 +141,24 @@ class Family(Agent):
                         neighbor_veg.setdefault(neighbor, []).append(vegetation)
         for list_of_values in neighbor_veg.values():
             if len(list_of_values) > 1:  # if there is more than one land type at that grid,
-                if list_of_values[0] != 'Elevation_Out_of_Bound' and list_of_values[0] != 'Outside_FNNR'  \
-                    and list_of_values[0] != 'PES' and list_of_values[0] != 'Forest' and list_of_values[0] != 'Farm'  \
-                    and list_of_values[0] != 'Household':
-                        list_of_values.remove(list_of_values[0])
+                for value in list_of_values:
+                    if value != 'Elevation_Out_of_Bound' and value != 'Outside_FNNR' \
+                            and value != 'PES' and value != 'Forest' and value != 'Farm'\
+                            and value != 'Household':
+                        list_of_values.remove(value)
                         # vegetation is considered the bottom later.
-                elif list_of_values[0] == 'Outside_FNNR':
-                    list_of_values = ['Outside_FNNR']  # otherwise, Outside_FNNR is the defining layer;
-                elif list_of_values[0] == 'Elevation_Out_of_Bound':
-                    list_of_values = ['Elevation_Out_of_Bound']  # then the other layers follow in layer formation.
-                elif list_of_values[0] == 'Household':
-                    list_of_values = ['Household']
-                elif list_of_values[0] == 'Farm':
-                    list_of_values = ['Farm']
-                elif list_of_values[0] == 'PES':
-                    list_of_values = ['PES']
-                elif list_of_values[0] == 'Forest':
-                    list_of_values = ['Forest']
+                    elif value == 'Outside_FNNR':
+                        list_of_values = ['Outside_FNNR']  # otherwise, Outside_FNNR is the defining layer;
+                    elif value == 'Elevation_Out_of_Bound':
+                        list_of_values = ['Elevation_Out_of_Bound']  # then the other layers follow in layer formation.
+                    elif value == 'Household':
+                        list_of_values = ['Household']
+                    elif value == 'Farm':
+                        list_of_values = ['Farm']
+                    elif value == 'PES':
+                        list_of_values = ['PES']
+                    elif value == 'Forest':
+                        list_of_values = ['Forest']
             for value in list_of_values:
                 neighbor_veg_list.append(value)
         return neighbor_veg_list
@@ -261,7 +261,9 @@ class Family(Agent):
             try:
                 assert int(newsum) == 1
             except AssertionError:
-                print(newsum)
+                print(newsum, choicelist)
+                print(choicelist[0], choicelist[1], choicelist[2], choicelist[3])
+                print(choicelist[4], choicelist[5], choicelist[6], choicelist[7])
             return direction
 
     def move_to(self, current_position):
