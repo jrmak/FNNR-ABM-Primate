@@ -9,20 +9,30 @@ from agents import moved_list
 
 xlist = []
 ylist = []
+count_x = {}
+count_y = {}
+new_x = {}
+new_y = {}
 
 # Create data
 for item in moved_list:
     if type(item) is tuple:
         x = item[0]
+        count_x[x] = count_x.get(x, 0) + 1
         xlist.append(x)
         y = item[1]
+        count_y[y] = count_y.get(y, 0) + 1
         ylist.append(y)
-    else:
-        pass
+
+for key, value in sorted(count_x.items()):
+     new_x.setdefault(key, []).append(value)
+
+for key, value in sorted(count_y.items()):
+     new_y.setdefault(key, []).append(value)
 
 # Create heatmap
-heatmap, xedges, yedges = numpy.histogram2d(xlist, ylist, bins=(64, 64))
-extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
+heatmap, xedges, yedges = numpy.histogram2d(xlist, ylist, bins = 40)
+extent = [0, 100, 0, 100]
 
 # Plot heatmap
 plt.clf()

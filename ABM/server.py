@@ -13,12 +13,9 @@ from environment import *
 
 # grid should be a square
 width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
-height = Movement._readASCII(Movement, vegetation_file)[2]  # index 2 returns line 2 of the text file
+height = Movement._readASCII(Movement, vegetation_file)[2]  # index [2] returns 3rd argument of _readASCII's output
 
 def movement_portrayal(agent):
-
-    if agent is None:
-        return
 
     portrayal = {"Shape": "rect", "Filled": "true", "w": 1, "h": 1, "Layer": 0}
 

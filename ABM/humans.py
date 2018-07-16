@@ -34,13 +34,17 @@ class Human(Agent):
 
     def step(self):
         # self.age += 1  # currently not used; humans don't age
+        if len(human_avoidance_list) > 94 * 9:  # 94 households, 8 neighbors, so 94 * 9 instances per step
+            del human_avoidance_list[:]  # reset the list every step (once it hits a length of 94 * 9)
+        load_dict = {}
+        masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
         current_position = list(self.current_position)  # changes tuple into a list to edit; content remains the same
-        human_avoidance_list.append(self.current_position)
+        if self.current_position not in masterdict['Forest'] + masterdict['Household'] + masterdict['PES']  \
+            + masterdict['Farm'] + masterdict['Elevation_Out_of_Bound'] + human_avoidance_list:
+            human_avoidance_list.append(self.current_position)
         human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
-        for human_neighbor in human_neighboring_grids:
-            human_avoidance_list.append(human_neighbor)
-        if len(human_avoidance_list) > 93 * 9:
-            human_avoidance_list.remove(human_avoidance_list[0])
+        # for human_neighbor in human_neighboring_grids:
+        #     human_avoidance_list.append(human_neighbor)
         resource_position = self.resource_position
         if self.resource_check == 0:
             self.move_to_point(resource_position)
