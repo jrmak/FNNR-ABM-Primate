@@ -5,18 +5,20 @@ This document runs the server and helps visualize the agents.
 """
 
 from excel_export_summary import *
+from excel_export_density_plot import *
 import matplotlib.pyplot as plt
 import numpy as np
 from model import *
-from agents import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list
+from agents import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list, moved_list
 
 monkey_population_list = []
 monkey_birth_count = []
 monkey_death_count = []
 
 model = Movement()  # run the model
-time = 73 * 10  # 73 time-steps of 5 days each for 10 years, 730 steps total
+time = 73 * 10 # 73 time-steps of 5 days each for 10 years, 730 steps total
 erase_summary()  # clears the Excel file to overwrite
+erase_density_plot()
 for t in range(time):  # for each time-step in the time we just defined,
     monkey_population_list.append(model.number_of_monkeys)
     monkey_birth_count.append(model.monkey_birth_count)
@@ -26,6 +28,7 @@ for t in range(time):  # for each time-step in the time we just defined,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
     # save_summary writes the Excel file; see excel_export_summary
     print('Loading, Progress ', t, '/', time)
+save_density_plot(moved_list)
 
 plt.subplot(211)
 age_category_list = ('0-1', '1-3', '3-7', '7-10', '10-25', '25+')
@@ -43,12 +46,12 @@ print('Age Structure Count || 0-1: %i | 1-3: %i | 3-7: %i | 7-10: %i | 10-25: %i
 
 # Percentages of each age category
 print(
-str("Age 0-1: " + str(round(demographic_structure_list[0] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 1-3: " + str(round(demographic_structure_list[1] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 3-7: " + str(round(demographic_structure_list[2] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 7-10: " + str(round(demographic_structure_list[3] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 10-25: " + str(round(demographic_structure_list[4] / sum(demographic_structure_list) * 100), 2) + "% | "),
-str("Age 25+: " + str(round(demographic_structure_list[5] / sum(demographic_structure_list) * 100), 2) + "%"))
+str("Age 0-1: " + str(round(demographic_structure_list[0] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 1-3: " + str(round(demographic_structure_list[1] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 3-7: " + str(round(demographic_structure_list[2] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 7-10: " + str(round(demographic_structure_list[3] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 10-25: " + str(round(demographic_structure_list[4] / sum(demographic_structure_list) * 100, 2)) + "% | "),
+str("Age 25+: " + str(round(demographic_structure_list[5] / sum(demographic_structure_list) * 100, 2)) + "%"))
 
 plt.subplot(212)
 gender_category_list = ('Rep. Females', 'Total Females', 'Main Group Males')
