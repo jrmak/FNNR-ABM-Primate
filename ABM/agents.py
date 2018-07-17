@@ -33,6 +33,8 @@ class Family(Agent):
 
     def step(self):
         # movement rules for each pixel-agent at each step
+
+        # loads environmental grid; it differs depending on whether or not human settlements are on the grid
         load_dict = {}
         if self.model.grid_type == 'with_humans':
             masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
@@ -47,11 +49,15 @@ class Family(Agent):
             yangaoping = [random.randint(50, 70), random.randint(70, 80)]
             # The grid is drawn from the bottom, so even though it is currently 85 x 100,
             # these numbers are relatively high because they indicate the top right corner of the grid
-            for i in range(random.randint(5, 5)):  # the monkeys move multiple pixels each step, not just one
+            for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
                 current_position = self.move_to_point(self.current_position, yangaoping)
                 if current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     current_position in masterdict['Outside_FNNR']:
-                    for i in range(random.randint(5, 5)):  # the monkeys move multiple pixels each step, not just one
+                    # the movement formula may land the monkeys in territory where they cannot move.
+                    # this territory is not very common, so if that occurs, the monkeys simply keep moving.
+                    for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one.
+                        # the range is 5 because each step at the 85x100 resolution is approximately 300m in resolution.
+                        # According to the pseudocode, monkeys move up to 2500m (not in a straight line) every 5 days.
                         current_position = self.move_to_point(self.current_position, yangaoping)
                         if current_position is not None:
                             moved_list.append(current_position)  # moved_list records positions for the heatmap
@@ -73,11 +79,13 @@ class Family(Agent):
             rest_of_reserve = self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'load')
             rest_of_reserve_choice = random.choice(rest_of_reserve)
             center = [50, 50]
-            for i in range(random.randint(10, 10)):  # when returning to the rest of the reserve after Yangaoping
+            for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
                 current_position = self.move_to_point(self.current_position, rest_of_reserve_choice)
                 if current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     current_position in masterdict['Outside_FNNR']:
-                    for i in range(random.randint(5, 5)):  # the monkeys move multiple pixels each step, not just one
+                    # the movement formula may land the monkeys in territory where they cannot move.
+                    # this territory is not very common, so if that occurs, the monkeys simply keep moving.
+                    for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
                         current_position = self.move_to_point(center)
                         if current_position is not None:
                             moved_list.append(current_position)  # moved_list records positions for the heatmap
@@ -89,13 +97,13 @@ class Family(Agent):
             # When it is not about to be breeding season/during it/just past it, move according to vegetation
             if self.current_position in masterdict['Elevation_Out_of_Bound']:
                 center = [50, 50]
-                for i in range(5):
+                for i in range(random.randint(5, 10)):
                     current_position = self.move_to_point(self.current_position, center)
                 if self.current_position in masterdict['Elevation_Out_of_Bound']:  # still
                     center = [50, 50]
-                    for i in range(5):
+                    for i in range(random.randint(5, 10)):
                         current_position = self.move_to_point(self.current_position, center)
-            for i in range(random.randint(5, 5)):
+            for i in range(random.randint(5, 10)):
                 neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                 current_position = self.neighbor_choice(neig, masterdict)
                 from humans import human_avoidance_list
@@ -134,9 +142,9 @@ class Family(Agent):
         neighbor_veg = {}
         neighbor_veg_list = []
         for neighbor in neighborlist:
-            for nposlist in neighbordict.values():  # for all grid values, find neighbors of this particular grid,
-                for neighbor_position in nposlist:
-                    if neighbor == neighbor_position:
+            for nposlist in neighbordict.values():  # from all the grid values, find neighbors for this particular grid
+                for neighbor_position in nposlist:  # in order to find out neighbor's vegetation -> neighbor's weighted
+                    if neighbor == neighbor_position:  # value -> selected neighbor to move to.
                         vegetation = list(neighbordict.keys())[list(neighbordict.values()).index(nposlist)]
                         neighbor_veg.setdefault(neighbor, []).append(vegetation)
         for list_of_values in neighbor_veg.values():
@@ -146,7 +154,7 @@ class Family(Agent):
                             and value != 'PES' and value != 'Forest' and value != 'Farm'\
                             and value != 'Household':
                         list_of_values.remove(value)
-                        # vegetation is considered the bottom later.
+                        # vegetation is considered the bottom layer.
                     elif value == 'Outside_FNNR':
                         list_of_values = ['Outside_FNNR']  # otherwise, Outside_FNNR is the defining layer;
                     elif value == 'Elevation_Out_of_Bound':
@@ -261,9 +269,7 @@ class Family(Agent):
             try:
                 assert int(newsum) == 1
             except AssertionError:
-                print(newsum, choicelist)
-                print(choicelist[0], choicelist[1], choicelist[2], choicelist[3])
-                print(choicelist[4], choicelist[5], choicelist[6], choicelist[7])
+                direction = self.current_position
             return direction
 
     def move_to(self, current_position):

@@ -52,14 +52,16 @@ class Movement(Model):
         self.grid_type = grid_type   # with_humans or without_humans
         self.run_type = run_type
 
-        """Select below which grid_type to run the model under."""
+        """Select below which grid_type to run the model under.
+        This will disable or enable certain functions.
+        It will also generate slightly different movement behaviors."""
         self.grid_type = 'with_humans'
         # self.grid_type = 'without_humans'
 
         """Select below which run type the model is operating on.
         If you are running the model with fresh input files (updated human buffers, etc.), then choose 'first_run'.
         This will generate new grid layers for the model to use.
-        Otherwise, choose normal_run."""
+        Otherwise, choose normal_run to load layers from file, which will result in a faster performance."""
         self.run_type = 'normal_run'
         # self.run_type = 'first_run'
 
@@ -69,7 +71,7 @@ class Movement(Model):
         height = 100
 
         self.grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
-        # MultiGrid is a mesa function that sets up the grid; options are between SingleGrid and MultiGrid
+        # MultiGrid is a Mesa function that sets up the grid; options are between SingleGrid and MultiGrid
         # MultiGrid allows you to put multiple layers on the grid
 
         self.schedule = RandomActivation(self)  # Mesa: Random vs. Staged Activation
@@ -87,6 +89,7 @@ class Movement(Model):
             gridlist4 = self._readASCII(pes_file)[0]  # list of all PES coordinate values
             gridlist5 = self._readASCII(farm_file)[0]  # list of all farm coordinate values
             gridlist6 = self._readASCII(forest_file)[0]  # list of all managed forest coordinate values
+            # The '_populate' function below builds the environmental grid.
             for x in [Elevation_Out_of_Bound]:
                 self._populate(empty_masterdict, gridlist2, x, width, height)
             for x in [Household]:
@@ -122,16 +125,18 @@ class Movement(Model):
         masterdict = empty_masterdict
 
         startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
+        # Agents will start out in high-probability areas.
         for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES']    \
             + masterdict['Farm'] + masterdict['Forest']:
                 if coordinate in startinglist:
-                    startinglist.remove(coordinate)
+                    startinglist.remove(coordinate)  # the original starting list includes areas that monkeys
+                                                     # cannot start in
 
         # Creation of resources (yellow dots in simulation)
         # These include Fuelwood, Herbs, Bamboo, etc., but right now resource type and frequency are not used
-        for line in _readCSV('hh_survey.csv')[1:]:
+        for line in _readCSV('hh_survey.csv')[1:]:  # see 'hh_survey.csv'
             hh_id_match = line[0]
-            resource_name = line[1]
+            resource_name = line[1]  # frequency is monthly; currently not-used
             frequency = line[2]
             y = line[5]
             x = line[6]

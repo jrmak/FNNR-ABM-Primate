@@ -35,7 +35,12 @@ class Monkey(Family):
             self.last_birth_interval += 1 / 73
 
         # Check if male subgroup needs to break off of main group
-        self.create_male_subgroup()
+        if self.model.time < 5:  # Temporary fix: currently, the moving family agents do not consider age
+            # in the visualization, because aging would have very little impact on their movement behavior.
+            # This temporary fix simply prevents too many male subgroups from spawning if the model runs for
+            # longer than a few years; normally, older monkeys would die out,
+            # so there would not be too many all-male subgroups existing at a time.
+            self.create_male_subgroup()
 
         # Birth
         if (18 < self.model.step_in_year < 25) or (48 < self.model.step_in_year < 55) \
