@@ -50,20 +50,19 @@ class Family(Agent):
             # The grid is drawn from the bottom, so even though it is currently 85 x 100,
             # these numbers are relatively high because they indicate the top right corner of the grid
             for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
-                current_position = self.move_to_point(self.current_position, yangaoping)
-                if current_position in masterdict['Elevation_Out_of_Bound'] or  \
-                    current_position in masterdict['Outside_FNNR']:
+                if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
+                    self.current_position in masterdict['Outside_FNNR']:
                     # the movement formula may land the monkeys in territory where they cannot move.
                     # this territory is not very common, so if that occurs, the monkeys simply keep moving.
                     for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one.
                         # the range is 5 because each step at the 85x100 resolution is approximately 300m in resolution.
                         # According to the pseudocode, monkeys move up to 2500m (not in a straight line) every 5 days.
-                        current_position = self.move_to_point(self.current_position, yangaoping)
-                        if current_position is not None:
-                            moved_list.append(current_position)  # moved_list records positions for the heatmap
+                        self.move_to_point(self.current_position, yangaoping)
+                        if self.current_position is not None:
+                            moved_list.append(self.current_position)  # moved_list records positions for the heatmap
                 else:
-                    if current_position is not None:
-                        moved_list.append(current_position)  # moved_list records positions for the heatmap
+                    if self.current_position is not None:
+                        moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
         elif 26 < self.model.step_in_year < 32 or 56 < self.model.step_in_year < 62:  # head back to rest of reserve
             # after breeding season ends, head away from Yangaoping
@@ -80,41 +79,39 @@ class Family(Agent):
             rest_of_reserve_choice = random.choice(rest_of_reserve)
             center = [50, 50]
             for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
-                current_position = self.move_to_point(self.current_position, rest_of_reserve_choice)
-                if current_position in masterdict['Elevation_Out_of_Bound'] or  \
-                    current_position in masterdict['Outside_FNNR']:
+                if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
+                    self.current_position in masterdict['Outside_FNNR']:
                     # the movement formula may land the monkeys in territory where they cannot move.
                     # this territory is not very common, so if that occurs, the monkeys simply keep moving.
                     for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
-                        current_position = self.move_to_point(center)
-                        if current_position is not None:
-                            moved_list.append(current_position)  # moved_list records positions for the heatmap
+                        self.move_to_point(center)
+                        if self.current_position is not None:
+                            moved_list.append(self.current_position)  # moved_list records positions for the heatmap
                 else:
-                    if current_position is not None:
-                        moved_list.append(current_position)  # moved_list records positions for the heatmap
+                    if self.current_position is not None:
+                        moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
         else:
             # When it is not about to be breeding season/during it/just past it, move according to vegetation
             if self.current_position in masterdict['Elevation_Out_of_Bound']:
                 center = [50, 50]
                 for i in range(random.randint(5, 10)):
-                    current_position = self.move_to_point(self.current_position, center)
+                    self.move_to_point(self.current_position, center)
                 if self.current_position in masterdict['Elevation_Out_of_Bound']:  # still
                     center = [50, 50]
                     for i in range(random.randint(5, 10)):
-                        current_position = self.move_to_point(self.current_position, center)
+                        self.move_to_point(self.current_position, center)
             for i in range(random.randint(5, 10)):
                 neig = self.model.grid.get_neighborhood(self.current_position, True, False)
-                current_position = self.neighbor_choice(neig, masterdict)
+                self.current_position = self.neighbor_choice(neig, masterdict)
                 from humans import human_avoidance_list
-                if current_position not in human_avoidance_list:
-                    self.move_to(current_position)
-                    self.current_position = current_position
-                    if current_position is not None:
-                        moved_list.append(current_position)  # moved_list records positions for the heatmap
+                if self.current_position not in human_avoidance_list:
+                    self.move_to(self.current_position)
+                    if self.current_position is not None:
+                        moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
-        if current_position is not None:
-            moved_list.append(current_position)  # moved_list records positions for the heatmap
+        if self.current_position is not None:
+            moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
     def move_to_point(self, current_position, new_position):
         current_position = list(current_position)  # current position
@@ -153,13 +150,14 @@ class Family(Agent):
                     if value != 'Elevation_Out_of_Bound' and value != 'Outside_FNNR' \
                             and value != 'PES' and value != 'Forest' and value != 'Farm'\
                             and value != 'Household':
-                        list_of_values.remove(value)
-                        # vegetation is considered the bottom layer.
+                        if len(list_of_values) > 1:  # checking again in case this loops multiple times
+                            list_of_values.remove(value)
+                        # Vegetation is considered the bottom layer, so in case of a conflict, it is removed.
                     elif value == 'Outside_FNNR':
-                        list_of_values = ['Outside_FNNR']  # otherwise, Outside_FNNR is the defining layer;
+                        list_of_values = ['Outside_FNNR']  # Otherwise, Outside_FNNR is the defining layer;
                     elif value == 'Elevation_Out_of_Bound':
-                        list_of_values = ['Elevation_Out_of_Bound']  # then the other layers follow in layer formation.
-                    elif value == 'Household':
+                        list_of_values = ['Elevation_Out_of_Bound']  # then the other layers follow in order of
+                    elif value == 'Household':  # formation.
                         list_of_values = ['Household']
                     elif value == 'Farm':
                         list_of_values = ['Farm']

@@ -67,8 +67,9 @@ print('Gender Structure Count || Reproductive Females: %i | Total Females: %i | 
 plt.tight_layout()  # needed to make the graph look neat
 plt.figure()  # each instance of plt.figure() sets a graph in a new window
 
-from heatmap import *  # see heatmap.py
-plt.figure()
+# from heatmap import *  # see heatmap.py; discontinued. I now generate an excel file from which I create the heatmap.
+# See documentation for how (summary: I create an xy scatterplot and set the points to 99% transparent).
+# plt.figure()
 
 plt.subplot(2, 2, 1)
 plt.plot(np.array(range(time)), np.array(monkey_population_list))
