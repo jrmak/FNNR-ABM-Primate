@@ -46,7 +46,7 @@ class Family(Agent):
         if 16 < self.model.step_in_year < 25 or 46 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
             # April: steps 19-25
             # September: steps 49-55
-            yangaoping = [random.randint(50, 70), random.randint(70, 80)]
+            yangaoping = [random.randint(50, 70), random.randint(70, 90)]
             # The grid is drawn from the bottom, so even though it is currently 85 x 100,
             # these numbers are relatively high because they indicate the top right corner of the grid
             for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
@@ -103,10 +103,11 @@ class Family(Agent):
                         self.move_to_point(self.current_position, center)
             for i in range(random.randint(5, 10)):
                 neig = self.model.grid.get_neighborhood(self.current_position, True, False)
-                self.current_position = self.neighbor_choice(neig, masterdict)
+                current_position = self.neighbor_choice(neig, masterdict)
                 from humans import human_avoidance_list
-                if self.current_position not in human_avoidance_list:
-                    self.move_to(self.current_position)
+                if current_position not in human_avoidance_list:
+                    self.move_to(current_position)
+                    self.current_position = current_position
                     if self.current_position is not None:
                         moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
@@ -174,7 +175,7 @@ class Family(Agent):
         choicelist = []
         # picks a weighted neighbor to move to
         # neighbordict is a dictionary with all vegetation categories and their corresponding grid values
-        # neighborlist = list of 8-cell neighbors to the current position
+        # neighborlist is a list of 8-cell neighbors to the current position
         neighbor_veg = self.check_vegetation_of_neighbor(neighborlist, neighbordict)
         # weights below were taken from the pseudocode
         for vegetation in neighbor_veg:
