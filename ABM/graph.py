@@ -33,7 +33,7 @@ save_density_plot(moved_list)
 plt.subplot(211)
 age_category_list = ('0-1', '1-3', '3-7', '7-10', '10-25', '25+')
 index = np.arange(len(age_category_list))
-width = 0.5
+width = 0.5  # width of each bar
 plt.bar(index, demographic_structure_list, width, align = 'center')
 plt.xticks(index, age_category_list)
 plt.title('Age Structure in the FNNR After ' + str(time) + ' Steps')

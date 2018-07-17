@@ -86,7 +86,7 @@ def movement_portrayal(agent):
 
     return portrayal
 
-agent_slider = UserSettableParameter('slider', "Number of Families", 5, 1, 20, 1)
+agent_slider = UserSettableParameter('slider', "Number of Families", 20, 1, 30, 1)
 # note: add more later
 
 canvas_width = 700
@@ -98,7 +98,7 @@ class MapLegend(TextElement):
 
     def render(self, model):
         # image created on MS Paint and uploaded to internet, but also featured in this folder for reference
-        return ("<center><img src = 'http://i64.tinypic.com/2u4tyzq.png'></center>" + "<br>"
+        return ("<center><img src = 'http://i63.tinypic.com/21o30yg.png'></center>" + "<br>"
                 + "<br><br></h3>")
 
 text0 = MapLegend()
