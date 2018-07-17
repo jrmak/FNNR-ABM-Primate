@@ -1,6 +1,11 @@
 ---Version History---
-7/5 - household layers imported. need to adjust agent movement now.
-7/2 - need to update this. imported vegetation and refined movement. previous update refined movement as well, but for elevation grid. more work done in ArcMap
+***7/16 note: this is extremely outdated. I will update this and the rest of my documentation after my thesis has been sent to the committee, hopefully between July 30th and August 13th.
+7/16 - Code's handling of heatmaps finalized. Code runs on my computers but not advisor's.
+7/14 - Humans and resource gathering integrated into the code.
+7/12 - Resources integrated into the code; human agents in testing.
+7/9 - Working on integrating resources and human collectors into the code. This is mostly Excel and ArcMap work.
+7/5 - Household layers imported. Need to adjust agent movement now.
+7/2 - Need to update this for month of June. Imported vegetation and refined movement. previous update refined movement as well, but for elevation grid. more work done in ArcMap
 6/7 - Updated Maxent suitability analysis, adjusted visualization to handle different grid sizes, erased gridlines
 - 6/1, 6/4 to be updated -
 5/28 - Expect to finish more pseudocore (sections 8-10)
