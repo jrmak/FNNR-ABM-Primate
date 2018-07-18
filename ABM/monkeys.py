@@ -3,7 +3,7 @@
 """
 This file runs the demographic submodel for the Guizhou golden monkey population (birth, death, aging, etc.).
 """
-from agents import *
+from families import *
 
 class Monkey(Family):
     #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions

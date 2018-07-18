@@ -9,7 +9,7 @@ from excel_export_density_plot import *
 import matplotlib.pyplot as plt
 import numpy as np
 from model import *
-from agents import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list, moved_list
+from families import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list, moved_list
 
 monkey_population_list = []
 monkey_birth_count = []

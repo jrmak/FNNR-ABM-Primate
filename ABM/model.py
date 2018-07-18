@@ -35,8 +35,8 @@ class Movement(Model):
 
     def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
-                 number_of_families = 10, number_of_monkeys = 0, monkey_birth_count = 0,
-                 monkey_death_count = 0, monkey_id_count = 0, grid_type = None, run_type = None):
+                 number_of_families = 20, number_of_monkeys = 0, monkey_birth_count = 0,
+                 monkey_death_count = 0, monkey_id_count = 0, grid_type = 'with_humans', run_type = 'normal_run'):
         # change the # of families here for graph.py, but use server.py to change # of families in the movement model
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
@@ -49,21 +49,8 @@ class Movement(Model):
         self.monkey_birth_count = monkey_birth_count
         self.monkey_death_count = monkey_death_count
         self.monkey_id_count = monkey_id_count
-        self.grid_type = grid_type   # with_humans or without_humans
-        self.run_type = run_type
-
-        """Select below which grid_type to run the model under.
-        This will disable or enable certain functions.
-        It will also generate slightly different movement behaviors."""
-        self.grid_type = 'with_humans'
-        # self.grid_type = 'without_humans'
-
-        """Select below which run type the model is operating on.
-        If you are running the model with fresh input files (updated human buffers, etc.), then choose 'first_run'.
-        This will generate new grid layers for the model to use.
-        Otherwise, choose normal_run to load layers from file, which will result in a faster performance."""
-        self.run_type = 'normal_run'
-        # self.run_type = 'first_run'
+        self.grid_type = grid_type   # string 'with_humans' or 'without_humans'
+        self.run_type = run_type  # string with 'normal_run' or 'first_run'
 
         # width = self._readASCII(vegetation_file)[1] # width as listed at the beginning of the ASCII file
         # height = self._readASCII(vegetation_file)[2] # height as listed at the beginning of the ASCII file
@@ -121,7 +108,6 @@ class Movement(Model):
         if self.grid_type == 'without_humans':
             empty_masterdict = self.saveLoad(load_dict, 'masterdict_without_humans', 'load')
             self.grid = self.saveLoad(load_dict, 'grid_without_humans', 'load')
-
         masterdict = empty_masterdict
 
         startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
@@ -134,15 +120,16 @@ class Movement(Model):
 
         # Creation of resources (yellow dots in simulation)
         # These include Fuelwood, Herbs, Bamboo, etc., but right now resource type and frequency are not used
-        for line in _readCSV('hh_survey.csv')[1:]:  # see 'hh_survey.csv'
-            hh_id_match = line[0]
-            resource_name = line[1]  # frequency is monthly; currently not-used
-            frequency = line[2]
-            y = line[5]
-            x = line[6]
-            resource = Resource(_readCSV('hh_survey.csv')[1:].index(line),
-                                self, (x, y), hh_id_match, resource_name, frequency)
-            self.grid.place_agent(resource, (int(x), int(y)))
+        if self.grid_type == 'with_humans':
+            for line in _readCSV('hh_survey.csv')[1:]:  # see 'hh_survey.csv'
+                hh_id_match = line[0]
+                resource_name = line[1]  # frequency is monthly; currently not-used
+                frequency = line[2]
+                y = line[5]
+                x = line[6]
+                resource = Resource(_readCSV('hh_survey.csv')[1:].index(line),
+                                    self, (x, y), hh_id_match, resource_name, frequency)
+                self.grid.place_agent(resource, (int(x), int(y)))
 
         # Creation of humans (brown dots in simulation)
         human_id = 0
@@ -166,7 +153,7 @@ class Movement(Model):
         for i in range(self.number_of_families):  # the following code block create families
             starting_position = random.choice(startinglist)
             saved_position = starting_position
-            from agents import Family
+            from families import Family
             family_size = random.randint(25, 45)  # sets family size for each group--random integer
             family_id = i
             list_of_family_members = []

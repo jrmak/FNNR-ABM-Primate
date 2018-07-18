@@ -86,9 +86,6 @@ def movement_portrayal(agent):
 
     return portrayal
 
-agent_slider = UserSettableParameter('slider', "Number of Families", 20, 1, 30, 1)
-# note: add more later
-
 canvas_width = 700
 canvas_height = 700
 
@@ -104,10 +101,14 @@ class MapLegend(TextElement):
 text0 = MapLegend()
 canvas = CanvasGrid(movement_portrayal, width, height, canvas_width, canvas_height)
 # chart_count = ChartModule([monkey_movement_chart])
-model_params = {"number_of_families": agent_slider}
+
+agent_slider = UserSettableParameter('slider', "Number of Families", 20, 1, 30, 1)
+humans_choice = UserSettableParameter('choice', "Status of Humans in Reserve", 'with_humans',
+                                      choices = ['with_humans', 'without_humans'])
+
+model_params = {"number_of_families": agent_slider, "grid_type": humans_choice}
 
 server = ModularServer(Movement, [canvas, text0], "FNNR: an ABM of Guizhou Golden Monkey Movement", model_params)
         # deleted ', chart_count' after canvas
-
 
 server.launch()
