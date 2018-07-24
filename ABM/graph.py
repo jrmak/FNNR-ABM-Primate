@@ -17,7 +17,7 @@ monkey_death_count = []
 
 model = Movement()  # run the model
 time = 73 * 10 # 73 time-steps of 5 days each for 10 years, 730 steps total
-erase_summary()  # clears the Excel file to overwrite
+# erase_summary()  # clears the Excel file to overwrite
 erase_density_plot()
 for t in range(time):  # for each time-step in the time we just defined,
     monkey_population_list.append(model.number_of_monkeys)
