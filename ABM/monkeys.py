@@ -43,7 +43,7 @@ class Monkey(Family):
             self.create_male_subgroup()
 
         # Birth
-        if (18 < self.model.step_in_year < 25) or (48 < self.model.step_in_year < 55) \
+        if (49 < self.model.step_in_year < 55) \
                 and (self.gender == 1 and 8 <= self.age <= 25):
             if self.last_birth_interval >= 3:
                 self.family_size += 1

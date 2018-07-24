@@ -50,6 +50,7 @@ class Family(Agent):
             # The grid is drawn from the bottom, so even though it is currently 85 x 100,
             # these numbers are relatively high because they indicate the top right corner of the grid
             for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
+                self.move_to_point(self.current_position, yangaoping)
                 if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     self.current_position in masterdict['Outside_FNNR']:
                     # the movement formula may land the monkeys in territory where they cannot move.
@@ -64,7 +65,7 @@ class Family(Agent):
                     if self.current_position is not None:
                         moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
-        elif 26 < self.model.step_in_year < 32 or 56 < self.model.step_in_year < 62:  # head back to rest of reserve
+        elif 26 < self.model.step_in_year < 34 or 56 < self.model.step_in_year < 64:  # head back to rest of reserve
             # after breeding season ends, head away from Yangaoping
             rest_of_reserve = {}
             if self.model.run_type == 'first_run':
@@ -79,12 +80,13 @@ class Family(Agent):
             rest_of_reserve_choice = random.choice(rest_of_reserve)
             center = [50, 50]
             for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
+                self.move_to_point(self.current_position, rest_of_reserve_choice)
                 if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     self.current_position in masterdict['Outside_FNNR']:
                     # the movement formula may land the monkeys in territory where they cannot move.
                     # this territory is not very common, so if that occurs, the monkeys simply keep moving.
                     for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
-                        self.move_to_point(center)
+                        self.move_to_point(self.current_position, center)
                         if self.current_position is not None:
                             moved_list.append(self.current_position)  # moved_list records positions for the heatmap
                 else:
@@ -107,8 +109,8 @@ class Family(Agent):
                 from humans import human_avoidance_list
                 if current_position not in human_avoidance_list:
                     self.move_to(current_position)
-                    self.current_position = current_position
-                    if self.current_position is not None:
+                    if current_position is not None:
+                        self.current_position = current_position
                         moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
         if self.current_position is not None:
