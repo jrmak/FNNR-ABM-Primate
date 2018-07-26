@@ -14,21 +14,25 @@ from families import demographic_structure_list, female_list, male_maingroup_lis
 monkey_population_list = []
 monkey_birth_count = []
 monkey_death_count = []
+counter = 31
 
 model = Movement()  # run the model
 time = 73 * 10 # 73 time-steps of 5 days each for 10 years, 730 steps total
 # erase_summary()  # clears the Excel file to overwrite
-erase_density_plot()
+# erase_density_plot()
 for t in range(time):  # for each time-step in the time we just defined,
     monkey_population_list.append(model.number_of_monkeys)
     monkey_birth_count.append(model.monkey_birth_count)
     monkey_death_count.append(model.monkey_death_count)
     model.step()  # see model.step() in model.py; monkey agents age, family-pixel agents move
-    save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
+    print('Loading, Progress ', t, '/', time)
+    if t == 1:
+        save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
+                 demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
+save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
     # save_summary writes the Excel file; see excel_export_summary
-    print('Loading, Progress ', t, '/', time)
-save_density_plot(moved_list)
+save_density_plot(moved_list, counter)
 
 plt.subplot(211)
 age_category_list = ('0-1', '1-3', '3-7', '7-10', '10-25', '25+')
@@ -90,4 +94,4 @@ plt.xlabel('5-Day Intervals (Steps)')
 plt.ylabel('Number of Deaths')
 plt.tight_layout()
 
-plt.show()  # shows all plots at once
+# plt.show()  # shows all plots at once

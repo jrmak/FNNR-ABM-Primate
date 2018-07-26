@@ -42,6 +42,10 @@ class Monkey(Family):
             # so there would not be too many all-male subgroups existing at a time.
             self.create_male_subgroup()
 
+        if self.family_size > 45:
+            #self.create_new_group(self)
+            pass
+
         # Birth
         if (49 < self.model.step_in_year < 55) \
                 and (self.gender == 1 and 8 <= self.age <= 25):
@@ -59,14 +63,16 @@ class Monkey(Family):
         # the current formula uses: chance that a monkey does NOT die^73 = survival rate in one year
         # this gives a lower result than a similar formula that considers [yearly mortality rate]/73
         # formula may be changed later
-        if self.age <= 1 and chance <= 0.00144:  # 1 - 0.99856; 90% survival; see below
+        if self.age <= 1 and chance <= 0.0034:  # 1 - 0.9966; 80% survival; see below
             self.death()
             demographic_structure_list[0] -= 1
             recent_death_infant.append(self.mother)
             # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
             # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
             # 0.99778^73 = 85% chance to survive first year with ticks every 5 days, or 15% yearly mortality
-            # 0.99695^73 = 80% chance to survive first year with ticks every 5 days, or 20$ yearly mortality
+            # 0.99695^73 = 80% chance to survive first year with ticks every 5 days, or 20% yearly mortality
+            # 0.9966^73 = 78% chance to survive first year with ticks every 5 days, or 22% yearly mortality
+
             # if a monkey dies, mother can give birth again the following season
         elif 1 < self.age < 10 and chance <= 0.00043:  # 0.00043 = 1 - 0.99958; 95% survival; see below
             self.death()
@@ -130,7 +136,7 @@ class Monkey(Family):
     def check_recent_death_infant(self):
         # allow mothers who have recently lost an infant to give birth again in a short period
         if self.unique_id in recent_death_infant:
-            self.last_birth_interval = random.uniform(2, 2.5)
+            self.last_birth_interval = random.uniform(2, 2.4)
             recent_death_infant.remove(self.unique_id)
 
     def birth(self, parent_current_position, new_family_size, parent_family, mother_id, list_of_family):
@@ -179,6 +185,7 @@ class Monkey(Family):
             reproductive_female_list.remove(self.unique_id)
         if self.unique_id in random_mother_list:
             random_mother_list.remove(self.unique_id)
+        self.family_size -= 1
 
     def create_male_subgroup(self):
         # male subgroup forms a new family and shows up in the visualization under a new, differently-vegetationed pixel
