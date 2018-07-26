@@ -1,24 +1,4 @@
 """
-text = 'agg_veg60.txt'
-
-out_counter = 0
-in_counter = 0
-f = open(text, 'r')
-body = f.readlines()
-abody = body[6:]  # ASCII file with a header
-f.close()
-with_list = []
-for line in abody:
-    for item in line.split(" "):
-        if str(item) == '-9999':
-            out_counter += 1
-        else:
-            in_counter += 1
-print(out_counter, in_counter)
-# 3603 coordinates outside FNNR boundaries, 4897 coordinates inside FNNR in 85 x 100 pixel grid
-"""
-
-"""
 with_humans vs maxent
 Kappa Statistic for 1 Count Frequency:
 0.697
@@ -33,7 +13,7 @@ Kappa Statistic for 20 Count Frequency:
 Kappa Statistic for 50 Count Frequency:
 0.0
 
-without vs maxent
+without humans vs maxent
 Kappa Statistic for 1 Count Frequency:
 0.682
 Kappa Statistic for 5 Count Frequency:
@@ -48,34 +28,29 @@ Kappa Statistic for 50 Count Frequency:
 0.0
 """
 
-text = 'with_maxent.csv'
+# text = 'with_maxent.csv'
 text = 'without_maxent.csv'
 
 # text = 'with_without_trimmed35.csv'
 # text2 = 'with_without_trimmed35_2.csv'
 
+"""
+def readCSV(file):
+    list1 = []
+    list2 = []
+    f = open(file, 'r')
+    body = f.readlines()
+    abody = body[2:]  # ignore header
+    f.close()
+    for line in abody: # format ('57,42,62,73')
+        list1.append(line[:5].strip("\\n"))  # first coordinates of line (first 5 characters, e.g. '57,42')
+        list2.append(str(line[-6:-1]))  # second coordinates of line (last 5 characters, e.g. '62,73')
+    return [list1, list2]
 
-f = open(text, 'r')
-body = f.readlines()
-abody = body[2:]  # ignore header
-f.close()
-with_list = []
-without_list = []
-for line in abody: # format ('57,42,62,73')
-    with_list.append(line[:5].strip("\\n"))  # first coordinates of line (first 5 characters, e.g. '57,42')
-    without_list.append(str(line[-6:-1]))  # second coordinates of line (last 5 characters, e.g. '62,73')
+list1 = readCSV(text)[0]
+list2 = readCSV(text)[1]
+# old version of function
 """
-f2 = open(text2, 'r')
-body2 = f2.readlines()
-abody2 = body2[2:]  # ASCII file with a header
-f2.close()
-with_list2 = []
-without_list2 = []
-for line in abody2:
-    with_list2.append(line[:5].strip("\\n"))
-    without_list2.append(str(line[-6:-1]))
-"""
-# could combine the two blocks of code above into one function, no time
 
 full_grid = []
 
@@ -94,7 +69,7 @@ def kappa(with_and_without_count, with_count, without_count, neither_count, freq
     print('Kappa Statistic for', frequency_count, 'Count Frequency:')
     print(round((p0 - pE)/(1 - pE), 3))  # rounds to 3 decimal places
 
-def calculate_count_x(with_list, without_list, x):
+def calculate_count_x(list1, list2, x):
     with_count = 0
     without_count = 0
     with_and_without_count = 0
@@ -102,16 +77,16 @@ def calculate_count_x(with_list, without_list, x):
     without_only_count = 0
     neither_count = 0
     for coordinate in full_grid:
-        if with_list.count(coordinate) >= x:
+        if list1.count(coordinate) >= x:
             with_count += 1
-            if without_list.count(coordinate) >= x:
+            if list2.count(coordinate) >= x:
                 with_and_without_count += 1
             else:
                 with_only_count += 1
 
-        elif without_list.count(coordinate) >= x:
+        elif list2.count(coordinate) >= x:
             without_count += 1
-            if with_list.count(coordinate) < x:
+            if list1.count(coordinate) < x:
                 without_only_count += 1
 
         else:
@@ -120,42 +95,42 @@ def calculate_count_x(with_list, without_list, x):
     # print(with_and_without_count, with_count, without_count, neither_count)
     return(with_and_without_count, with_count, without_count, neither_count, x, 2975)
 
-kappa(*calculate_count_x(with_list, without_list, 1))
-kappa(*calculate_count_x(with_list, without_list, 5))
-kappa(*calculate_count_x(with_list, without_list, 10))
-kappa(*calculate_count_x(with_list, without_list, 15))
-kappa(*calculate_count_x(with_list, without_list, 20))
-kappa(*calculate_count_x(with_list, without_list, 50))
-kappa(*calculate_count_x(with_list, without_list, 100))
+kappa(*calculate_count_x(list1, list2, 1))
+kappa(*calculate_count_x(list1, list2, 5))
+kappa(*calculate_count_x(list1, list2, 10))
+kappa(*calculate_count_x(list1, list2, 15))
+kappa(*calculate_count_x(list1, list2, 20))
+kappa(*calculate_count_x(list1, list2, 50))
+kappa(*calculate_count_x(list1, list2, 100))
 
 """
-kappa(*calculate_count_x(with_list, without_list, 1))
-kappa(*calculate_count_x(with_list, with_list2, 1))
-kappa(*calculate_count_x(without_list, without_list2, 1))
+kappa(*calculate_count_x(list1, list2, 1))
+kappa(*calculate_count_x(list1, list1, 1))
+kappa(*calculate_count_x(list2, list2, 1))
 print()
-kappa(*calculate_count_x(with_list, without_list, 5))
-kappa(*calculate_count_x(with_list, with_list2, 5))
-kappa(*calculate_count_x(without_list, without_list2, 5))
+kappa(*calculate_count_x(list1, list2, 5))
+kappa(*calculate_count_x(list1, list1, 5))
+kappa(*calculate_count_x(list2, list2, 5))
 print()
-kappa(*calculate_count_x(with_list, without_list, 10))
-kappa(*calculate_count_x(with_list, with_list2, 10))
-kappa(*calculate_count_x(without_list, without_list2, 10))
+kappa(*calculate_count_x(list1, list2, 10))
+kappa(*calculate_count_x(list1, list1, 10))
+kappa(*calculate_count_x(list2, list2, 10))
 print()
-kappa(*calculate_count_x(with_list, without_list, 15))
-kappa(*calculate_count_x(with_list, with_list2, 15))
-kappa(*calculate_count_x(without_list, without_list2, 15))
+kappa(*calculate_count_x(list1, list2, 15))
+kappa(*calculate_count_x(list1, list1, 15))
+kappa(*calculate_count_x(list2, list2, 15))
 print()
-kappa(*calculate_count_x(with_list, without_list, 20))
-kappa(*calculate_count_x(with_list, with_list2, 20))
-kappa(*calculate_count_x(without_list, without_list2, 20))
+kappa(*calculate_count_x(list1, list2, 20))
+kappa(*calculate_count_x(list1, list1, 20))
+kappa(*calculate_count_x(list2, list2, 20))
 print()
-kappa(*calculate_count_x(with_list, without_list, 50))
-kappa(*calculate_count_x(with_list, with_list2, 50))
-kappa(*calculate_count_x(without_list, without_list2, 50))
+kappa(*calculate_count_x(list1, list2, 50))
+kappa(*calculate_count_x(list1, list2, 50))
+kappa(*calculate_count_x(list2, list2, 50))
 print()
-kappa(*calculate_count_x(with_list, without_list, 100))
-kappa(*calculate_count_x(with_list, with_list2, 100))
-kappa(*calculate_count_x(without_list, without_list2, 100))
+kappa(*calculate_count_x(list1, list2, 100))
+kappa(*calculate_count_x(list1, list2, 100))
+kappa(*calculate_count_x(list2, list2, 100))
 """
 """
 text = 'with_without_trimmed35.csv'
