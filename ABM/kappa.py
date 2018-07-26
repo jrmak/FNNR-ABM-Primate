@@ -1,57 +1,80 @@
 """
-with_humans vs maxent
-Kappa Statistic for 1 Count Frequency:
-0.697
-Kappa Statistic for 5 Count Frequency:
-0.578
-Kappa Statistic for 10 Count Frequency:
-0.391
-Kappa Statistic for 15 Count Frequency:
-0.272
-Kappa Statistic for 20 Count Frequency:
-0.078
-Kappa Statistic for 50 Count Frequency:
-0.0
+text = 'agg_veg60.txt'
 
-without humans vs maxent
-Kappa Statistic for 1 Count Frequency:
-0.682
-Kappa Statistic for 5 Count Frequency:
-0.594
-Kappa Statistic for 10 Count Frequency:
-0.387
-Kappa Statistic for 15 Count Frequency:
-0.247
-Kappa Statistic for 20 Count Frequency:
-0.074
-Kappa Statistic for 50 Count Frequency:
-0.0
+out_counter = 0
+in_counter = 0
+f = open(text, 'r')
+body = f.readlines()
+abody = body[6:]  # ASCII file with a header
+f.close()
+with_list = []
+for line in abody:
+    for item in line.split(" "):
+        if str(item) == '-9999':
+            out_counter += 1
+        else:
+            in_counter += 1
+print(out_counter, in_counter)
+# 3603 coordinates outside FNNR boundaries, 4897 coordinates inside FNNR in 85 x 100 pixel grid
 """
 
-# text = 'with_maxent.csv'
-text = 'without_maxent.csv'
+"""
+with_humans vs maxent
+Kappa Statistic for 1 Count Frequency:
+0.853
+Kappa Statistic for 5 Count Frequency:
+0.828
+Kappa Statistic for 10 Count Frequency:
+0.81
+Kappa Statistic for 15 Count Frequency:
+0.818
+Kappa Statistic for 20 Count Frequency:
+0.969
+Kappa Statistic for 50 Count Frequency:
+1.0
 
+without vs maxent
+Kappa Statistic for 1 Count Frequency:
+0.856
+Kappa Statistic for 5 Count Frequency:
+0.861
+Kappa Statistic for 10 Count Frequency:
+0.845
+Kappa Statistic for 15 Count Frequency:
+0.832
+Kappa Statistic for 20 Count Frequency:
+0.976
+Kappa Statistic for 50 Count Frequency:
+1.0
+"""
+
+text = 'with_maxent.csv'
+text = 'without_maxent.csv'
 # text = 'with_without_trimmed35.csv'
 # text2 = 'with_without_trimmed35_2.csv'
 
+f = open(text, 'r')
+body = f.readlines()
+abody = body[2:]  # ASCII file with a header
+f.close()
+with_list = []
+without_list = []
+for line in abody: # format ('57,42,62,73')
+    with_list.append(line[:5].strip("\\n"))  # first coordinates of line (first 5 characters, e.g. '57,42')
+    without_list.append(str(line[-6:-1]))  # second coordinates of line (last 5 characters, e.g. '62,73')
 """
-def readCSV(file):
-    list1 = []
-    list2 = []
-    f = open(file, 'r')
-    body = f.readlines()
-    abody = body[2:]  # ignore header
-    f.close()
-    for line in abody: # format ('57,42,62,73')
-        list1.append(line[:5].strip("\\n"))  # first coordinates of line (first 5 characters, e.g. '57,42')
-        list2.append(str(line[-6:-1]))  # second coordinates of line (last 5 characters, e.g. '62,73')
-    return [list1, list2]
-
-list1 = readCSV(text)[0]
-list2 = readCSV(text)[1]
-# old version of function
+f2 = open(text2, 'r')
+body2 = f2.readlines()
+abody2 = body2[2:]  # ASCII file with a header
+f2.close()
+with_list2 = []
+without_list2 = []
+for line in abody2:
+    with_list2.append(line[:5].strip("\\n"))
+    without_list2.append(str(line[-6:-1]))
+unique_with_list2 = list(set(with_list2))
+unique_without_list2 = list(set(without_list2))
 """
-
 full_grid = []
 
 for x in range(85):
@@ -69,7 +92,7 @@ def kappa(with_and_without_count, with_count, without_count, neither_count, freq
     print('Kappa Statistic for', frequency_count, 'Count Frequency:')
     print(round((p0 - pE)/(1 - pE), 3))  # rounds to 3 decimal places
 
-def calculate_count_x(list1, list2, x):
+def calculate_count_x(with_list, without_list, x):
     with_count = 0
     without_count = 0
     with_and_without_count = 0
@@ -77,131 +100,108 @@ def calculate_count_x(list1, list2, x):
     without_only_count = 0
     neither_count = 0
     for coordinate in full_grid:
-        if list1.count(coordinate) >= x:
+        if with_list.count(coordinate) >= x:
             with_count += 1
-            if list2.count(coordinate) >= x:
+            if without_list.count(coordinate) >= x:
                 with_and_without_count += 1
             else:
                 with_only_count += 1
 
-        elif list2.count(coordinate) >= x:
+        if without_list.count(coordinate) >= x:
             without_count += 1
-            if list1.count(coordinate) < x:
+            if with_list.count(coordinate) < x:
                 without_only_count += 1
-
         else:
             neither_count += 1
-
     # print(with_and_without_count, with_count, without_count, neither_count)
     return(with_and_without_count, with_count, without_count, neither_count, x, 2975)
 
-kappa(*calculate_count_x(list1, list2, 1))
-kappa(*calculate_count_x(list1, list2, 5))
-kappa(*calculate_count_x(list1, list2, 10))
-kappa(*calculate_count_x(list1, list2, 15))
-kappa(*calculate_count_x(list1, list2, 20))
-kappa(*calculate_count_x(list1, list2, 50))
-kappa(*calculate_count_x(list1, list2, 100))
+kappa(*calculate_count_x(with_list, without_list, 1))
+kappa(*calculate_count_x(with_list, without_list, 5))
+kappa(*calculate_count_x(with_list, without_list, 10))
+kappa(*calculate_count_x(with_list, without_list, 15))
+kappa(*calculate_count_x(with_list, without_list, 20))
+kappa(*calculate_count_x(with_list, without_list, 50))
 
 """
-kappa(*calculate_count_x(list1, list2, 1))
-kappa(*calculate_count_x(list1, list1, 1))
-kappa(*calculate_count_x(list2, list2, 1))
+kappa(*calculate_count_x(with_list, without_list, 1))
+kappa(*calculate_count_x(with_list, with_list2, 1))
+kappa(*calculate_count_x(without_list, without_list2, 1))
 print()
-kappa(*calculate_count_x(list1, list2, 5))
-kappa(*calculate_count_x(list1, list1, 5))
-kappa(*calculate_count_x(list2, list2, 5))
+kappa(*calculate_count_x(with_list, without_list, 5))
+kappa(*calculate_count_x(with_list, with_list2, 5))
+kappa(*calculate_count_x(without_list, without_list2, 5))
 print()
-kappa(*calculate_count_x(list1, list2, 10))
-kappa(*calculate_count_x(list1, list1, 10))
-kappa(*calculate_count_x(list2, list2, 10))
+kappa(*calculate_count_x(with_list, without_list, 10))
+kappa(*calculate_count_x(with_list, with_list2, 10))
+kappa(*calculate_count_x(without_list, without_list2, 10))
 print()
-kappa(*calculate_count_x(list1, list2, 15))
-kappa(*calculate_count_x(list1, list1, 15))
-kappa(*calculate_count_x(list2, list2, 15))
+kappa(*calculate_count_x(with_list, without_list, 15))
+kappa(*calculate_count_x(with_list, with_list2, 15))
+kappa(*calculate_count_x(without_list, without_list2, 15))
 print()
-kappa(*calculate_count_x(list1, list2, 20))
-kappa(*calculate_count_x(list1, list1, 20))
-kappa(*calculate_count_x(list2, list2, 20))
+kappa(*calculate_count_x(with_list, without_list, 20))
+kappa(*calculate_count_x(with_list, with_list2, 20))
+kappa(*calculate_count_x(without_list, without_list2, 20))
 print()
-kappa(*calculate_count_x(list1, list2, 50))
-kappa(*calculate_count_x(list1, list2, 50))
-kappa(*calculate_count_x(list2, list2, 50))
+kappa(*calculate_count_x(with_list, without_list, 50))
+kappa(*calculate_count_x(with_list, with_list2, 50))
+kappa(*calculate_count_x(without_list, without_list2, 50))
 print()
-kappa(*calculate_count_x(list1, list2, 100))
-kappa(*calculate_count_x(list1, list2, 100))
-kappa(*calculate_count_x(list2, list2, 100))
+kappa(*calculate_count_x(with_list, without_list, 100))
+kappa(*calculate_count_x(with_list, with_list2, 100))
+kappa(*calculate_count_x(without_list, without_list2, 100))
 """
 """
 text = 'with_without_trimmed35.csv'
 text2 = 'with_without_trimmed35_2.csv'
 
 Kappa Statistic for 1 Count Frequency:
-0.813
-936 1017 121 1837
+0.9
 Kappa Statistic for 1 Count Frequency:
-0.809
-1014 1091 95 1789
+0.91
 Kappa Statistic for 1 Count Frequency:
-0.846
+0.931
 
-750 798 132 2045
 Kappa Statistic for 5 Count Frequency:
-0.79
-717 798 89 2088
+0.891
 Kappa Statistic for 5 Count Frequency:
-0.797
-757 882 78 2015
+0.924
 Kappa Statistic for 5 Count Frequency:
-0.778
+0.936
 
-596 642 129 2204
 Kappa Statistic for 10 Count Frequency:
-0.755
-571 642 60 2273
+0.878
 Kappa Statistic for 10 Count Frequency:
-0.806
-627 725 61 2189
+0.94
 Kappa Statistic for 10 Count Frequency:
-0.79
+0.943
 
-489 546 107 2322
 Kappa Statistic for 15 Count Frequency:
-0.733
-474 546 58 2371
+0.884
 Kappa Statistic for 15 Count Frequency:
-0.777
-540 596 64 2315
+0.934
 Kappa Statistic for 15 Count Frequency:
-0.811
+0.933
 
-419 475 84 2416
 Kappa Statistic for 20 Count Frequency:
-0.737
-404 475 43 2457
+0.897
 Kappa Statistic for 20 Count Frequency:
-0.774
-444 503 69 2403
+0.945
 Kappa Statistic for 20 Count Frequency:
-0.767
+0.918
 
-133 183 33 2759
 Kappa Statistic for 50 Count Frequency:
-0.608
-144 183 46 2746
+0.9
 Kappa Statistic for 50 Count Frequency:
-0.619
-119 166 32 2777
+0.868
 Kappa Statistic for 50 Count Frequency:
-0.594
+0.893
 
-2 7 4 2964
 Kappa Statistic for 100 Count Frequency:
-0.18
-0 7 5 2963
+0.692
 Kappa Statistic for 100 Count Frequency:
--0.002
-0 6 2 2967
+0.583
 Kappa Statistic for 100 Count Frequency:
--0.001
+0.75
 """
