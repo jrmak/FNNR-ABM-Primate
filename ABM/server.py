@@ -102,7 +102,7 @@ text0 = MapLegend()
 canvas = CanvasGrid(movement_portrayal, width, height, canvas_width, canvas_height)
 # chart_count = ChartModule([monkey_movement_chart])
 
-agent_slider = UserSettableParameter('slider', "Number of Families", 5, 1, 30, 1)
+agent_slider = UserSettableParameter('slider', "Number of Families", 20, 1, 30, 1)
 humans_choice = UserSettableParameter('choice', "Status of Humans in Reserve", 'with_humans',
                                       choices = ['with_humans', 'without_humans'])
 
