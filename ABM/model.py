@@ -2,7 +2,7 @@
 
 from mesa.model import Model
 from mesa.space import MultiGrid
-from mesa.time import RandomActivation
+from mesa.time import StagedActivation
 from monkeys import *
 from environment import *
 from humans import _readCSV, Human, Resource
@@ -61,7 +61,7 @@ class Movement(Model):
         # MultiGrid is a Mesa function that sets up the grid; options are between SingleGrid and MultiGrid
         # MultiGrid allows you to put multiple layers on the grid
 
-        self.schedule = RandomActivation(self)  # Mesa: Random vs. Staged Activation
+        self.schedule = StagedActivation(self)  # Mesa: Random vs. Staged Activation
         # similar to NetLogo's Ask Agents - determines order (or lack of) in which each agents act
 
         empty_masterdict = {'Outside_FNNR': [], 'Elevation_Out_of_Bound': [], 'Household': [], 'PES': [], 'Farm': [],
@@ -110,12 +110,12 @@ class Movement(Model):
             self.grid = self.saveLoad(load_dict, 'grid_without_humans', 'load')
         masterdict = empty_masterdict
 
-        startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
+        starting_list = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
         # Agents will start out in high-probability areas.
         for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES']    \
             + masterdict['Farm'] + masterdict['Forest']:
-                if coordinate in startinglist:
-                    startinglist.remove(coordinate)  # the original starting list includes areas that monkeys
+                if coordinate in starting_list:
+                    starting_list.remove(coordinate)  # the original starting list includes areas that monkeys
                                                      # cannot start in
 
         # Creation of resources (yellow dots in simulation)
@@ -151,7 +151,7 @@ class Movement(Model):
 
         # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block create families
-            starting_position = random.choice(startinglist)
+            starting_position = random.choice(starting_list)
             saved_position = starting_position
             from families import Family
             family_size = random.randint(25, 45)  # sets family size for each group--random integer
@@ -226,6 +226,14 @@ class Movement(Model):
         self.step_in_year += 1
         if self.step_in_year > 73:
             self.step_in_year = 1  # start new year
+        if len(male_subgroup_list) > random.randint(10, 15):
+            for item in male_subgroup_list:
+                male_migration_list.append(item)
+            new_male_family_counter.append(new_male_family_counter[-1] + 1)
+            new_male_family = self.create_male_subgroup()
+            new_male_families_dict.setdefault(new_male_family_counter[-1], []).append(new_male_family)
+            if male_migration_list == []:
+                new_male_families_dict.clear()
         self.schedule.step()
 
     def _readASCII(self, text):
@@ -282,6 +290,24 @@ class Movement(Model):
                         self.grid.place_agent(land, land_grid_coordinate)
                         masterdict[land.__class__.__name__].append(land_grid_coordinate)
                         counter += 1
+
+    def create_male_subgroup(self):
+        # male subgroup forms a new family and shows up in the visualization under a new, differently-vegetationed pixel
+        new_family_id = int(global_family_id_list[-1] + 1)
+        global_family_id_list.append(new_family_id)
+        family_type = 'all_male'
+        load_dict = {}
+        masterdict = self.saveLoad(load_dict, 'masterdict_without_humans', 'load')
+        current_position = random.choice(masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous'])
+        split_flag = 0
+        male_family = Family(new_family_id, self, current_position, len(male_subgroup_list),
+                             male_subgroup_list, family_type, current_position, split_flag)
+        for item in male_subgroup_list:
+            male_migration_list.append(item)
+        self.grid.place_agent(male_family, current_position)
+        self.schedule.add(male_family)
+        self.number_of_families += 1
+        return male_family
 
     def saveLoad(self, pickled_file, name, option):
         """ This function pickles an object, which lets it be loaded easily later.
