@@ -38,6 +38,7 @@ class Monkey(Agent):
             male_family = self.create_male_subgroup()
             new_male_family_counter.append(new_male_family_counter[-1] + 1)
             self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'save')
+            print('male family')
             for item in male_subgroup_list:
                 male_migration_list.append(item)
             del male_subgroup_list[:]
@@ -49,12 +50,10 @@ class Monkey(Agent):
             self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'save')
             male_migration_list.remove(self.unique_id)
 
-        if self.family.family_size > 45 and self.family.split_flag == 0:  # start splitting/create new family
-            new_family = self.create_new_family(self.family.family_type)
+        if self.family.family_size > 50 and self.family.split_flag == 0:  # start splitting/create new family
+            new_family = self.create_new_family()
             new_family_counter.append(new_family_counter[-1] + 1)
-            self.family.split_flag = new_family_counter[-1]
             self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'save')
-            print('new_family')
 
         if self.family.split_flag != 0 and self.family.family_size > 23:  # join new family/migration
             new_family = 0  # placeholder
@@ -64,7 +63,6 @@ class Monkey(Agent):
 
         if self.family.split_flag != 0 and self.family.family_size < 24:  # stop splitting; remain in family
             self.family.split_flag = 0
-            print('migration stopped')
             
         # Birth
         if (49 < self.model.step_in_year < 55) \
@@ -174,7 +172,7 @@ class Monkey(Agent):
             mother = random.choice(random_mother_list)
         new_monkey = Monkey(last + 1, self.model, gender, age, age_category, family, last_birth_interval,
                             mother)
-        new_monkey.family.list_of_family_members.append(self.unique_id)
+        self.family.list_of_family_members.append(new_monkey.unique_id)
         self.model.schedule.add(new_monkey)
         self.model.number_of_monkeys += 1
         self.model.monkey_id_count += 1
@@ -210,25 +208,25 @@ class Monkey(Agent):
         male_family = Family(new_family_id, self.model, len(male_subgroup_list),
                              male_subgroup_list,
                              family_type, split_flag)
-        self.model.number_of_families += 1
         self.model.grid.place_agent(male_family, self.family.current_position)
         self.model.schedule.add(male_family)
+        self.model.number_of_families += 1
         return male_family
 
-    def create_new_family(self, family_type):
+    def create_new_family(self):
         # a new family group forms when the size of the original group reaches < 45 members
         from model import global_family_id_list
         new_family_id = int(global_family_id_list[-1] + 1)
         global_family_id_list.append(new_family_id)
         self.family.split_flag = new_family_counter[-1]  # old family split_flag
         saved_position = self.family.current_position
-        self.family.list_of_family_members.remove(self.unique_id)
         split_flag = 0  # 0 for new family
+        family_type = 'traditional'
         new_family = Family(new_family_id, self.model, self.family.current_position, 1, [self.unique_id],
                             family_type, saved_position, split_flag)
-        self.family.list_of_family_members.append(self.unique_id)
         self.model.grid.place_agent(new_family, self.family.current_position)
         self.model.schedule.add(new_family)
+        self.model.number_of_families += 1
         return new_family
 
     def migrate_to_new_family(self, new_family):
