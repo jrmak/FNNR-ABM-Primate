@@ -9,6 +9,7 @@ male_migration_list = []
 new_family_counter = [0]
 new_male_family_counter = [0]
 
+
 class Monkey(Agent):
     #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions
     #  such as being born, aging, mating, dying, etc. in a different but related submodel
@@ -25,6 +26,7 @@ class Monkey(Agent):
     def step(self):
         # Aging
         self.check_age_category()
+        self.age += (1 / 73)
 
         # Check if mother of recently dead infant and count time since last birth
         if self.unique_id in reproductive_female_list:
@@ -35,13 +37,13 @@ class Monkey(Agent):
 
         # Check if male subgroup needs to break off of main group
         if len(male_subgroup_list) > random.randint(10, 15):
-            male_family = self.create_male_subgroup()
             new_male_family_counter.append(new_male_family_counter[-1] + 1)
+            male_family = self.create_male_subgroup()
             self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'save')
-            print('male family')
             for item in male_subgroup_list:
                 male_migration_list.append(item)
             del male_subgroup_list[:]
+            print('new male family')
 
         if self.unique_id in male_migration_list:
             male_family = 0  # placeholder
@@ -49,20 +51,25 @@ class Monkey(Agent):
             male_family = self.migrate_to_new_family(male_family)
             self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'save')
             male_migration_list.remove(self.unique_id)
+            print('male migration')
 
-        if self.family.family_size > 50 and self.family.split_flag == 0:  # start splitting/create new family
-            new_family = self.create_new_family()
+        if self.family.family_size > 46 and self.family.split_flag == 0:  # start splitting/create new family
             new_family_counter.append(new_family_counter[-1] + 1)
+            self.family.split_flag = new_family_counter[-1]  # old family split_flag
+            new_family = self.create_new_family()
             self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'save')
+            print('new family')
 
-        if self.family.split_flag != 0 and self.family.family_size > 23:  # join new family/migration
+        if self.family.split_flag != 0 and self.family.family_size >= 24:  # join new family/migration
             new_family = 0  # placeholder
             new_family = self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'load')
             new_family = self.migrate_to_new_family(new_family)
             self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'save')
+            print('main migration')
 
         if self.family.split_flag != 0 and self.family.family_size < 24:  # stop splitting; remain in family
             self.family.split_flag = 0
+            print('migration stopped')
             
         # Birth
         if (49 < self.model.step_in_year < 55) \
@@ -140,7 +147,6 @@ class Monkey(Agent):
                 # determine if he breaks off into an all-male subgroup
                 male_subgroup_choice = random.uniform(0, 1)
                 if male_subgroup_choice < 0.4:
-                    self.family_type = 'all_male'
                     if self.unique_id not in male_subgroup_list:
                         male_subgroup_list.append(self.unique_id)
 
@@ -204,10 +210,11 @@ class Monkey(Agent):
         from model import global_family_id_list
         new_family_id = int(global_family_id_list[-1] + 1)
         global_family_id_list.append(new_family_id)
+        saved_position = self.family.current_position
         family_type = 'all_male'
-        male_family = Family(new_family_id, self.model, len(male_subgroup_list),
-                             male_subgroup_list,
-                             family_type, split_flag)
+        split_flag = 0
+        male_family = Family(new_family_id, self.model, self.family.current_position, len(male_subgroup_list),
+                             male_subgroup_list, family_type, saved_position, split_flag)
         self.model.grid.place_agent(male_family, self.family.current_position)
         self.model.schedule.add(male_family)
         self.model.number_of_families += 1
@@ -218,7 +225,6 @@ class Monkey(Agent):
         from model import global_family_id_list
         new_family_id = int(global_family_id_list[-1] + 1)
         global_family_id_list.append(new_family_id)
-        self.family.split_flag = new_family_counter[-1]  # old family split_flag
         saved_position = self.family.current_position
         split_flag = 0  # 0 for new family
         family_type = 'traditional'

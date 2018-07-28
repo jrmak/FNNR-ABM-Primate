@@ -224,7 +224,6 @@ class Movement(Model):
         # necessary; tells model to move forward
         self.time += (1/73)
         self.step_in_year += 1
-        print(self.number_of_families)
         if self.step_in_year > 73:
             self.step_in_year = 1  # start new year
         self.schedule.step()
