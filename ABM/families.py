@@ -23,13 +23,14 @@ class Family(Agent):
     # it moves on the visualization grid, unlike individual monkey agents.
     # it is currently not important in the demographic model, just the visualization model.
     def __init__(self, unique_id, model, current_position, family_size, list_of_family_members, family_type,
-                 saved_position):
+                 saved_position, split_flag):
         super().__init__(unique_id, model)
         self.current_position = current_position
         self.family_size = family_size
         self.list_of_family_members = list_of_family_members
         self.family_type = family_type
         self.saved_position = saved_position
+        self.split_flag = split_flag
 
     def step(self):
         # movement rules for each pixel-agent at each step

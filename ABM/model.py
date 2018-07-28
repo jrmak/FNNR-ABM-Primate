@@ -158,8 +158,9 @@ class Movement(Model):
             family_id = i
             list_of_family_members = []
             family_type = 'traditional'  # as opposed to an all-male subgroup
+            split_flag = 0  # binary: 1 means its members start migrating out to a new family
             family = Family(family_id, self, starting_position, family_size, list_of_family_members, family_type,
-                            saved_position)
+                            saved_position, split_flag)
             self.grid.place_agent(family, starting_position)
             self.schedule.add(family)
             global_family_id_list.append(family_id)
@@ -170,12 +171,11 @@ class Movement(Model):
                 gender = random.randint(0, 1)
                 if gender == 1:  # gender = 1 is female, gender = 0 is male
                     female_list.append(id)
-                    last_birth_interval = random.uniform(0, 3.25)
+                    last_birth_interval = random.uniform(0, 3)
                 else:
                     male_maingroup_list.append(id)  # as opposed to the all-male subgroup
                     last_birth_interval = -9999  # males will never give birth
                 mother = 0  # no parent check for first generation
-                death_flag = 0
                 choice = random.random()  # 0 - 1 float - age is determined randomly based on weights
                 if choice <= 0.11:  # 11% of starting monkey population
                     age = random.uniform(0, 1)  # are randomly aged befween
@@ -212,20 +212,19 @@ class Movement(Model):
                     age_category = 5  # ages 25-30
                     demographic_structure_list[5] += 1
                     gender = 1
-                monkey = Monkey(id, self, starting_position, family_size, list_of_family_members, family_type,
-                                saved_position, gender, age, age_category, family_id, last_birth_interval, mother,
-                                death_flag)
-
+                monkey = Monkey(id, self, gender, age, age_category, family, last_birth_interval, mother
+                                )
                 self.number_of_monkeys += 1
                 self.monkey_id_count += 1
-                self.schedule.add(monkey)
                 list_of_family_members.append(monkey.unique_id)
+                self.schedule.add(monkey)
 
 
     def step(self):
         # necessary; tells model to move forward
         self.time += (1/73)
         self.step_in_year += 1
+        print(self.number_of_families)
         if self.step_in_year > 73:
             self.step_in_year = 1  # start new year
         self.schedule.step()
