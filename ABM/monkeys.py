@@ -5,26 +5,25 @@ This file runs the demographic submodel for the Guizhou golden monkey population
 """
 from families import *
 
-class Monkey(Family):
-    #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions
-    #  such as being born, aging, mating, dying, etc. in a different submodel
+male_migration_list = []
+new_family_counter = [0]
+new_male_family_counter = [0]
 
-    def __init__(self, unique_id, model, current_position, family_size, list_of_family_members, family_type,
-                 saved_position, gender, age, age_category, family_id, last_birth_interval, mother, death_flag):
-        super().__init__(unique_id, model, current_position, family_size, list_of_family_members, family_type,
-                         saved_position)
-        self.gender = gender
+class Monkey(Agent):
+    #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions
+    #  such as being born, aging, mating, dying, etc. in a different but related submodel
+    def __init__(self, unique_id, model, gender, age, age_category, family, last_birth_interval,
+                 mother):
+        super().__init__(unique_id, model)
         self.age = age
+        self.gender = gender
         self.age_category = age_category
-        self.family_id = family_id
+        self.family = family
         self.last_birth_interval = last_birth_interval
         self.mother = mother
-        self.death_flag = death_flag
 
     def step(self):
-
         # Aging
-        self.age += (1 / 73)  # every step is 5 days, or 1/73rd of a year
         self.check_age_category()
 
         # Check if mother of recently dead infant and count time since last birth
@@ -35,24 +34,44 @@ class Monkey(Family):
             self.last_birth_interval += 1 / 73
 
         # Check if male subgroup needs to break off of main group
-        if self.model.time < 5:  # Temporary fix: currently, the moving family agents do not consider age
-            # in the visualization, because aging would have very little impact on their movement behavior.
-            # This temporary fix simply prevents too many male subgroups from spawning if the model runs for
-            # longer than a few years; normally, older monkeys would die out,
-            # so there would not be too many all-male subgroups existing at a time.
-            self.create_male_subgroup()
+        if len(male_subgroup_list) > random.randint(10, 15):
+            male_family = self.create_male_subgroup()
+            new_male_family_counter.append(new_male_family_counter[-1] + 1)
+            self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'save')
+            for item in male_subgroup_list:
+                male_migration_list.append(item)
+            del male_subgroup_list[:]
 
-        if self.family_size > 45:
-            #self.create_new_group(self)
-            pass
+        if self.unique_id in male_migration_list:
+            male_family = 0  # placeholder
+            male_family = self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'load')
+            male_family = self.migrate_to_new_family(male_family)
+            self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'save')
+            male_migration_list.remove(self.unique_id)
 
+        if self.family.family_size > 45 and self.family.split_flag == 0:  # start splitting/create new family
+            new_family = self.create_new_family(self.family.family_type)
+            new_family_counter.append(new_family_counter[-1] + 1)
+            self.family.split_flag = new_family_counter[-1]
+            self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'save')
+            print('new_family')
+
+        if self.family.split_flag != 0 and self.family.family_size > 23:  # join new family/migration
+            new_family = 0  # placeholder
+            new_family = self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'load')
+            new_family = self.migrate_to_new_family(new_family)
+            self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'save')
+
+        if self.family.split_flag != 0 and self.family.family_size < 24:  # stop splitting; remain in family
+            self.family.split_flag = 0
+            print('migration stopped')
+            
         # Birth
         if (49 < self.model.step_in_year < 55) \
-                and (self.gender == 1 and 8 <= self.age <= 25):
+                and (self.gender == 1 and random.uniform(8, 9) <= self.age <= 25):
             if self.last_birth_interval >= 3:
-                self.family_size += 1
-                self.birth(self.current_position, self.family_size, self.family_id, self.unique_id,
-                           self.list_of_family_members)
+                self.family.family_size += 1
+                self.birth(self.family, self.unique_id)
                 self.last_birth_interval = 0
 
         # Death
@@ -123,8 +142,6 @@ class Monkey(Family):
                 # determine if he breaks off into an all-male subgroup
                 male_subgroup_choice = random.uniform(0, 1)
                 if male_subgroup_choice < 0.4:
-                    male_maingroup_list.remove(self.unique_id)  # male defects from main group
-                    self.family_id = 0
                     self.family_type = 'all_male'
                     if self.unique_id not in male_subgroup_list:
                         male_subgroup_list.append(self.unique_id)
@@ -139,32 +156,25 @@ class Monkey(Family):
             self.last_birth_interval = random.uniform(2, 2.4)
             recent_death_infant.remove(self.unique_id)
 
-    def birth(self, parent_current_position, new_family_size, parent_family, mother_id, list_of_family):
+    def birth(self, parent_family, mother_id):
         # birth from the agent-perspective of the new monkey agent
         last = self.model.monkey_id_count
-        current_position = parent_current_position
-        saved_position = current_position
-        family_size = new_family_size
+        family = parent_family
         gender = random.randint(0, 1)
         age = 0
         age_category = 0
-        family_id = parent_family
         if gender == 1:
-            last_birth_interval = random.uniform(0, 3)
+            last_birth_interval = 0
             female_list.append(last + 1)
         else:
             last_birth_interval = -9999
             male_maingroup_list.append(last + 1)
         mother = mother_id
-        list_of_family_members = list_of_family
-        list_of_family_members.append(last + 1)  # last + 1 = unique id
         if mother == 0 or mother == '0':
             mother = random.choice(random_mother_list)
-        family_type = 'traditional'
-        death_flag = 0  # actually useless for now, will delete later
-        new_monkey = Monkey(last + 1, self.model, current_position, family_size, list_of_family_members, family_type,
-                            saved_position, gender, age, age_category, family_id, last_birth_interval, mother,
-                            death_flag)
+        new_monkey = Monkey(last + 1, self.model, gender, age, age_category, family, last_birth_interval,
+                            mother)
+        new_monkey.family.list_of_family_members.append(self.unique_id)
         self.model.schedule.add(new_monkey)
         self.model.number_of_monkeys += 1
         self.model.monkey_id_count += 1
@@ -173,8 +183,12 @@ class Monkey(Family):
 
     def death(self):
         # death from the perspective of a monkey agent
-        self.death_flag = 1  # actually useless for now, will delete later
-        self.model.schedule.remove(self)
+        self.family.family_size -= 1
+        if self.family.family_size == 0:  # if this individual is the last member in their family--for all-male groups
+            global_family_id_list.remove(self.family)
+            self.model.number_of_families -= 1
+            self.model.grid.remove_agent(self.family)
+            self.model.schedule.remove(self.family)
         self.model.number_of_monkeys -= 1
         self.model.monkey_death_count += 1
         if self.unique_id in female_list:
@@ -185,20 +199,42 @@ class Monkey(Family):
             reproductive_female_list.remove(self.unique_id)
         if self.unique_id in random_mother_list:
             random_mother_list.remove(self.unique_id)
-        self.family_size -= 1
+        self.model.schedule.remove(self)
 
     def create_male_subgroup(self):
         # male subgroup forms a new family and shows up in the visualization under a new, differently-vegetationed pixel
-        if len(male_subgroup_list) > random.randint(10, 15):
-            from model import global_family_id_list
-            new_family_id = int(global_family_id_list[-1] + 1)
-            global_family_id_list.append(new_family_id)
-            family_type = 'all_male'
-            saved_position = self.current_position
-            male_family = Family(new_family_id, self.model, self.current_position, len(male_subgroup_list),
-                                 male_subgroup_list,
-                                 family_type, saved_position)
-            self.model.grid.place_agent(male_family, self.current_position)
-            self.model.schedule.add(male_family)
-            del male_subgroup_list[:]  # the list that builds up the male subgroup gets cleared each time once the new
-            # all-male family is actually created (which is done when 10-15 males have joined)
+        from model import global_family_id_list
+        new_family_id = int(global_family_id_list[-1] + 1)
+        global_family_id_list.append(new_family_id)
+        family_type = 'all_male'
+        male_family = Family(new_family_id, self.model, len(male_subgroup_list),
+                             male_subgroup_list,
+                             family_type, split_flag)
+        self.model.number_of_families += 1
+        self.model.grid.place_agent(male_family, self.family.current_position)
+        self.model.schedule.add(male_family)
+        return male_family
+
+    def create_new_family(self, family_type):
+        # a new family group forms when the size of the original group reaches < 45 members
+        from model import global_family_id_list
+        new_family_id = int(global_family_id_list[-1] + 1)
+        global_family_id_list.append(new_family_id)
+        self.family.split_flag = new_family_counter[-1]  # old family split_flag
+        saved_position = self.family.current_position
+        self.family.list_of_family_members.remove(self.unique_id)
+        split_flag = 0  # 0 for new family
+        new_family = Family(new_family_id, self.model, self.family.current_position, 1, [self.unique_id],
+                            family_type, saved_position, split_flag)
+        self.family.list_of_family_members.append(self.unique_id)
+        self.model.grid.place_agent(new_family, self.family.current_position)
+        self.model.schedule.add(new_family)
+        return new_family
+
+    def migrate_to_new_family(self, new_family):
+        self.family.family_size -= 1
+        self.family.list_of_family_members.remove(self.unique_id)
+        self.family = new_family
+        self.family.list_of_family_members.append(self.unique_id)
+        self.family.family_size += 1
+        return self.family
