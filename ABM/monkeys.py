@@ -8,7 +8,9 @@ from families import *
 male_migration_list = []
 new_family_counter = [0]
 new_male_family_counter = [0]
-
+old_family_ids = {}
+new_families_dict = {}
+new_male_families_dict = {}
 
 class Monkey(Agent):
     #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions
@@ -36,41 +38,33 @@ class Monkey(Agent):
             self.last_birth_interval += 1 / 73
 
         # Check if male subgroup needs to break off of main group
-        if len(male_subgroup_list) > random.randint(10, 15):
-            new_male_family_counter.append(new_male_family_counter[-1] + 1)
-            male_family = self.create_male_subgroup()
-            self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'save')
-            for item in male_subgroup_list:
-                male_migration_list.append(item)
-            del male_subgroup_list[:]
-            print('new male family')
 
         if self.unique_id in male_migration_list:
-            male_family = 0  # placeholder
-            male_family = self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'load')
-            male_family = self.migrate_to_new_family(male_family)
-            self.model.saveLoad(male_family, 'male_family' + str(new_male_family_counter[-1]), 'save')
+            new_family_list = new_male_families_dict[new_male_family_counter[-1]]
+            for new_male_family in new_family_list:  # extract from list; there should only be 1 value
+                self.migrate_to_new_family(new_male_family)
             male_migration_list.remove(self.unique_id)
-            print('male migration')
+            if self.unique_id in male_subgroup_list:
+                male_subgroup_list.remove(self.unique_id)
+
 
         if self.family.family_size > 46 and self.family.split_flag == 0:  # start splitting/create new family
             new_family_counter.append(new_family_counter[-1] + 1)
             self.family.split_flag = new_family_counter[-1]  # old family split_flag
+            old_family_ids.setdefault(self.family.unique_id, []).append(new_family_counter[-1])
             new_family = self.create_new_family()
-            self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'save')
-            print('new family')
+            new_families_dict.setdefault(new_family_counter[-1], []).append(new_family)
 
         if self.family.split_flag != 0 and self.family.family_size >= 24:  # join new family/migration
-            new_family = 0  # placeholder
-            new_family = self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'load')
-            new_family = self.migrate_to_new_family(new_family)
-            self.model.saveLoad(new_family, 'new_family' + str(self.family.split_flag), 'save')
-            print('main migration')
+            new_family_id_list = old_family_ids[self.family.unique_id]
+            for new_family_id in new_family_id_list:  # extract from list; there should only be 1 value
+                new_family_list = new_families_dict[new_family_id]
+            for new_family in new_family_list:  # extract from list; there should only be 1 value
+                self.migrate_to_new_family(new_family)
 
         if self.family.split_flag != 0 and self.family.family_size < 24:  # stop splitting; remain in family
             self.family.split_flag = 0
-            print('migration stopped')
-            
+
         # Birth
         if (49 < self.model.step_in_year < 55) \
                 and (self.gender == 1 and random.uniform(8, 9) <= self.age <= 25):
@@ -161,7 +155,7 @@ class Monkey(Agent):
             recent_death_infant.remove(self.unique_id)
 
     def birth(self, parent_family, mother_id):
-        # birth from the agent-perspective of the new monkey agent
+        # birth from the agent-perspective of the mother agent
         last = self.model.monkey_id_count
         family = parent_family
         gender = random.randint(0, 1)
@@ -178,7 +172,7 @@ class Monkey(Agent):
             mother = random.choice(random_mother_list)
         new_monkey = Monkey(last + 1, self.model, gender, age, age_category, family, last_birth_interval,
                             mother)
-        self.family.list_of_family_members.append(new_monkey.unique_id)
+        new_monkey.family.list_of_family_members.append(new_monkey.unique_id)
         self.model.schedule.add(new_monkey)
         self.model.number_of_monkeys += 1
         self.model.monkey_id_count += 1
@@ -205,20 +199,6 @@ class Monkey(Agent):
             random_mother_list.remove(self.unique_id)
         self.model.schedule.remove(self)
 
-    def create_male_subgroup(self):
-        # male subgroup forms a new family and shows up in the visualization under a new, differently-vegetationed pixel
-        from model import global_family_id_list
-        new_family_id = int(global_family_id_list[-1] + 1)
-        global_family_id_list.append(new_family_id)
-        saved_position = self.family.current_position
-        family_type = 'all_male'
-        split_flag = 0
-        male_family = Family(new_family_id, self.model, self.family.current_position, len(male_subgroup_list),
-                             male_subgroup_list, family_type, saved_position, split_flag)
-        self.model.grid.place_agent(male_family, self.family.current_position)
-        self.model.schedule.add(male_family)
-        self.model.number_of_families += 1
-        return male_family
 
     def create_new_family(self):
         # a new family group forms when the size of the original group reaches < 45 members
@@ -237,8 +217,8 @@ class Monkey(Agent):
 
     def migrate_to_new_family(self, new_family):
         self.family.family_size -= 1
-        self.family.list_of_family_members.remove(self.unique_id)
+        if self.unique_id in self.family.list_of_family_members:
+            self.family.list_of_family_members.remove(self.unique_id)
         self.family = new_family
         self.family.list_of_family_members.append(self.unique_id)
         self.family.family_size += 1
-        return self.family
