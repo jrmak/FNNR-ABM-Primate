@@ -11,6 +11,8 @@ from mesa.visualization.UserParam import UserSettableParameter
 from model import *
 from environment import *
 
+# 7-27-18
+
 # grid should be a square
 width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
 height = Movement._readASCII(Movement, vegetation_file)[2]  # index [2] returns 3rd argument of _readASCII's output

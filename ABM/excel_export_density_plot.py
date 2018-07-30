@@ -16,7 +16,7 @@ os.chdir(currentpath)  # uses current directory path
 def save_density_plot(moved_list, number):
     """Exports entries onto a .csv file"""
     try:
-        density_export = open('abm_export_density_plot_wo' + str(number) + '.csv', 'a+')  # a+ will create the file if it doesn't exist already
+        density_export = open('export_density_plot_wo' + str(number) + '.csv', 'a+')  # a+ will create the file if it doesn't exist already
         # a is also preferred to w here to append, rather than overwrite, values
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
