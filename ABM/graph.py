@@ -16,7 +16,7 @@ from families import demographic_structure_list, female_list, male_maingroup_lis
 monkey_population_list = []
 monkey_birth_count = []
 monkey_death_count = []
-counter = 31
+counter = 30
 
 model = Movement()  # run the model
 time = 73 * 10  # 73 time-steps of 5 days each for 10 years, 730 steps total

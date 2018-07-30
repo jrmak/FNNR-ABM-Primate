@@ -81,7 +81,7 @@ class Monkey(Agent):
         # the current formula uses: chance that a monkey does NOT die^73 = survival rate in one year
         # this gives a lower result than a similar formula that considers [yearly mortality rate]/73
         # formula may be changed later
-        if self.age <= 1 and chance <= 0.0034:  # 1 - 0.9966; 80% survival; see below
+        if self.age <= 1 and chance <= 0.00305:  # 1 - 0.9966; 80% survival; see below
             self.death()
             demographic_structure_list[0] -= 1
             recent_death_infant.append(self.mother)

@@ -35,16 +35,16 @@ newdict2 = sum_dict_values(dict2)
 union_difference = {x: abs(newdict1[x] - newdict2[x]) for x in newdict1 if x in newdict2}
 symmetric_difference = set(newdict1.items()) ^ set(newdict2.items())
 
-difference = union_difference.copy()
-difference.update(symmetric_difference)
-
+#difference = union_difference.copy()
+#difference.update(symmetric_difference)
+difference = set(newdict1.items()) - set(newdict2.items())
 try:
-    diff = open('difference.csv', 'a+')  # a+ will create the file if it doesn't exist already
+    diff = open('difference2.csv', 'a+')  # a+ will create the file if it doesn't exist already
     # diff = open('kappa_average_w.csv', 'a+')
     # diff = open('kappa_average_w.csv', 'a+')  # comparing with vs. without
 except IOError:
     print('Please close Excel and retry.')  # will not work if the .csv is already open
-for k, v in difference.items():
+for k, v in difference:
     for i in range(v):
         diff.writelines(k)
         diff.writelines('\n')

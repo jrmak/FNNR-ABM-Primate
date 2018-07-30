@@ -111,7 +111,7 @@ def writeKappa(count, kappa_output):
     # text2 = 'maxent.csv'
     # print('Progress: ' + str(number) + ' / 30')
 
-text1 = 'difference.csv'
+text1 = 'difference2.csv'
 text2 = 'maxent.csv'
 list1 = readCSV(text1)
 list2 = readCSV(text2)
