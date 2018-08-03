@@ -4,7 +4,7 @@ Welcome! This project seeks to understand population demographics and factors af
 It uses Mesa, a library framework with tools designed to support agent-based modeling in Python 3.X.
 
 An overview of Mesa can be found at: https://mesa.readthedocs.io/en/master/overview.html
-A more through doc can be found at: https://media.readthedocs.org/pdf/mesa/latest/mesa.pdf
+A more thorough doc can be found at: https://media.readthedocs.org/pdf/mesa/latest/mesa.pdf
 
 Documentation for this project--as well as the source code available for download--can be found on this page.
 
@@ -18,7 +18,7 @@ If you have errors running the code and it is library-related, make sure Mesa's 
 Monkey movements are semi-randomized, and based on the weighted value of their 8-neighbor surroundings.
 This weighted value is currently determined by elevation (changeable in code; requires a raster layer converted to an ASCII file).
 
-3b. Run 'graph.py' to see population demographic charts after 1 year, or 73 time-steps (changeable in code).
+3b. Run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code).
 
 This project is incomplete.
 For more information, contact the owner of this repository.
