@@ -3,6 +3,7 @@
 """
 This file runs the demographic submodel for the Guizhou golden monkey population (birth, death, aging, etc.).
 """
+
 from families import *
 
 male_migration_list = []
@@ -20,17 +21,17 @@ class Monkey(Agent):
         super().__init__(unique_id, model)
         self.age = age
         self.gender = gender
-        self.age_category = age_category
-        self.family = family
-        self.last_birth_interval = last_birth_interval
+        self.age_category = age_category  # ages 0-1, 3-7, etc.
+        self.family = family  # family ID
+        self.last_birth_interval = last_birth_interval  # only really applies to females who give birth
         self.mother = mother
 
     def step(self):
         # Aging
-        self.check_age_category()
+        self.check_age_category()  # changes the monkey's age category if they have just aged to a threshold #
         self.age += (1 / 73)
 
-        # Check if mother of recently dead infant and count time since last birth
+        # Check if an individual is a mother of recently dead infant, and count time since last birth
         if self.unique_id in reproductive_female_list:
             if self.unique_id not in random_mother_list:
                 random_mother_list.append(self.unique_id)
@@ -38,7 +39,6 @@ class Monkey(Agent):
             self.last_birth_interval += 1 / 73
 
         # Check if male subgroup needs to break off of main group
-
         if self.unique_id in male_migration_list:
             new_family_list = new_male_families_dict[new_male_family_counter[-1]]
             for new_male_family in new_family_list:  # extract from list; there should only be 1 value
@@ -48,6 +48,7 @@ class Monkey(Agent):
                 male_subgroup_list.remove(self.unique_id)
 
 
+        # if a family group is too large, it splits into two
         if self.family.family_size > 46 and self.family.split_flag == 0:  # start splitting/create new family
             new_family_counter.append(new_family_counter[-1] + 1)
             self.family.split_flag = new_family_counter[-1]  # old family split_flag
@@ -55,6 +56,7 @@ class Monkey(Agent):
             new_family = self.create_new_family()
             new_families_dict.setdefault(new_family_counter[-1], []).append(new_family)
 
+        # if a family group is splitting, monkeys within it are flagged to migrate out
         if self.family.split_flag != 0 and self.family.family_size >= 24:  # join new family/migration
             new_family_id_list = old_family_ids[self.family.unique_id]
             for new_family_id in new_family_id_list:  # extract from list; there should only be 1 value
@@ -62,10 +64,11 @@ class Monkey(Agent):
             for new_family in new_family_list:  # extract from list; there should only be 1 value
                 self.migrate_to_new_family(new_family)
 
+        # if a family group is splitting, it stops splitting when the number of individuals is low enough
         if self.family.split_flag != 0 and self.family.family_size < 24:  # stop splitting; remain in family
             self.family.split_flag = 0
 
-        # Birth
+        # Birth from the mother's perspective
         if (49 < self.model.step_in_year < 55) \
                 and (self.gender == 1 and random.uniform(8, 9) <= self.age <= 25):
             if self.last_birth_interval >= 3:
@@ -155,7 +158,7 @@ class Monkey(Agent):
             recent_death_infant.remove(self.unique_id)
 
     def birth(self, parent_family, mother_id):
-        # birth from the agent-perspective of the mother agent
+        # birth from the agent-perspective of the mother agent; creates a new monkey individual
         last = self.model.monkey_id_count
         family = parent_family
         gender = random.randint(0, 1)
@@ -202,11 +205,12 @@ class Monkey(Agent):
 
     def create_new_family(self):
         # a new family group forms when the size of the original group reaches < 45 members
+        # this is done from the self perspective, but nothing happens to the individual besides the group forming
         from model import global_family_id_list
-        new_family_id = int(global_family_id_list[-1] + 1)
+        new_family_id = int(global_family_id_list[-1] + 1)  # the new family_id is the latest id + 1
         global_family_id_list.append(new_family_id)
         saved_position = self.family.current_position
-        split_flag = 0  # 0 for new family
+        split_flag = 0  # 0 for new family; new families do not start splitting by default
         family_type = 'traditional'
         new_family = Family(new_family_id, self.model, self.family.current_position, 1, [self.unique_id],
                             family_type, saved_position, split_flag)
@@ -216,6 +220,8 @@ class Monkey(Agent):
         return new_family
 
     def migrate_to_new_family(self, new_family):
+        # removes and adds self to certain lists, and changes self attributes, to migrate self to a new family
+        # this occurs when a male is migrating to an all-male group or a bigger family is splitting into two
         self.family.family_size -= 1
         if self.unique_id in self.family.list_of_family_members:
             self.family.list_of_family_members.remove(self.unique_id)

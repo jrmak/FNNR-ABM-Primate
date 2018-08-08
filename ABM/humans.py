@@ -11,7 +11,8 @@ human_avoidance_list = []  # sets coordinate positions the monkeys should not st
 # Neighboring cells of human activity may also be added to this list.
 
 def _readCSV(text):
-    # reads in a .csv file
+    # reads in a .csv file.
+    # separate from _readASCII in model.py, which reads .asc files.
     cells = []
     f = open(text, 'r')
     body = f.readlines()
@@ -47,10 +48,10 @@ class Human(Agent):
         human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
         for human_neighbor in human_neighboring_grids:
              human_avoidance_list.append(human_neighbor)
-        if self.resource_check == 0:
+        if self.resource_check == 0: # if the human does not have the resource, head towards it
             self.move_to_point(self.resource_position, self.resource_frequency)
         else:
-            self.move_to_point(tuple(self.home_position), self.resource_frequency)
+            self.move_to_point(tuple(self.home_position), self.resource_frequency)  # else, head home
             if current_position[0] == list(self.home_position)[0] and current_position[1] == list(self.home_position)[1]:
                 # if you are back home, go out and collect resources again if frequency permits
                 self.resource_check = 0
@@ -61,17 +62,20 @@ class Human(Agent):
                     self.resource_position = resource.position
                     # print(self.resource_position, self.current_position, self.home_position)
                 except KeyError:
-                    pass
+                    pass  # this "pass" occurs because
                     # not all households collect resources
 
         if self.age > 70:
             pass
-            # may input human aging later
+            # may input human aging later. for example -
             # if random.uniform(0, 1) > 0.95:
             #     self.death()
 
     def death(self):
+        # currently not used
+        # must implement birth() (not created yet) too if used
         self.model.schedule.remove(self)
+        self.model.grid.remove_agent(self)
 
     def move_to(self, pos):
         if pos != None:
@@ -103,6 +107,8 @@ class Human(Agent):
             self.resource_frequency += self.resource_frequency / 6
 
 class Resource(Agent):
+    # Resources are fuelwood, mushrooms, herbs, etc. (see 'type') that humans collect.
+    # They are considered agents in case a future version of the model makes them limited (accounts for land change).
     def __init__(self, unique_id, model, position, hh_id_match, type, frequency):
         super().__init__(unique_id, model)
         self.position = position

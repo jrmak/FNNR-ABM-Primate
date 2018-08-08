@@ -1,4 +1,8 @@
-# this module is similar to symbology -> classification in ArcMap
+# !/usr/bin/python
+
+# This module is similar to symbology -> classification in ArcMap.
+# Land categories are typed as classes so that they can undergo land change in case that feature is ever added
+# to the model in the future.
 
 from mesa.agent import Agent
 
@@ -8,6 +12,7 @@ class Environment(Agent):
         super().__init__(unique_id, model)
         self.pos = pos
         self.elevation = elevation
+
     def step(self):
         pass
 

@@ -44,7 +44,7 @@ class Family(Agent):
         # print(self.model.grid_type)
         # Movement for families is defined below
 
-        if 17 < self.model.step_in_year < 25 or 47 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
+        if 16 < self.model.step_in_year < 25 or 46 < self.model.step_in_year < 55:  # head to Yangaoping for Apr/Sept
             # April: steps 19-25
             # September: steps 49-55
             yangaoping = [random.randint(50, 70), random.randint(70, 90)]
@@ -79,11 +79,8 @@ class Family(Agent):
                 self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'save')
             rest_of_reserve = self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'load')
             rest_of_reserve_choice = random.choice(rest_of_reserve)
-            #center = [50, 30]
-            load_dict = {}
-            masterdict = self.model.saveLoad(load_dict, 'masterdict_without_humans', 'load')
-            center = random.choice(masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous'])
-            for i in range(random.randint(5, 15)):  # when returning to the rest of the reserve after Yangaoping
+            center = [50, 50]
+            for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
                 self.move_to_point(self.current_position, rest_of_reserve_choice)
                 if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     self.current_position in masterdict['Outside_FNNR']:
@@ -121,6 +118,7 @@ class Family(Agent):
             moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
     def move_to_point(self, current_position, new_position):
+        # Brings a pixel to a certain point. Uses self.move_to within the function.
         current_position = list(current_position)  # current position
         if current_position[0] < new_position[0]:  # if the current position is away from Yaogaoping,
             current_position[0] = current_position[0] + 1  # move it closer
@@ -142,7 +140,7 @@ class Family(Agent):
             self.current_position = current_position
 
     def check_vegetation_of_neighbor(self, neighborlist, neighbordict):
-        # returns a list of neighbors as vegetation
+        # returns a list of neighbors as vegetation types
         neighbor_veg = {}
         neighbor_veg_list = []
         for neighbor in neighborlist:
@@ -183,7 +181,7 @@ class Family(Agent):
         # neighbordict is a dictionary with all vegetation categories and their corresponding grid values
         # neighborlist is a list of 8-cell neighbors to the current position
         neighbor_veg = self.check_vegetation_of_neighbor(neighborlist, neighbordict)
-        # weights below were taken from the pseudocode
+        # weights below were taken from the pseudocode, and can be modified
         for vegetation in neighbor_veg:
             if vegetation == 'Elevation_Out_of_Bound':
                 weight = 0

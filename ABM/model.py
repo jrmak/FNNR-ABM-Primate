@@ -3,10 +3,15 @@
 from mesa.model import Model
 from mesa.space import MultiGrid
 from mesa.time import RandomActivation
+# each of these are classes imported from the Mesa library.
+
 from monkeys import *
 from environment import *
 from humans import _readCSV, Human, Resource
-from resource_dict import resource_dict
+# these are files created by the project.
+# monkeys.py control the individual monkey agents for the population submodel.
+# environment.py controls environmental resource tiles (currently static in behavior).
+# humans.py controls the human agents for the visualization submodel.
 import pickle
 
 
@@ -23,7 +28,7 @@ household_list = [2, 3, 5, 6, 8, 9, 11, 14, 15, 16, 17, 19, 22, 25, 27, 30, 31, 
                  123, 128, 129, 131, 132, 134, 135, 136, 137, 138, 140, 141, 142, 143, 144, 145, 146, 148, 149, 150,
                  151, 153, 154, 155, 157, 159, 161, 163, 165, 166, 167, 169]
 vegetation_file = 'agg_veg60.txt'  # change these filenames to another file in the same directory as needed
-elevation_file = 'agg_dem_87100.txt'  # I will upload more versions of the buffer zones later
+elevation_file = 'agg_dem_87100.txt'  # files must be in .txt or ascii format at the right resolution (around 85x100)
 household_file = 'hh_ascii400.txt'
 farm_file = 'farm_ascii300.txt'
 pes_file = 'pes_ascii200.txt'
@@ -38,7 +43,8 @@ class Movement(Model):
                  time = 0, step_in_year = 0,
                  number_of_families = 20, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0, monkey_id_count = 0, grid_type = 'with_humans', run_type = 'normal_run'):
-        # change the # of families here for graph.py, but use server.py to change # of families in the movement model
+        # change the # of families here for the populations submodel (graph.py),
+        # but use server.py to change # of families in the movement model.
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
         self.width = width
@@ -229,14 +235,14 @@ class Movement(Model):
         self.schedule.step()
 
     def _readASCII(self, text):
-        # reads in a text file that determines the environmental grid setup
+        # reads in a text (.txt) file with a 6-line ASCII header that determines the environmental grid setup
         f = open(text, 'r')
         body = f.readlines()
         width = body[0][-4:]  # last 4 characters of line that contains the 'width' value
-        height = body[1][-5:]
-        abody = body[6:]  # ASCII file with a header
+        height = body[1][-5:]  # last 5 characters of line that contains the 'height' value
+        abody = body[6:]  # ASCII file with a header - ignores first few lines
         f.close()
-        abody = reversed(abody)
+        abody = reversed(abody)  # loads upside down otherwise
         cells = []
         for line in abody:
             cells.append(line.split(" "))

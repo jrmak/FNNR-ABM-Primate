@@ -1,10 +1,9 @@
 # !/usr/bin/python
+# 8/7/2018
 
 """
 This document runs the server and helps visualize the agents.
 """
-
-# 7-27-18
 
 from excel_export_summary import *
 from excel_export_density_plot import *
@@ -16,10 +15,10 @@ from families import demographic_structure_list, female_list, male_maingroup_lis
 monkey_population_list = []
 monkey_birth_count = []
 monkey_death_count = []
-counter = 30
+counter = 31
 
 model = Movement()  # run the model
-time = 73 * 10  # 73 time-steps of 5 days each for 10 years, 730 steps total
+time = 73 * 10 # 73 time-steps of 5 days each for 10 years, 730 steps total
 # erase_summary()  # clears the Excel file to overwrite
 # erase_density_plot()
 for t in range(time):  # for each time-step in the time we just defined,
@@ -33,7 +32,7 @@ for t in range(time):  # for each time-step in the time we just defined,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
 save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
-# save_summary writes the Excel file; see excel_export_summary
+    # save_summary writes the Excel file; see excel_export_summary
 save_density_plot(moved_list, counter)
 
 plt.subplot(211)
