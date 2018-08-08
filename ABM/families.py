@@ -272,7 +272,10 @@ class Family(Agent):
             try:
                 assert int(newsum) == 1
             except AssertionError:
-                direction = self.current_position
+                if self.current_position != None:
+                    direction = self.current_position
+                else:
+                    direction = self.saved_position
             return direction
 
     def move_to(self, current_position):
