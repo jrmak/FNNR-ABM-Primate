@@ -1,4 +1,6 @@
 ---Version History---
+8/8 - Updated code comments
+8/9 - Updated User Manual; uploaded some data (Excel files used for kappa analysis)
 ***7/16 note: this is extremely outdated. I will update this and the rest of my documentation after my thesis has been sent to the committee, hopefully between July 30th and August 13th.
 7/16 - Code's handling of heatmaps finalized. Code runs on my computers but not advisor's.
 7/14 - Humans and resource gathering integrated into the code.
