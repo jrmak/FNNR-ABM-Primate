@@ -94,9 +94,17 @@ class Family(Agent):
             rest_of_reserve_choice = random.choice(rest_of_reserve)
             center = [50, 50]
             for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
-                from humans import human_avoidance_list
-                if self.current_position not in human_avoidance_list:
-                    self.move_to_point(self.current_position, rest_of_reserve_choice)
+                correlation = 0.8
+                if random.uniform(0, 1) < correlation:
+                    from humans import human_avoidance_list
+                    if self.current_position not in human_avoidance_list:
+                        self.move_to_point(self.current_position, rest_of_reserve_choice)
+                else:
+                    neig = self.model.grid.get_neighborhood(self.current_position, True, False)
+                    current_position = self.neighbor_choice(neig, masterdict)
+                    from humans import human_avoidance_list
+                    if current_position not in human_avoidance_list:
+                        self.move_to(current_position)
                 if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     self.current_position in masterdict['Outside_FNNR']:
                     # the movement formula may land the monkeys in territory where they cannot move.
