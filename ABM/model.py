@@ -136,6 +136,7 @@ class Movement(Model):
 
         # Creation of humans (brown dots in simulation)
         human_id = 0
+        schedule_temp_list = []
         for line in _readCSV('household.csv')[1:]:
             hh_id = line[0]  # household ID for that human
             starting_position = (int(line[4]), int(line[3]))
@@ -155,7 +156,8 @@ class Movement(Model):
             if self.grid_type == 'with_humans':
                 self.grid.place_agent(human, starting_position)
                 self.schedule.add(human)
-
+                schedule_temp_list.append(human)
+                
         # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block create families
             starting_position = random.choice(startinglist)
@@ -170,6 +172,7 @@ class Movement(Model):
                             saved_position, split_flag)
             self.grid.place_agent(family, starting_position)
             self.schedule.add(family)
+            schedule_temp_list.append(family)
             global_family_id_list.append(family_id)
 
             # Creation of individual monkeys (not in the visualization submodel, but for the demographic submodel)
@@ -224,7 +227,9 @@ class Movement(Model):
                 self.number_of_monkeys += 1
                 self.monkey_id_count += 1
                 list_of_family_members.append(monkey.unique_id)
-                self.schedule.add(monkey)
+                self.schedule.add(monkey)           	
+       for x in schedule_temp_list:
+           self.schedule.add(x)
 
     def step(self):
         # necessary; tells model to move forward
