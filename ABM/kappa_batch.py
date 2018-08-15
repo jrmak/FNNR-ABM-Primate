@@ -1,24 +1,10 @@
+# !/usr/bin/python
+
 import os
 import inspect
-import csv
 
-
-# old version of function
 """
-def readCSV(file):
-    list1 = []
-    list2 = []
-    f = open(file, 'r')
-    body = f.readlines()
-    abody = body[2:]  # ignore header
-    f.close()
-    for line in abody: # format ('57,42,62,73')
-        list1.append(line[:5].strip("\\n"))  # first coordinates of line (first 5 characters, e.g. '57,42')
-        list2.append(str(line[-6:-1]))  # second coordinates of line (last 5 characters, e.g. '62,73')
-    return [list1, list2]
-
-list1 = readCSV(text)[0]
-list2 = readCSV(text)[1]
+This file calculates the kappa statistic for two heatmap outputs (csv file of movements) of the visualization submodel.
 """
 
 def readCSV(file):
@@ -73,6 +59,7 @@ def calculate_count_x(list1, list2, x):
 
     # print(with_and_without_count, with_count, without_count, neither_count)
     return(with_and_without_count, with_count, without_count, neither_count, x, 2975)
+    # 1425 data points in the FNNR, 2975 in 35x85
 
 currentpath = str(inspect.getfile(inspect.currentframe()))[:-14]  # removes 'kappa_batch.py' at end
 os.chdir(currentpath)  # uses current directory path

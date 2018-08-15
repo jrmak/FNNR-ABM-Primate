@@ -51,7 +51,20 @@ class Family(Agent):
             # The grid is drawn from the bottom, so even though it is currently 85 x 100,
             # these numbers are relatively high because they indicate the top right corner of the grid
             for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
-                self.move_to_point(self.current_position, yangaoping)
+                correlation = 0.8
+                if random.uniform(0, 1) < correlation:
+                    from humans import human_avoidance_list
+                    if self.current_position not in human_avoidance_list:
+                        self.move_to_point(self.current_position, yangaoping)
+                else:
+                    neig = self.model.grid.get_neighborhood(self.current_position, True, False)
+                    current_position = self.neighbor_choice(neig, masterdict)
+                    from humans import human_avoidance_list
+                    if current_position not in human_avoidance_list:
+                        self.move_to(current_position)
+                        if current_position is not None:
+                            self.current_position = current_position
+                            moved_list.append(self.current_position)  # moved_list records positions for the heatmap
                 if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     self.current_position in masterdict['Outside_FNNR']:
                     # the movement formula may land the monkeys in territory where they cannot move.
@@ -81,7 +94,9 @@ class Family(Agent):
             rest_of_reserve_choice = random.choice(rest_of_reserve)
             center = [50, 50]
             for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
-                self.move_to_point(self.current_position, rest_of_reserve_choice)
+                from humans import human_avoidance_list
+                if self.current_position not in human_avoidance_list:
+                    self.move_to_point(self.current_position, rest_of_reserve_choice)
                 if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     self.current_position in masterdict['Outside_FNNR']:
                     # the movement formula may land the monkeys in territory where they cannot move.
@@ -96,11 +111,13 @@ class Family(Agent):
 
         else:
             # When it is not about to be breeding season/during it/just past it, move according to vegetation
-            if self.current_position in masterdict['Elevation_Out_of_Bound']:
+            if self.current_position in masterdict['Elevation_Out_of_Bound'] or self.current_position \
+                in masterdict['Outside_FNNR']:
                 center = [50, 50]
                 for i in range(random.randint(5, 10)):
                     self.move_to_point(self.current_position, center)
-                if self.current_position in masterdict['Elevation_Out_of_Bound']:  # still
+                if self.current_position in masterdict['Elevation_Out_of_Bound'] or self.current_position \
+                        in masterdict['Outside_FNNR']:  # repeat last step if still out of bounds
                     center = [50, 50]
                     for i in range(random.randint(5, 10)):
                         self.move_to_point(self.current_position, center)
@@ -118,7 +135,7 @@ class Family(Agent):
             moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
     def move_to_point(self, current_position, new_position):
-        # Brings a pixel to a certain point. Uses self.move_to within the function.
+        # Brings a pixel to a certain point using a correlated walk. Uses self.move_to within the function.
         current_position = list(current_position)  # current position
         if current_position[0] < new_position[0]:  # if the current position is away from Yaogaoping,
             current_position[0] = current_position[0] + 1  # move it closer
@@ -182,6 +199,7 @@ class Family(Agent):
         # neighborlist is a list of 8-cell neighbors to the current position
         neighbor_veg = self.check_vegetation_of_neighbor(neighborlist, neighbordict)
         # weights below were taken from the pseudocode, and can be modified
+        # for better code, a dictionary can be created instead of the below structure
         for vegetation in neighbor_veg:
             if vegetation == 'Elevation_Out_of_Bound':
                 weight = 0
@@ -232,7 +250,8 @@ class Family(Agent):
             #  and all of the continuous ranges summed up to 16.
 
             # a new weighted-choice function in Python 3.6 eliminates the need for this formula; however,
-            # this project will not chnage its dependencies at this point.
+            # this project will not change its dependencies at this point (Python 3.6 is required for this choice
+            # function).
             chance = random.uniform(0, 1)
 
             oldsum = 0
