@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 """
 Finds the symmetric difference of the two scenarios' heatmaps ('With Humans' vs. 'Without Humans').
 """
