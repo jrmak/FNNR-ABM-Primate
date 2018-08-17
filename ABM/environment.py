@@ -1,5 +1,3 @@
-# !/usr/bin/python
-
 # This module is similar to symbology -> classification in ArcMap.
 # Land categories are typed as classes so that they can undergo land change in case that feature is ever added
 # to the model in the future.
