@@ -2,7 +2,8 @@
 
 """
 Graphs a line "walk" from a list of traveled coordinates.
-Code from http://nbviewer.jupyter.org/gist/boarpig/92228a4d3e4653ccd0cd
+Note: Only works when number_of_families = 1 is set in model.py's Model parameters--otherwise, lines will
+inaccurately connect separate agents' movements together
 """
 
 from random import choice
@@ -18,19 +19,6 @@ def readCSVInt(text):
     for line in body[2:]:
         cells.append(line.strip("\n").replace(" ","").split(","))
     return cells
-
-def walk():
-    place = [0, 0]
-    directions = ((-1, 1), (0, 1), (1, 1),
-             (-1, 0)        , (1, 0),
-             (-1, -1), (0, -1), (1, -1))
-    points = [(0, 0)]
-    for i in range(100):
-        direction = choice(directions)
-        place[0] += direction[0]
-        place[1] += direction[1]
-        points.append(place[:])
-    return points
 
 tuple_excel_walk = []
 excel_walk = readCSVInt('abm_export_density_plot_single1.csv')
