@@ -1,3 +1,10 @@
+#!/usr/bin/python
+
+"""
+Deletes coordinates from a csv file if its y value is below 65 (for an 85x100 spatial grid,
+this creates an 85x35 segment of the top portion).
+"""
+
 text = 'abm_export_density_plot_wo'
 
 #text = 'testing.csv'
