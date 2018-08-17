@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-"
+"""
 Converts Maxent results into a rough heatmap.
-"
+"""
 
 import csv
 import inspect
