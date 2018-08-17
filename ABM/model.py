@@ -1,4 +1,7 @@
-# !/usr/bin/python
+"""
+This module processes the main model.
+To run the code, however, please run server.py (for the movement submodel) or graph.py (for the population submodel).
+"""
 
 from mesa.model import Model
 from mesa.space import MultiGrid
