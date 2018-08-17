@@ -1,7 +1,5 @@
-# !/usr/bin/python
-
 """
-This file runs the demographic submodel for the Guizhou golden monkey population (birth, death, aging, etc.).
+This file handles the demographic submodel for the Guizhou golden monkey population (birth, death, aging, etc.).
 """
 
 from families import *
