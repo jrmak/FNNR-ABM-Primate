@@ -1,7 +1,5 @@
-# !/usr/bin/python
-
 """
-This document imports human data from the excel file.
+This document imports human data from the Excel file containing Shuang's survey results and determines behavior for human agents.
 """
 
 from mesa.agent import Agent
