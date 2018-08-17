@@ -1,5 +1,3 @@
-# !/usr/bin/python
-
 """
 This file determines behavior for family agents in the visualization grid.
 """
