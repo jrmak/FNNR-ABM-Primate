@@ -1,3 +1,7 @@
+"""
+Finds the symmetric difference of the two scenarios' heatmaps ('With Humans' vs. 'Without Humans').
+"""
+
 text1 = 'export_density_plot_w30.csv'
 text2 = 'export_density_plot_wo30.csv'
 
