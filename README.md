@@ -6,19 +6,19 @@ It uses Mesa, a library framework with tools designed to support agent-based mod
 An overview of Mesa can be found at: https://mesa.readthedocs.io/en/master/overview.html
 A more thorough doc can be found at: https://media.readthedocs.org/pdf/mesa/latest/mesa.pdf
 
-Documentation for this project--as well as the source code available for download--can be found on this page.
+Documentation for this project--as well as the source code available for download--can be found here. Please refer to the User's Manual.
 
 Instructions for Running the Code:
 1. Have Python 3.X installed, as well as the Mesa (which comes with dependencies such as numpy, pandas, and tornado) and matplotlib libraries.
 If you have errors running the code and it is library-related, make sure Mesa's edition is 0.8.3, and tornado's edition is 4.5.2.
 
-2. Download the code. Files are found in the ABM folder.
+2. Download the code. Files are found in the ABM folder, though the Data folder has some files that are used for processing the data, using Microsoft Excel for some parts. Please refer to the later sections of the User's Manual, found in the parent directory of this repository, for more information.
 
 3a. Run 'server.py' to launch a web browser with an interactive visualization module of monkey movement.
 Monkey movements are semi-randomized, and based on the weighted value of their 8-neighbor surroundings.
 This weighted value is currently determined by elevation (changeable in code; requires a raster layer converted to an ASCII file).
+Alternatively, if you have a slow computer, a web app version of server.py can be found at http://abm-webapp-abm.193b.starter-ca-central-1.openshiftapps.com/.
 
-3b. Run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code).
+3b. Run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code). graph.py also provides all data output (Excel file export)--graph.py is the main file to run for data analysis; server.py is simply a demonstration.
 
-This project is incomplete.
 For more information, contact the owner of this repository.
