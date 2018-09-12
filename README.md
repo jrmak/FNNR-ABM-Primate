@@ -16,8 +16,9 @@ If you have errors running the code and it is library-related, make sure Mesa's 
 
 3a. Run 'server.py' to launch a web browser with an interactive visualization module of monkey movement.
 Monkey movements are semi-randomized, and based on the weighted value of their 8-neighbor surroundings.
-This weighted value is currently determined by elevation (changeable in code; requires a raster layer converted to an ASCII file).
-Alternatively, if you have a slow computer, a web app version of server.py can be found at http://abm-webapp-abm.193b.starter-ca-central-1.openshiftapps.com/.
+This weighted value is currently determined by vegetation, human presence, season, and elevation (changeable in code; requires raster layers converted to an ASCII file).
+
+A web app version of server.py can be found at http://abm-webapp-abm.193b.starter-ca-central-1.openshiftapps.com/.
 
 3b. Run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code). graph.py also provides all data output (Excel file export)--graph.py is the main file to run for data analysis; server.py is simply a demonstration.
 
