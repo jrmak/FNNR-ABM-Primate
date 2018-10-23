@@ -145,9 +145,16 @@ class Movement(Model):
                 resource_position = starting_position  # some households don't collect resources
             human_id += 1
             resource_check = 0
-            human = Human(human_id, self, starting_position, hh_id, random.randint(15, 59),  # ages 15-59 randomly
+            age = random.randint(15, 59)
+            gender = random.choice([1, 2])
+            if age > 19 and random.random() > 0.60:
+                marriage = 1
+            else:
+                marriage = 0
+            human = Human(human_id, self, starting_position, hh_id, age,
                           resource_check, starting_position, resource_position,
-                          resource_frequency)  # currently, human age is not being used in the model
+                          resource_frequency, gender, education, work_status,
+                          marriage, past_hh_id, migration_status)
             if self.grid_type == 'with_humans':
                 self.grid.place_agent(human, starting_position)
                 self.schedule.add(human)
