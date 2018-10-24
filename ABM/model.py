@@ -132,9 +132,10 @@ class Movement(Model):
 
         # Creation of humans (brown dots in simulation)
         human_id = 0
-        for line in _readCSV('household.csv')[1:]:
-            hh_id = line[0]  # household ID for that human
-            starting_position = (int(line[4]), int(line[3]))
+        for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each hh:
+            household = line[0]
+            for line in _readCSV('household.csv')[1:]:  # exclude headers; for each hh:
+                starting_position = (int(line[4]), int(line[3]))
             try:
                 resource = random.choice(resource_dict[hh_id])  # random resource point for human
                 resource_position = resource.position
@@ -143,11 +144,51 @@ class Movement(Model):
                 # to another randomly-picked resource
             except KeyError:
                 resource_position = starting_position  # some households don't collect resources
+
+            hh_gender_list = line[1:10]
+            hh_age_list = line[10:19]
+            hh_education_list = line[20:29]
+            hh_marriage_list = line[30:39]
+
+            # creation of non-migrants
+            for list_item in hh_age_list:
+                if str(list_item) == '-3' or str(list_item) == '':
+                    hh_age_list.remove(list_item)
+            for x in range(len(hh_age_list) - 1):
+                person = []
+                for item in [hh_age_list, hh_gender_list, hh_education_list, hh_marriage_list]:
+                    human_id += 1
+                    person.append(item[x])
+                    age = person[0]
+                    gender = person[1]
+                    education = person[2]
+                    marriage = person[3]
+                    if str(person[0]) != '':  # sorts out all blanks
+                        migration_status = 0
+                        resource_check = 0
+                        human = Human(human_id, self, starting_position, hh_id, age,  # creates human
+                                  resource_check, starting_position, resource_position,
+                                  resource_frequency, gender, education, work_status,
+                                  marriage, past_hh_id, migration_status)
+
+                        if self.grid_type == 'with_humans':
+                            self.grid.place_agent(human, starting_position)
+                            self.schedule.add(human)
+
+            # creation of migrants
+            hh_migrants = line[40:43]  # age, gender, marriage, education of migrant
             human_id += 1
+            age = hh_migrants[0]
+            gender = hh_migrants[1]
+            education = hh_migrants[2]
+            marriage = hh_migrants[3]
+            migration_status = 1
             resource_check = 0
-            human = Human(human_id, self, starting_position, hh_id, random.randint(15, 59),  # ages 15-59 randomly
+            human = Human(human_id, self, starting_position, hh_id, age,  # creates human
                           resource_check, starting_position, resource_position,
-                          resource_frequency)  # currently, human age is not being used in the model
+                          resource_frequency, gender, education, work_status,
+                          marriage, past_hh_id, migration_status)
+
             if self.grid_type == 'with_humans':
                 self.grid.place_agent(human, starting_position)
                 self.schedule.add(human)

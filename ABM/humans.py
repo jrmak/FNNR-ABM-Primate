@@ -5,6 +5,8 @@ This document imports human data from the Excel file containing Shuang's survey 
 from mesa.agent import Agent
 import random
 
+single_male_list = []
+married_male_list = []
 human_avoidance_list = []  # sets coordinate positions the monkeys should not step on, because humans are on it.
 # Neighboring cells of human activity may also be added to this list.
 
@@ -23,7 +25,8 @@ class Human(Agent):
     # it moves on the visualization grid, unlike individual monkey agents.
     # it is currently not important in the demographic model, just the visualization model.
     def __init__(self, unique_id, model, current_position, hh_id, age, resource_check,
-                 home_position, resource_position, resource_frequency):
+                 home_position, resource_position, resource_frequency, gender, education, work_status,
+                 marriage, past_hh_id, migration_status):
         super().__init__(unique_id, model)
         self.current_position = current_position
         self.hh_id = hh_id
@@ -32,9 +35,51 @@ class Human(Agent):
         self.home_position = home_position
         self.resource_position = resource_position
         self.resource_frequency = resource_frequency
+        self.gender = gender
+        self.education = education
+        self.work_status = work_status
+        self.marriage_status = marriage
+        self.past_hh_id = past_hh_id
+        self.migration_status = migration_status
+
+        self.birth_rate = 0.00017  # 0.0121, or 1.21%, is the yearly birth rate.
+        # This makes the birth rate for every 5 days (73 'checks' a year) 0.00017%,
+        # because 1 - 0.0121 = 0.9879, 0.99983 ^73 = 0.9879, and 1 - 0.99983 = 0.00017
+        self.birth_interval = 2
+        self.birth_flag = 0
+        self.death_flag = 0
+        self.marriage_rate = 0.007
+        self.marriage_flag = 0
+        self.match_prob = 0.05  # pre-set from pseudo-code
+        self.immi_marriage_rate = 0.03  # pre-set from pseudo-code
+
+        # make sure hh_ids and individuals are matched
+
 
     def step(self):
-        # self.age += 1  # currently not used; humans don't age
+        # human aging/demographic behavior
+        self.age_check()
+        self.death_check()
+        # self.migration_check()
+        # self.remigration_check
+        self.marriage_check()
+        self.marriage_match()
+        self.birth_check()
+        self.age += 1 / 73
+        self.last_birth_time += 1 / 73
+
+        if int(self.age) > 20 and self.gender == 1 and self.marriage == 0\
+                and self.unique_id not in single_male_list:
+            single_male_list.append([self.unique_id, self.hh_id])
+
+        if self.unique_id in married_male_list:
+            if self.unique_id in single_male_list:
+                single_male_list.remove(self.unique_id)
+            self.marriage = 1
+
+        shuffle(single_male_list)
+
+        # human movement and resource collection behavior
         if len(human_avoidance_list) > 94 * 9:  # 94 households, 8 neighbors, so 94 * 9 instances per step
             del human_avoidance_list[:]  # reset the list every step (once it hits a length of 94 * 9)
         load_dict = {}
@@ -63,17 +108,86 @@ class Human(Agent):
                     pass  # this "pass" occurs because
                     # not all households collect resources
 
-        if self.age > 70:
-            pass
-            # may input human aging later. for example -
-            # if random.uniform(0, 1) > 0.95:
-            #     self.death()
+    def age_check(self):
+        """Check working and education age, as well as age-based death rates"""
+        # check working status
+        if self.age < 15:
+            self.workstatus = 0
+        elif 15 <= self.age < 59:
+            self.workstatus = 1
+        elif self.age >= 59:
+            self.workstatus = 0
 
-    def death(self):
-        # currently not used
-        # must implement birth() (not created yet) too if used
-        self.model.schedule.remove(self)
+        if self.migration_status == 1:
+            self.workstatus = 2  # 2 is not higher than 1 in this case; just a third value
+
+        # check education status; measured in years of education
+        if 7 <= int(self.age) <= 19:
+            if random.random() > 0.1:
+                self.education += 1
+                # most adults in the FNNR did not get a full 12-13 years of education
+        elif 19 < self.age < 23 and self.migration_status == 1:
+            self.education += 1  # went to college and got further education
+
+        # check age-based death rates
+        if self.age > 65:
+            self.death_rate = 0.00000095  # 5-day death rate
+        # The average death rate in China is 7.3 per 1,000 people/year (Google).
+        # However, death rates should be higher for the elderly, or else the population structure will skew.
+        # I set death rates for those over age 65 to be 15% per year--0.9985 yearly survival rate.
+        # The survival rate for each 5-day step is compounded 73 times, so x^73 = 0.09985.
+        # x is the 5-day survival rate, and 1 - x is the 5-day death rate.
+        else:
+            self.death_rate = 0.000047
+        # I wanted people to have an 80% chance of reaching age 65.
+        # If a 'check' is every 5 days, 73 * 65 = 4,745 checks.
+        # x^4745 = 0.8; the 5-day survival rate is 0.999953, and 1 - x is the 5-day death rate.
+
+        # These rates are changeable later. However, they produce a stable population.
+
+    def birth_check(self):
+        """Small chance of giving birth every step if married and under 50"""
+        if self.gender == 2 and self.age < 55 and self.marriage == 1:
+            if random() < self.birth_rate: # create new human agent
+                if self.last_birth_time > float(self.birth_interval):
+                    self.last_birth_time = 0  # reset counter
+                    last = self.model.human_id_count
+                    ind = IndividualAgent(last + 1, self.model, self.current_position, self.hh_id, age, self.resource_check,
+                                          self.home_position, self.resource_position, self.resource_frequency, gender,
+                                          education, work_status, marriage, past_hh_id, migration_status)
+                    ind.age = 0
+                    ind.gender = choice([1, 2])
+                    ind.education = 6
+                    ind.work_status = 0
+                    ind.marriage = 0
+                    ind.migration_status = 0
+                    self.model.schedule.add(ind)
+                    self.model.human_id_count += 1
+
+    def death_check(self):
+        """Small chance of dying every step; increases if over 65"""
+        if random() < self.death_rate:
+            self.model.schedule.remove(self)
         self.model.grid.remove_agent(self)
+
+    def marriage_check(self):
+        if int(self.age) > 20 and int(self.gender) == 2 and int(self.marriage) == 0\
+                and self.migration_status == 0:
+                if random.random() < self.marriage_rate:
+                    # get married
+                    self.marriage = 1
+                    self.past_hh_id = self.hh_id
+                    self.match_female()
+        if self.individual_id in married_male_list or self.individual_id in married_male_list_2014:
+            self.marriage = 1
+            # takes the first male off the single_male_list, which is shuffled every step
+            self.hh_id = single_male_list[0][1]  # male's hh_id
+            married_male_list.append(single_male_list[0][0])
+            single_male_list.remove(single_male_list[0])
+
+    def migration_check(self):
+        #if self.
+        pass
 
     def move_to(self, pos):
         if pos != None:
