@@ -6,7 +6,7 @@ from mesa.time import RandomActivation
 from monkeys import *
 from environment import *
 from humans import _readCSV, Human, Resource
-from resource_dict import resource_dict
+# from resource_dict import resource_dict
 import pickle
 
 
@@ -132,9 +132,12 @@ class Movement(Model):
 
         # Creation of humans (brown dots in simulation)
         human_id = 0
-        for line in _readCSV('household.csv')[1:]:
-            hh_id = line[0]  # household ID for that human
-            starting_position = (int(line[4]), int(line[3]))
+        line_counter = 0
+        for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each hh:
+            line_counter += 1
+            hh_id = line_counter
+            for liner in _readCSV('household.csv')[1:]:  # exclude headers; for each hh:
+                starting_position = (int(liner[4]), int(liner[3]))
             try:
                 resource = random.choice(resource_dict[hh_id])  # random resource point for human
                 resource_position = resource.position
@@ -143,11 +146,89 @@ class Movement(Model):
                 # to another randomly-picked resource
             except KeyError:
                 resource_position = starting_position  # some households don't collect resources
-            human_id += 1
-            resource_check = 0
-            human = Human(human_id, self, starting_position, hh_id, random.randint(15, 59),  # ages 15-59 randomly
-                          resource_check, starting_position, resource_position,
-                          resource_frequency)  # currently, human age is not being used in the model
+                resource_frequency = 0
+
+            hh_gender_list = line[1:10]
+            hh_age_list = line[10:19]
+            hh_education_list = line[19:28]
+            hh_marriage_list = line[28:37]
+            # creation of non-migrants
+            for list_item in hh_age_list:
+                if str(list_item) == '-3' or str(list_item) == '':
+                    hh_age_list.remove(list_item)
+            for x in range(len(hh_age_list) - 1):
+                person = []
+                for item in [hh_age_list, hh_gender_list, hh_education_list, hh_marriage_list]:
+                    person.append(item[x])
+                human_id += 1
+                age = float(person[0])
+                gender = int(person[1])
+                education = int(person[2])
+                marriage = int(person[3])
+                mig_years = 0
+                if 15 < age < 59:
+                    work_status = 1
+                else:
+                    work_status = 0
+                past_hh_id = 0
+                migration_network = int(line[37])
+                total_rice = float(line[43])
+                gtgp_rice = float(line[44])
+                total_dry = float(line[45])
+                gtgp_dry = float(line[46])
+                income_local_off_farm = int(line[47])
+                migration_status = 0
+                resource_check = 0
+                mig_remittances = 0
+                num_labor = 0
+                hh_size = 0  # will populate later
+                last_birth_time = 0
+                if str(person[0]) != '':  # sorts out all blanks
+                    human = Human(human_id, self, starting_position, hh_id, age,  # creates human
+                              resource_check, starting_position, resource_position,
+                              resource_frequency, gender, education, work_status,
+                              marriage, past_hh_id, mig_years, migration_status, total_rice,
+                              total_dry, gtgp_rice, gtgp_dry, migration_network, mig_remittances,
+                              income_local_off_farm, num_labor, hh_size, last_birth_time)
+
+                    if self.grid_type == 'with_humans':
+                        self.grid.place_agent(human, starting_position)
+                        self.schedule.add(human)
+
+            # creation of migrants
+            hh_migrants = line[38:43]  # age, gender, marriage, education of migrants
+            if str(hh_migrants[0]) != '':  # if that household has any migrants, create migrant person
+                human_id += 1
+                age = float(hh_migrants[0])
+                gender = float(hh_migrants[1])
+                education = int(hh_migrants[2])
+                marriage = int(hh_migrants[3])
+                mig_years = int(hh_migrants[4])
+                if 15 < age < 59:
+                    work_status = 1
+                else:
+                    work_status = 0
+                past_hh_id = 0
+                migration_status = 1
+                migration_network = int(line[37])
+                total_rice = float(line[43])
+                gtgp_rice = float(line[44])
+                total_dry = float(line[45])
+                gtgp_dry = float(line[46])
+                income_local_off_farm = float(line[47])
+                resource_check = 0
+                mig_remittances = 0
+                num_labor = 0
+                hh_size = 0
+                last_birth_time = 0
+                human = Human(human_id, self, starting_position, hh_id, age,  # creates human
+                              resource_check, starting_position, resource_position,
+                              resource_frequency, gender, education, work_status,
+                              marriage, past_hh_id, mig_years, migration_status, total_rice,
+                              total_dry, gtgp_rice, gtgp_dry,
+                              migration_network, mig_remittances, income_local_off_farm, num_labor, hh_size,
+                              last_birth_time)
+
             if self.grid_type == 'with_humans':
                 self.grid.place_agent(human, starting_position)
                 self.schedule.add(human)
