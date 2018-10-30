@@ -6,7 +6,6 @@ from mesa.time import RandomActivation
 from monkeys import *
 from environment import *
 from humans import _readCSV, Human, Resource
-from resource_dict import resource_dict
 import pickle
 
 
@@ -129,28 +128,139 @@ class Movement(Model):
                                     self, (x, y), hh_id_match, resource_name, frequency)
                 self.grid.place_agent(resource, (int(x), int(y)))
                 resource_dict.setdefault(hh_id_match, []).append(resource)
+                if self.run_type == 'first_run':
+                    self.saveLoad(resource_dict, 'resource_dict', 'save')
 
         # Creation of humans (brown dots in simulation)
+        schedule_temp_list = []
         human_id = 0
-        for line in _readCSV('household.csv')[1:]:
-            hh_id = line[0]  # household ID for that human
-            starting_position = (int(line[4]), int(line[3]))
+        line_counter = 0
+        for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each household:
+            hh_id = int(line[0])
+            line_counter += 1
+            starting_position = (int(_readCSV('household.csv')[line_counter][4]), int(_readCSV('household.csv')[line_counter][3]))
             try:
-                resource = random.choice(resource_dict[hh_id])  # random resource point for human
+                resource = random.choice(resource_dict[str(hh_id)])  # random resource point for human
                 resource_position = resource.position
                 resource_frequency = resource.frequency
                 # to travel to, among the list of resource points reported by that household; may change later
                 # to another randomly-picked resource
             except KeyError:
                 resource_position = starting_position  # some households don't collect resources
-            human_id += 1
-            resource_check = 0
-            human = Human(human_id, self, starting_position, hh_id, random.randint(15, 59),  # ages 15-59 randomly
-                          resource_check, starting_position, resource_position,
-                          resource_frequency)  # currently, human age is not being used in the model
-            if self.grid_type == 'with_humans':
-                self.grid.place_agent(human, starting_position)
-                self.schedule.add(human)
+                resource_frequency = 0
+            hh_gender_list = line[1:10]
+            hh_age_list = line[10:19]
+            hh_education_list = line[19:28]
+            hh_marriage_list = line[28:37]
+            # creation of non-migrants
+            for list_item in hh_age_list:
+                if str(list_item) == '-3' or str(list_item) == '':
+                    hh_age_list.remove(list_item)
+            for x in range(len(hh_age_list) - 1):
+                person = []
+                for item in [hh_age_list, hh_gender_list, hh_education_list, hh_marriage_list]:
+                    person.append(item[x])
+                age = float(person[0])
+                gender = int(person[1])
+                education = int(person[2])
+                marriage = int(person[3])
+                mig_years = 0
+                if 15 < age < 59:
+                    work_status = 1
+                else:
+                    work_status = 0
+                migration_network = int(line[37])
+                total_rice = float(line[43])
+                gtgp_rice = float(line[44])
+                total_dry = float(line[45])
+                gtgp_dry = float(line[46])
+                if total_rice in ['-3', '-4', -3, None]:
+                    total_rice = 0
+                if total_dry in ['-3', '-4', -3, None]:
+                    total_dry = 0
+                if gtgp_dry in ['-3', '-4', -3, None]:
+                    gtgp_dry = 0
+                if gtgp_rice in ['-3', '-4', -3, None]:
+                    gtgp_rice = 0
+                if (gtgp_dry + gtgp_rice) != 0:
+                    gtgp_part = 1
+                else:
+                    gtgp_part = 0
+                non_gtgp_area = (float(total_rice) + float(total_dry)) \
+                                - (float(gtgp_dry) + float(gtgp_rice))
+                income_local_off_farm = int(line[47])
+                resource_check = 0
+                mig_remittances = 0
+                last_birth_time = 0
+                past_hh_id = hh_id
+                migration_status = 0
+                death_rate = 0
+                if str(person[0]) != '' and str(person[0]) != '-3':  # sorts out all blanks
+                    human_id += 1
+                    human = Human(human_id, self, starting_position, hh_id, age,  # creates human
+                                  resource_check, starting_position, resource_position,
+                                  resource_frequency, gender, education, work_status,
+                                  marriage, past_hh_id, mig_years, migration_status, gtgp_part,
+                                  non_gtgp_area, migration_network, mig_remittances,
+                                  income_local_off_farm, last_birth_time, death_rate)
+
+                    if self.grid_type == 'with_humans':
+                        self.grid.place_agent(human, starting_position)
+                        self.schedule.add(human)
+                        schedule_temp_list.append(human)  # glitch--model runs out of memory otherwise
+
+            # creation of migrant
+            hh_migrants = line[38:43]  # age, gender, marriage, education of migrants
+            if str(hh_migrants[0]) != '' and str(hh_migrants[0]) != '-3':  # if that household has any migrants, create migrant person
+                human_id += 1
+                age = float(hh_migrants[0])
+                gender = float(hh_migrants[1])
+                education = int(hh_migrants[2])
+                marriage = int(hh_migrants[3])
+                mig_years = int(hh_migrants[4])
+                if 15 < age < 59:
+                    work_status = 1
+                else:
+                    work_status = 0
+                past_hh_id = hh_id
+                hh_id = 'Migrated'
+                migration_status = 1
+                migration_network = int(line[37])
+
+                total_rice = float(line[43])
+                gtgp_rice = float(line[44])
+                total_dry = float(line[45])
+                gtgp_dry = float(line[46])
+                income_local_off_farm = float(line[47])
+                if total_rice in ['-3', '-4', -3, None]:
+                    total_rice = 0
+                if total_dry in ['-3', '-4', -3, None]:
+                    total_dry = 0
+                if gtgp_dry in ['-3', '-4', -3, None]:
+                    gtgp_dry = 0
+                if gtgp_rice in ['-3', '-4', -3, None]:
+                    gtgp_rice = 0
+                if (gtgp_dry + gtgp_rice) != 0:
+                    gtgp_part = 1
+                else:
+                    gtgp_part = 0
+                non_gtgp_area = ((total_rice) + (total_dry)) \
+                                - ((gtgp_dry) + (gtgp_rice))
+                resource_check = 0
+                mig_remittances = 0
+                last_birth_time = 0
+                death_rate = 0
+                human = Human(human_id, self, starting_position, hh_id, age,  # creates human
+                              resource_check, starting_position, resource_position,
+                              resource_frequency, gender, education, work_status,
+                              marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
+                              migration_network, mig_remittances, income_local_off_farm,
+                              last_birth_time, death_rate)
+
+                if self.grid_type == 'with_humans':
+                    self.schedule.add(human)
+                    schedule_temp_list.append(human)
+                    self.grid.place_agent(human, starting_position)
 
         # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block create families
@@ -166,6 +276,7 @@ class Movement(Model):
                             saved_position, split_flag)
             self.grid.place_agent(family, starting_position)
             self.schedule.add(family)
+            schedule_temp_list.append(family)
             global_family_id_list.append(family_id)
 
             # Creation of individual monkeys (not in the visualization submodel, but for the demographic submodel)
@@ -221,6 +332,8 @@ class Movement(Model):
                 self.monkey_id_count += 1
                 list_of_family_members.append(monkey.unique_id)
                 self.schedule.add(monkey)
+        for x in schedule_temp_list:
+            self.schedule.add(x)
 
     def step(self):
         # necessary; tells model to move forward
