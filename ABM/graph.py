@@ -1,16 +1,19 @@
 # !/usr/bin/python
-# 8/7/2018
+# 10/30/2018
 
 """
 This document runs the server and helps visualize the agents.
 """
 
 from excel_export_summary import *
+from excel_export_summary_humans import *
 from excel_export_density_plot import *
 import matplotlib.pyplot as plt
 import numpy as np
 from model import *
 from families import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list, moved_list
+from humans import hh_size_list, human_birth_list, human_death_list, single_male_list, married_male_list, \
+    num_labor_list, gtgp_part_list, total_migration_list, total_re_migration_list
 
 monkey_population_list = []
 monkey_birth_count = []
@@ -19,7 +22,8 @@ movement_session_id = 10
 
 model = Movement()  # run the model
 time = 73 * 10 # 73 time-steps of 5 days each for 10 years, 730 steps total
-# erase_summary()  # clears the Excel file to overwrite
+erase_summary()  # clears the Excel file to overwrite
+erase_human_summary()
 erase_density_plot()
 for t in range(time):  # for each time-step in the time we just defined,
     monkey_population_list.append(model.number_of_monkeys)
@@ -27,19 +31,30 @@ for t in range(time):  # for each time-step in the time we just defined,
     monkey_death_count.append(model.monkey_death_count)
     model.step()  # see model.step() in model.py; monkey agents age, family-pixel agents move
     print('Loading, Progress ', t, '/', time)
-    if t == 1:  # save beginning structure
+    if t == 1 or t % 20 == 0:  # save beginning structure, then every 100 days thereafter
         save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
+        save_summary_humans(t, sum(hh_size_list), len(human_birth_list), len(human_death_list), sum(num_labor_list),
+                            len(single_male_list), len(married_male_list),
+                            str(sum(gtgp_part_list) / 94 * 100) + '%', sum(total_migration_list),
+                            sum(total_re_migration_list))  # 94 households
+"""
+# Optional code block: used for generating random walk graphs (currently commented out)
     if t == 73 * 1:
-        save_density_plot(moved_list, 1)  # feel free to delete this block; it is used for generating random walk graphs
+        save_density_plot(moved_list, 1)
     if t == 73 * 3:
         save_density_plot(moved_list, 3)
     if t == 73 * 5:
         save_density_plot(moved_list, 5)
-save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
-                 demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
-    # save_summary writes the Excel file; see excel_export_summary
 save_density_plot(moved_list, movement_session_id)
+"""
+save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
+             demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
+save_summary_humans(t, sum(hh_size_list), len(human_birth_list), len(human_death_list), sum(num_labor_list),
+                    len(single_male_list), len(married_male_list),
+                    str(sum(gtgp_part_list) / 94 * 100) + '%', sum(total_migration_list),
+                    sum(total_re_migration_list))  # 94 households total
+# functions above are called again after the last step
 
 plt.subplot(211)
 age_category_list = ('0-1', '1-3', '3-7', '7-10', '10-25', '25+')

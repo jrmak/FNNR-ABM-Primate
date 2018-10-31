@@ -9,6 +9,8 @@ import math
 
 single_male_list = []
 married_male_list = []
+human_birth_list = []
+human_death_list = []
 human_avoidance_list = []  # sets coordinate positions the monkeys should not step on, because humans are on it.
 # Neighboring cells of human activity may also be added to this list.
 
@@ -20,6 +22,8 @@ gtgp_part_list = [0] * 170  # 1 if yes, 0 if no
 head_of_household_list = [0] * 170
 former_hoh_list = [0] * 170
 hh_size_list = [0] * 170
+total_migration_list = [0] * 170
+total_re_migration_list = [0] * 170
 
 def _readCSV(text):
     # reads in a .csv file.
@@ -75,6 +79,8 @@ class Human(Agent):
                 hh_size_list[self.hh_id] += 1
                 if self.work_status == 1:
                     num_labor_list[self.hh_id] += 1
+                if self.gtgp_part == 1:
+                    gtgp_part_list[self.hh_id] = 1
             self.movement()
             self.age_check()
             self.hoh_check()
@@ -93,7 +99,7 @@ class Human(Agent):
         # every step, perform a single/married male check
         # since marriage happens from the female's point of view
         if int(self.age) > 20 and self.gender == 1 and self.marriage == 0\
-                and self.unique_id not in single_male_list:
+                and [self.unique_id, self.hh_id] not in single_male_list:
             single_male_list.append([self.unique_id, self.hh_id])
 
         if self.unique_id in married_male_list:
@@ -138,9 +144,9 @@ class Human(Agent):
         """Check working and education age, as well as age-based death rates"""
         # check working status
         if 15 <= float(self.age) < 59:
-            self.workstatus = 1
+            self.work_status = 1
         else:
-            self.workstatus = 0
+            self.work_status = 0
 
         # check education status; measured in years of education
         if 7 <= int(self.age) <= 19:
@@ -194,22 +200,22 @@ class Human(Agent):
                 # around once a year.
                 if self.last_birth_time > 2:  # 2 years is the set birth interval; can modify
                     self.last_birth_time = 0  # reset counter
-                    last = self.model.human_id
+                    last = self.model.human_id_count
                     # build more attributes
+                    age = 0
+                    gender = random.choice([1, 2])
+                    education = 0
+                    work_status = 0
+                    marriage = 0
                     ind = Human(last + 1, self.model, self.current_position, self.hh_id, age, self.resource_check,
                                           self.home_position, self.resource_position, self.resource_frequency, gender,
-                                          education, work_status, marriage, past_hh_id, mig_years, migration_status,
-                                          self.gtgp_part, self.non_gtgp_area, self.migration_network,
-                                          self.mig_remittances, self.income_local_off_farm,
+                                          education, work_status, marriage, self.past_hh_id, self.mig_years,
+                                          self.migration_status, self.gtgp_part, self.non_gtgp_area,
+                                          self.migration_network, self.mig_remittances, self.income_local_off_farm,
                                           self.last_birth_time, self.death_rate)
-                    ind.age = 0
-                    ind.gender = choice([1, 2])
-                    ind.education = 6
-                    ind.work_status = 0
-                    ind.marriage = 0
-                    ind.migration_status = 0
                     self.model.schedule.add(ind)
                     self.model.human_id_count += 1
+                    human_birth_list.append(last + 1)
 
     def death_check(self):
         """Small chance of dying every step; increases if over 65"""
@@ -220,6 +226,11 @@ class Human(Agent):
                 num_labor_list[self.hh_id] =- 1
             if self.unique_id in former_hoh_list:
                 former_hoh_list[self.hh_id] = 0
+            if self.unique_id in single_male_list:
+                single_male_list.remove(self.unique_id)
+            if self.unique_id in married_male_list:
+                married_male_list.remove(self.unique_id)
+            human_death_list.append(self.unique_id)
             hh_size_list[self.hh_id] -= 1
 
             self.model.schedule.remove(self)
@@ -237,12 +248,7 @@ class Human(Agent):
                     hh_size_list[self.hh_id] -= 1
                     self.hh_id = single_male_list[0][1]  # male's hh_id
                     hh_size_list[self.hh_id] += 1
-
-        if self.unique_id in married_male_list:
-            self.marriage = 1
-            # takes the first male off the single_male_list, which is shuffled every step
-            married_male_list.append(single_male_list[0][0])
-            single_male_list.remove(single_male_list[0])
+                    married_male_list.append(single_male_list[0][0])  # male's unique_id
 
     def migration_check(self):
         """Describes out-migration process and probability"""
@@ -266,15 +272,15 @@ class Human(Agent):
             if hh_migration_flag[self.hh_id] == 0:  # only one migrant allowed per household at a time
                 hh_size_list[self.hh_id] -= 1
                 self.past_hh_id = self.hh_id
-                self.workstatus = 4
+                self.work_status = 0
                 self.migration_status = 1
                 if self.unique_id in head_of_household_list:
                     head_of_household_list[self.past_hh_id] = 0
                     former_hoh_list[self.hh_id] = self.unique_id
                     self.resource_frequency = self.resource_frequency * 0.5
                 hh_migration_flag[self.hh_id] = 1
-                if self.work_status == 1:
-                    num_labor_list[self.hh_id] -= 1
+                num_labor_list[self.hh_id] -= 1
+                total_migration_list[self.hh_id] += 1
 
                 self.hh_id = 'Migrated'
 
@@ -288,10 +294,11 @@ class Human(Agent):
             if random.random() < re_mig_prob:  # re-migration occurs
                 self.migration_status = 0
                 self.hh_id = self.past_hh_id
-                self.workstatus = 1
+                self.work_status = 1
                 self.mig_years = 0
                 hh_size_list[self.hh_id] += 1
                 hh_migration_flag[self.hh_id] = 0
+                total_re_migration_list[self.hh_id] += 1
                 if self.unique_id == former_hoh_list[self.hh_id]:
                     self.resource_frequency = self.resource_frequency * 2
                 if 15 < int(self.age) < 59:
