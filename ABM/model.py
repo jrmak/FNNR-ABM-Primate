@@ -16,6 +16,9 @@ It also sets up the environmental grid using imported vegetation, elevation, and
 Then every step, it calls for agents to act.
 """
 
+# NOTE: right now, the number of monkey families is set to 1 for model testing purposes (model runs faster).
+# The actual number should be around 20. Change this in __init__() under Movement(Model).
+
 global_family_id_list = []
 household_list = [2, 3, 5, 6, 8, 9, 11, 14, 15, 16, 17, 19, 22, 25, 27, 30, 31, 32, 34, 35, 36, 39, 41, 42, 43, 46,
                  47, 48, 49, 53, 54, 55, 57, 63, 64, 71, 72, 85, 100, 101, 102, 103, 104, 108, 113, 118, 120, 121,
@@ -38,7 +41,8 @@ class Movement(Model):
     def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
                  number_of_families = 1, number_of_monkeys = 0, monkey_birth_count = 0,
-                 monkey_death_count = 0, monkey_id_count = 0, grid_type = 'with_humans', run_type = 'normal_run'):
+                 monkey_death_count = 0, monkey_id_count = 0,
+                 number_of_humans = 0, grid_type = 'with_humans', run_type = 'normal_run'):
         # change the # of families here for graph.py, but use server.py to change # of families in the movement model
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
@@ -51,6 +55,7 @@ class Movement(Model):
         self.monkey_birth_count = monkey_birth_count
         self.monkey_death_count = monkey_death_count
         self.monkey_id_count = monkey_id_count
+        self.number_of_humans = number_of_humans
         self.grid_type = grid_type   # string 'with_humans' or 'without_humans'
         self.run_type = run_type  # string with 'normal_run' or 'first_run'
 
@@ -119,7 +124,7 @@ class Movement(Model):
         # These include Fuelwood, Herbs, Bamboo, etc., but right now resource type and frequency are not used
         if self.grid_type == 'with_humans':
             for line in _readCSV('hh_survey.csv')[1:]:  # see 'hh_survey.csv'
-                hh_id_match = line[0]
+                hh_id_match = int(line[0])
                 resource_name = line[1]  # frequency is monthly; currently not-used
                 frequency = float(line[2]) / 6 # divided by 6 for 5-day frequency, as opposed to 30-day (1 month)
                 y = int(line[5])
@@ -133,7 +138,7 @@ class Movement(Model):
 
         # Creation of humans (brown dots in simulation)
         schedule_temp_list = []
-        human_id = 0
+        self.number_of_humans = 0
         line_counter = 0
         for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each household:
             hh_id = int(line[0])
@@ -191,13 +196,13 @@ class Movement(Model):
                 income_local_off_farm = int(line[47])
                 resource_check = 0
                 mig_remittances = 0
-                last_birth_time = 0
+                last_birth_time = random.uniform(0, 3)
                 past_hh_id = hh_id
                 migration_status = 0
                 death_rate = 0
                 if str(person[0]) != '' and str(person[0]) != '-3':  # sorts out all blanks
-                    human_id += 1
-                    human = Human(human_id, self, starting_position, hh_id, age,  # creates human
+                    self.number_of_humans += 1
+                    human = Human(number_of_humans, self, starting_position, hh_id, age,  # creates human
                                   resource_check, starting_position, resource_position,
                                   resource_frequency, gender, education, work_status,
                                   marriage, past_hh_id, mig_years, migration_status, gtgp_part,
@@ -212,7 +217,7 @@ class Movement(Model):
             # creation of migrant
             hh_migrants = line[38:43]  # age, gender, marriage, education of migrants
             if str(hh_migrants[0]) != '' and str(hh_migrants[0]) != '-3':  # if that household has any migrants, create migrant person
-                human_id += 1
+                self.number_of_humans += 1
                 age = float(hh_migrants[0])
                 gender = float(hh_migrants[1])
                 education = int(hh_migrants[2])
@@ -250,7 +255,7 @@ class Movement(Model):
                 mig_remittances = 0
                 last_birth_time = 0
                 death_rate = 0
-                human = Human(human_id, self, starting_position, hh_id, age,  # creates human
+                human = Human(number_of_humans, self, starting_position, hh_id, age,  # creates human
                               resource_check, starting_position, resource_position,
                               resource_frequency, gender, education, work_status,
                               marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
@@ -261,7 +266,6 @@ class Movement(Model):
                     self.schedule.add(human)
                     schedule_temp_list.append(human)
                     self.grid.place_agent(human, starting_position)
-
         # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block create families
             starting_position = random.choice(startinglist)
@@ -334,6 +338,7 @@ class Movement(Model):
                 self.schedule.add(monkey)
         for x in schedule_temp_list:
             self.schedule.add(x)
+
 
     def step(self):
         # necessary; tells model to move forward
