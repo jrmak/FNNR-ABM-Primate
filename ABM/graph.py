@@ -14,7 +14,7 @@ from model import *
 from families import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list, moved_list
 from humans import hh_size_list, human_birth_list, human_death_list, human_marriage_list,\
     single_male_list, married_male_list, \
-    num_labor_list, total_migration_list, total_re_migration_list
+    labor_list, total_migration_list, total_re_migration_list
 
 monkey_population_list = []
 monkey_birth_count = []
@@ -26,6 +26,9 @@ time = 73 * 10 # 73 time-steps of 5 days each for 10 years, 730 steps total
 erase_summary()  # clears the Excel file to overwrite
 erase_human_summary()
 erase_density_plot()
+if model.number_of_families == 1:
+    print('Warning: graph.py is only running 1 monkey family for testing purposes (to run faster).'
+          'Change the number_of_families setting in model.py\'s Movement() __init__ parameters.')
 for t in range(time):  # for each time-step in the time we just defined,
     monkey_population_list.append(model.number_of_monkeys)
     monkey_birth_count.append(model.monkey_birth_count)
@@ -36,7 +39,7 @@ for t in range(time):  # for each time-step in the time we just defined,
         save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
         save_summary_humans(t, model.number_of_humans, len(human_birth_list), len(human_death_list), len(human_marriage_list),
-                            sum(num_labor_list),
+                            len(labor_list),
                             len(single_male_list), len(married_male_list), sum(total_migration_list))  # 94 households
 """
 # Optional code block: used for generating random walk graphs (currently commented out)
@@ -51,7 +54,7 @@ save_density_plot(moved_list, movement_session_id)
 save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
              demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
 save_summary_humans(t, model.number_of_humans, len(human_birth_list), len(human_death_list),
-                    len(human_marriage_list), sum(num_labor_list),
+                    len(human_marriage_list), len(labor_list),
                     len(single_male_list), len(married_male_list), sum(total_migration_list))  # 94 households total
 # functions above are called again after the last step
 

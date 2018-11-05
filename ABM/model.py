@@ -40,7 +40,7 @@ class Movement(Model):
 
     def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
-                 number_of_families = 1, number_of_monkeys = 0, monkey_birth_count = 0,
+                 number_of_families = 20, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0, monkey_id_count = 0,
                  number_of_humans = 0, grid_type = 'with_humans', run_type = 'normal_run'):
         # change the # of families here for graph.py, but use server.py to change # of families in the movement model
@@ -170,10 +170,6 @@ class Movement(Model):
                 education = int(person[2])
                 marriage = int(person[3])
                 mig_years = 0
-                if 15 < age < 59:
-                    work_status = 1
-                else:
-                    work_status = 0
                 migration_network = int(line[37])
                 total_rice = float(line[43])
                 gtgp_rice = float(line[44])
@@ -200,6 +196,7 @@ class Movement(Model):
                 past_hh_id = hh_id
                 migration_status = 0
                 death_rate = 0
+                work_status = 0
                 if str(person[0]) != '' and str(person[0]) != '-3':  # sorts out all blanks
                     self.number_of_humans += 1
                     human = Human(self.number_of_humans, self, starting_position, hh_id, age,  # creates human
@@ -208,7 +205,6 @@ class Movement(Model):
                                   marriage, past_hh_id, mig_years, migration_status, gtgp_part,
                                   non_gtgp_area, migration_network, mig_remittances,
                                   income_local_off_farm, last_birth_time, death_rate)
-
                     if self.grid_type == 'with_humans':
                         self.grid.place_agent(human, starting_position)
                         self.schedule.add(human)
@@ -336,8 +332,8 @@ class Movement(Model):
                 self.monkey_id_count += 1
                 list_of_family_members.append(monkey.unique_id)
                 self.schedule.add(monkey)
-        for x in schedule_temp_list:
-            self.schedule.add(x)
+        #for x in schedule_temp_list:
+            #self.schedule.add(x)
 
 
     def step(self):
