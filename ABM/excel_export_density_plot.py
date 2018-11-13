@@ -15,7 +15,7 @@ os.chdir(currentpath)  # uses current directory path
 def save_density_plot(moved_list, number):
     """Exports entries onto a .csv file"""
     try:
-        density_export = open('export_density_plot_' + str(number) + '.csv', 'a+')
+        density_export = open('export_density_plot_' + str(number) + '.csv', 'w+')
         # a+ will create the file if it doesn't exist already
         # change the name of this file manually each run if changing testing styles to collect new data
         # without overwriting, e.g. naming the file with 'wo' vs 'w' for without or with humans
