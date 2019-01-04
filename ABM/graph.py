@@ -49,8 +49,8 @@ for t in range(time):  # for each time-step in the time we just defined,
         save_density_plot(moved_list, 3)
     if t == 73 * 5:
         save_density_plot(moved_list, 5)
-save_density_plot(moved_list, movement_session_id)
 """
+save_density_plot(moved_list, movement_session_id)
 save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
              demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
 save_summary_humans(t, model.number_of_humans, len(human_birth_list), len(human_death_list),
