@@ -10,8 +10,9 @@ from mesa.visualization.UserParam import UserSettableParameter
 
 from model import *
 from environment import *
+from fnnr_config_file import family_setting, human_setting
 
-# 8-7-18
+# 1-7-19
 
 # grid should be a square
 width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
@@ -104,8 +105,8 @@ text0 = MapLegend()
 canvas = CanvasGrid(movement_portrayal, width, height, canvas_width, canvas_height)
 # chart_count = ChartModule([monkey_movement_chart])
 
-agent_slider = UserSettableParameter('slider', "Number of Families", 20, 1, 30, 1)
-humans_choice = UserSettableParameter('choice', "Status of Humans in Reserve", 'with_humans',
+agent_slider = UserSettableParameter('slider', "Number of Families", family_setting, 1, 30, 1)
+humans_choice = UserSettableParameter('choice', "Status of Humans in Reserve", human_setting,
                                       choices = ['with_humans', 'without_humans'])
 
 model_params = {"number_of_families": agent_slider, "grid_type": humans_choice}

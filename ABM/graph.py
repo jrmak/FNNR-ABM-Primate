@@ -1,5 +1,5 @@
 # !/usr/bin/python
-# 10/30/2018
+# 1/7/2019
 
 """
 This document runs the server and helps visualize the agents.
@@ -15,20 +15,18 @@ from families import demographic_structure_list, female_list, male_maingroup_lis
 from humans import hh_size_list, human_birth_list, human_death_list, human_marriage_list,\
     single_male_list, married_male_list, \
     labor_list, total_migration_list, total_re_migration_list
+from fnnr_config_file import human_setting, year_setting, random_walk_graph_setting, plot_setting
+import os
 
 monkey_population_list = []
 monkey_birth_count = []
 monkey_death_count = []
-movement_session_id = 10
 
 model = Movement()  # run the model
-time = 73 * 10 # 73 time-steps of 5 days each for 10 years, 730 steps total
+time = 73 * year_setting # 73 time-steps of 5 days each for 10 years, 730 steps total
 erase_summary()  # clears the Excel file to overwrite
 erase_human_summary()
-erase_density_plot()
-if model.number_of_families == 1:
-    print('Warning: graph.py is only running 1 monkey family for testing purposes (to run faster).'
-          'Change the number_of_families setting in model.py\'s Movement() __init__ parameters.')
+# erase_density_plot()  # delete files manually since they iterate when multiple are created
 for t in range(time):  # for each time-step in the time we just defined,
     monkey_population_list.append(model.number_of_monkeys)
     monkey_birth_count.append(model.monkey_birth_count)
@@ -41,16 +39,24 @@ for t in range(time):  # for each time-step in the time we just defined,
         save_summary_humans(t, model.number_of_humans, len(human_birth_list), len(human_death_list), len(human_marriage_list),
                             len(labor_list),
                             len(single_male_list), len(married_male_list), sum(total_migration_list))  # 94 households
-"""
-# Optional code block: used for generating random walk graphs (currently commented out)
+
+
+if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_config_file.py
+    # this should only be run with 1 family at a time or else the graphs will be messed up
     if t == 73 * 1:
         save_density_plot(moved_list, 1)
     if t == 73 * 3:
         save_density_plot(moved_list, 3)
     if t == 73 * 5:
         save_density_plot(moved_list, 5)
-"""
+
+movement_session_id = 0
+currentpath = str(inspect.getfile(inspect.currentframe()))[:-8]  # 'removes graph.py' at end
+os.chdir(currentpath)
+while os.path.exists(str(os.getcwd()) + "export_density_plot_" + human_setting + str(movement_session_id) + ".csv"):
+    movement_session_id += 1
 save_density_plot(moved_list, movement_session_id)
+
 save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
              demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
 save_summary_humans(t, model.number_of_humans, len(human_birth_list), len(human_death_list),
@@ -95,10 +101,6 @@ print('Gender Structure Count || Reproductive Females: %i | Total Females: %i | 
 plt.tight_layout()  # needed to make the graph look neat
 plt.figure()  # each instance of plt.figure() sets a graph in a new window
 
-# from heatmap import *  # see heatmap.py; discontinued. I now generate an excel file from which I create the heatmap.
-# See documentation for how (summary: I create an xy scatterplot and set the points to 99% transparent).
-# plt.figure()
-
 plt.subplot(2, 2, 1)
 plt.plot(np.array(range(time)), np.array(monkey_population_list))
 plt.title('GGM Population in the FNNR')
@@ -118,4 +120,5 @@ plt.xlabel('5-Day Intervals (Steps)')
 plt.ylabel('Number of Deaths')
 plt.tight_layout()
 
-# plt.show()  # shows all plots at once
+if plot_setting == True:
+    plt.show()  # shows all plots at once

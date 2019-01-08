@@ -1,4 +1,4 @@
-
+# !/usr/bin/python
 """
 This document imports human data from the Excel file containing Shuang's survey results and determines behavior for human agents.
 """
@@ -19,7 +19,7 @@ birth_flag_list = []
 marriage_flag_list = []
 labor_list = []
 
-# 169 = household IDs, 169 + 1 indices (+ 1 is for the 0th index)
+# 169 = household IDs, 170 = 169 + 1 indices (+ 1 is for the 0th index)
 # 170 indices total; not all are used; these are just to store values for each household
 hh_migration_flag = [0] * 170  # 1 if the head of household out-migrates, 0 if not or if returned
 num_labor_list = [0] * 170  # number of laborers in each household; index is hh #; 0th index is always 0
@@ -125,7 +125,7 @@ class Human(Agent):
     # human movement and resource collection behavior only occurs with 1 gatherer per household
         if self.unique_id in head_of_household_list:
             if len(human_avoidance_list) > 372 * 9:  # 372 humans, 8 neighbors/9 cells, so 94 * 9 instances per step
-                del human_avoidance_list[:]  # reset the list every step (once it hits a length of 94 * 9)
+                del human_avoidance_list[:]  # reset the list every step (once it hits a length of 372 * 9)
             load_dict = {}
             masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
             current_position = list(self.current_position)  # changes tuple into a list to edit; content remains the same
@@ -139,6 +139,11 @@ class Human(Agent):
             if self.resource_check == 0 and self.resource_position is not None and self.resource_position != '':
                 # if the human does not have the resource, head towards it
                 try:
+                    if self.resource_frequency == 0:
+                        from model import resource_dict
+                        resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
+                        self.resource_frequency = resource.frequency
+                        self.resource_position = resource.position
                     self.move_to_point(self.resource_position, self.resource_frequency)
                 except:
                     # print('Error moving', self.resource_position)
@@ -375,16 +380,33 @@ class Human(Agent):
             current_position = list(self.current_position)
             if current_position[0] < destination[0]:
                 current_position[0] = current_position[0] + int(frequency)
+                for i in list(range(1, int(frequency))):
+                    human_avoidance_list.append(self.current_position + i)
+                if current_position[0] > destination[0]:  # if this overshoots:
+                    current_position[0] = destination[0]
             elif current_position[0] == destination[0]:
                 pass  # don't move
             else:
                 current_position[0] = current_position[0] - int(frequency)
+                for i in list(range(1, int(frequency))):
+                    human_avoidance_list.append(self.current_position - i)
+                if current_position[0] < destination[0]:  # if this overshoots:
+                    current_position[0] = destination[0]
             if current_position[1] < destination[1]:
                 current_position[1] = current_position[1] + int(frequency)
+                for i in list(range(1, int(frequency))):
+                    human_avoidance_list.append(self.current_position + i)
+                if current_position[1] > destination[1]:  # if this overshoots:
+                    current_position[1] = destination[1]
             elif current_position[1] == destination[1]:
                 pass
             else:
                 current_position[1] = current_position[1] - int(frequency)
+                for i in list(range(1, int(frequency))):
+                    human_avoidance_list.append(self.current_position - i)
+                if current_position[1] < destination[1]:  # if this overshoots:
+                    current_position[1] = destination[1]
+
             current_position = tuple(current_position)
             self.move_to(current_position)
             self.current_position = current_position
@@ -393,6 +415,7 @@ class Human(Agent):
         else:
             self.resource_frequency += self.resource_frequency / 6  # 6 * 5 days in a step = 30 days in a month
             # resource frequency is listed monthly in the source file
+            # this indicates time passing each step until the gatherer can move
 
 class Resource(Agent):
     # Resources are fuelwood, mushrooms, herbs, etc. (see 'type') that humans collect.

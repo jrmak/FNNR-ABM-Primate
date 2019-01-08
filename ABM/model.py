@@ -6,6 +6,7 @@ from mesa.time import RandomActivation
 from monkeys import *
 from environment import *
 from humans import _readCSV, Human, Resource
+from fnnr_config_file import family_setting, human_setting, run_setting
 import pickle
 
 
@@ -40,9 +41,9 @@ class Movement(Model):
 
     def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
-                 number_of_families = 20, number_of_monkeys = 0, monkey_birth_count = 0,
+                 number_of_families = family_setting, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0, monkey_id_count = 0,
-                 number_of_humans = 0, grid_type = 'with_humans', run_type = 'normal_run'):
+                 number_of_humans = 0, grid_type = human_setting, run_type = run_setting):
         # change the # of families here for graph.py, but use server.py to change # of families in the movement model
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
