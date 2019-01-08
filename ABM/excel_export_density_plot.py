@@ -2,6 +2,7 @@
 import csv
 import inspect
 import os
+from fnnr_config_file import human_setting
 
 """
 Contains two functions: save_summary and erase_summary.
@@ -15,12 +16,12 @@ os.chdir(currentpath)  # uses current directory path
 def save_density_plot(moved_list, number):
     """Exports entries onto a .csv file"""
     try:
-        density_export = open('abm_export_density_plot' '.csv', 'w+')
-        # density_export = open('export_density_plot_' + str(number) + '.csv', 'w+')
-        # the + will create the file if it doesn't exist already
+        density_export = open('abm_export_density_plot_' + human_setting + '_' + str(number) + '.csv', 'w+')
+        # a+ will create the file if it doesn't exist already
         # change the name of this file manually each run if changing testing styles to collect new data
-        # without overwriting, e.g. naming the file with '_wo#.csv' vs '_w#.csv' for without or with humans
-        # the str(number) is movement_session_id in graph.py - edit this after each run
+        # without overwriting, e.g. naming the file with 'wo' vs 'w' for without or with humans
+        # a is also preferred to w here at the end to append, rather than overwrite, values
+        # the str(number) is movement_session_id in graph.py
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
     filewriter = csv.writer(density_export)
@@ -32,8 +33,7 @@ def save_density_plot(moved_list, number):
 
 def erase_density_plot():
     try:
-        density_export = open('abm_export_density_plot.csv', 'w+')  # w+ will create the file if it doesn't exist already
-        density_export.truncate()
+        density_export = open('abm_export_density_plot_with_humans_replacethiswith#.csv', 'w+')  # write in your own file
         density_export.flush()  # flush memory
         density_export.close()
     except IOError:

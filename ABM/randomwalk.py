@@ -9,7 +9,7 @@ inaccurately connect separate agents' movements together
 from random import choice
 from matplotlib import pyplot as plt
 import numpy as np
-
+from fnnr_config_file import model_exported_density_plot_file
 def readCSVInt(text):
     # reads in a .csv file.
     # separate from _readASCII in model.py, which reads .asc files.
@@ -21,7 +21,7 @@ def readCSVInt(text):
     return cells
 
 tuple_excel_walk = []
-excel_walk = readCSVInt('abm_export_density_plot_single1.csv')
+excel_walk = readCSVInt(model_exported_density_plot_file)
 for x in excel_walk:
     tuple_excel_walk.append(tuple(x))
 
