@@ -137,6 +137,75 @@ class Movement(Model):
                 if self.run_type == 'first_run':
                     self.saveLoad(resource_dict, 'resource_dict', 'save')
 
+        # Creation of households (not in visualization, but each step, humans check their household for impacts)
+
+        # Creation of land parcels
+        land_parcel_count = 0
+        # all land parcels in a household adapt the same non_gtgp_area
+        for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each household:
+            hh_id = int(line[0])
+            hh_count = []
+            for person in (line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9]):
+                if person not in ['-3', -3]:
+                    hh_count.append(person)
+            hh_size = len(hh_count)
+            total_rice = float(line[43])
+            gtgp_rice = float(line[44])
+            total_dry = float(line[45])
+            gtgp_dry = float(line[46])
+            if total_rice in ['-3', '-4', -3, None]:
+                total_rice = 0
+            if total_dry in ['-3', '-4', -3, None]:
+                total_dry = 0
+            if gtgp_dry in ['-3', '-4', -3, None]:
+                gtgp_dry = 0
+            if gtgp_rice in ['-3', '-4', -3, None]:
+                gtgp_rice = 0
+            if (gtgp_dry + gtgp_rice) != 0:
+                gtgp_part = 1
+            else:
+                gtgp_part = 0
+            non_gtgp_area = (float(total_rice) + float(total_dry)) \
+                            - (float(gtgp_dry) + float(gtgp_rice))
+
+            age_1 = float(line[1])
+            gender_1 = float(line[10])
+            education_1 = float(line[19])
+
+            # individual land parcels in each household
+            for line in _readCSV('hh_land.csv')[2:]:  # exclude headers; for each household:
+                for i in list(range(1,6)):  # for each of the household's five possible non-gtgp land parcels:
+                    non_gtgp_output = float(line[i])
+                    pre_gtgp_output = 0
+                    land_time = float(line[i + 26])  # non-gtgp travel time
+                    plant_type = float(line[i + 11])  # non-gtgp plant type
+                    land_type = float(line[i + 31])  # non-gtgp land type
+                    gtgp_enrolled = 0
+                    land_parcel_count += 1
+
+                    lp = LandParcel(land_parcel_count, self, hh_id, gtgp_enrolled,
+                                         age_1, gender_1, education_1,
+                                         gtgp_dry, gtgp_rice, total_dry, total_rice,
+                                         land_type, land_time, plant_type, non_gtgp_output,
+                                         pre_gtgp_output)
+                    self.schedule.add(lp)
+
+                for i in list(range(1, 6)):  # for each of the household's five possible gtgp land parcels:
+                    pre_gtgp_output = 0
+                    non_gtgp_output = float(line[i + 1])
+                    land_time = float(line[i + 21])  # gtgp travel time
+                    plant_type = float(line[i + 16])  # gtgp plant type
+                    land_type = float(line[i + 36])  # gtgp land type
+                    gtgp_enrolled = 1
+                    land_parcel_count += 1
+
+                    lp = LandParcel(land_parcel_count, self, hh_id, gtgp_enrolled,
+                                    age_1, gender_1, education_1,
+                                    gtgp_dry, gtgp_rice, total_dry, total_rice,
+                                    land_type, land_time, plant_type, non_gtgp_output,
+                                    pre_gtgp_output)
+                    self.schedule.add(lp)
+
         # Creation of humans (brown dots in simulation)
         schedule_temp_list = []
         self.number_of_humans = 0
