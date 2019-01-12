@@ -23,7 +23,6 @@ labor_list = []
 # 170 indices total; not all are used; these are just to store values for each household
 hh_migration_flag = [0] * 170  # 1 if the head of household out-migrates, 0 if not or if returned
 num_labor_list = [0] * 170  # number of laborers in each household; index is hh #; 0th index is always 0
-gtgp_part_list = [0] * 170  # 1 if yes, 0 if no
 head_of_household_list = [0] * 170
 former_hoh_list = [0] * 170
 hh_size_list = [0] * 170
@@ -307,18 +306,26 @@ class Human(Agent):
     def migration_check(self):
         """Describes out-migration process and probability"""
 
+        from land import non_gtgp_part_list, gtgp_part_list, non_gtgp_area_list
+
+        self.non_gtgp_area = non_gtgp_area_list[self.hh_id]
+
         if num_labor_list[self.hh_id] != 0:
             non_gtgp_land_per_labor = self.non_gtgp_area / num_labor_list[self.hh_id]
         else:
             non_gtgp_land_per_labor = 0
         try:
             remittance = random.normalvariate(1200, 16000)
-        # 1200 is the mean, and 16000 is the st. dev. according to the original pseudocode, but this seems strange
+        # 1200 is the mean, and 400^2 is the st. dev. according to the original pseudocode, but this seems strange
         except:
             remittance = 0
         if remittance < 0:
             remittance = 0
         self.remittance = float(remittance)
+        if self.hh_id in non_gtgp_part_list:
+            self.gtgp_part = 0
+        elif self.hh_id in gtgp_part_list:
+            self.gtgp_part = 1
         prob = math.exp(2.07 - 0.00015 * float(self.income_local_off_farm) + 0.67 * float(num_labor_list[self.hh_id])
                + 4.36 * float(self.migration_network) - 0.58 * float(non_gtgp_land_per_labor)
                + 0.27 * float(self.gtgp_part) - 0.13 * float(self.age) + 0.07 * float(self.gender)
