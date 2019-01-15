@@ -10,10 +10,12 @@ Running the model
 # model settings
 run_setting = "normal_run"  # "normal_run" or "first_run" (strings with underscores); default is "normal_run"
 plot_setting = False  # pops up monkey demographic graphs that were exported to the Excel files; default is False
+# Note: due to time constraints and unfamiliarity with matplotlib, I only have monkey demographic plots in my model.
+# Other plots can be generated in Excel.
 
 # monkey/human settings
 family_setting = 20  # number of monkey families; default/recommended is 20; set to 1 for random walk mapping
-year_setting = 10  # number of years the model will run, as an integer multiple of 73 5-day time-steps; default is 10
+year_setting = 20  # number of years the model will run, as an integer multiple of 73 5-day time-steps; default is 10
 human_setting = "with_humans"  # "with_humans" or "without_humans" (strings with underscores); default is "with_humans"
 
 # land settings
@@ -29,6 +31,7 @@ unit_comp_rice = 400  # 'land_type' scenario only; compensation for rice convers
 unit_comp_before = 250  # 'time' scenario only; compensation before scenario_breakpoint year
 unit_comp_after = 350  # 'time' scenario only; compensation after scenario_breakpoint year
 time_breakpoint = 4  # 'time' scenario only; year that PES ends
+land_step_measure = 6  # every 5 days (time-step) * land_count = land time resolution; default is 6 (30-day, monthly)
 
 """
 Configuring randomwalk.py
