@@ -16,7 +16,7 @@ currentpath = str(inspect.getfile(inspect.currentframe()))[:-34]  # 'removes exc
 os.chdir(currentpath)  # uses current directory path
 
 
-def save_summary_households(steps, average_non_gtgp_per_hh, average_gtgp_per_hh,
+def save_summary_households(steps, total_non_gtgp, total_gtgp, average_non_gtgp_per_hh, average_gtgp_per_hh,
                         average_non_gtgp_land_area_per_hh, average_gtgp_land_area_per_hh,
                         average_hh_income):
     """Exports entries onto a .csv file"""
@@ -36,13 +36,18 @@ def save_summary_households(steps, average_non_gtgp_per_hh, average_gtgp_per_hh,
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 
-    if steps == 0:
+    if steps == 6:
         filewriter = csv.writer(fnnr_export)
         filewriter.writerow(
-            ['Steps', 'Avg # Non-GTGP Parcels', 'Avg GTGP Parcels', 'Avg Non-GTGP Area',
+            ['Steps', 'Total # Non-GTGP Parcels', 'Total # GTGP Parcels',
+             'Avg # Non-GTGP Parcels', 'Avg GTGP Parcels', 'Avg Non-GTGP Area',
              'Avg GTGP Area', 'Avg Household Income'
              ])
     fnnr_export.writelines(str(steps))
+    fnnr_export.writelines(',')
+    fnnr_export.writelines(str(total_non_gtgp))
+    fnnr_export.writelines(',')
+    fnnr_export.writelines(str(total_gtgp))
     fnnr_export.writelines(',')
     fnnr_export.writelines(str(average_non_gtgp_per_hh))
     fnnr_export.writelines(',')

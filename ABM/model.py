@@ -5,7 +5,7 @@ from mesa.space import MultiGrid
 from mesa.time import RandomActivation
 from monkeys import *
 from environment import *
-from humans import _readCSV, Human, Resource
+from humans import _readCSV, Human, Resource, human_demographic_structure_list
 from land import Land
 from fnnr_config_file import family_setting, human_setting, run_setting
 import pickle
@@ -138,76 +138,79 @@ class Movement(Model):
                 if self.run_type == 'first_run':
                     self.saveLoad(resource_dict, 'resource_dict', 'save')
 
-        # Creation of households (not in visualization, but each step, humans check their household for impacts)
-
         # Creation of land parcels
         land_parcel_count = 0
-        # all land parcels in a household adapt the same non_gtgp_area
-        for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each household:
-            hh_id = int(line[0])
-            hh_count = []
-            for person in (line[1], line[2], line[3], line[4], line[5], line[6], line[7], line[8], line[9]):
-                if person not in ['-3', -3]:
-                    hh_count.append(person)
-            hh_size = len(hh_count)
-            total_rice = float(line[43])
-            gtgp_rice = float(line[44])
-            total_dry = float(line[45])
-            gtgp_dry = float(line[46])
-            if total_rice in ['-3', '-4', -3, None]:
-                total_rice = 0
-            if total_dry in ['-3', '-4', -3, None]:
-                total_dry = 0
-            if gtgp_dry in ['-3', '-4', -3, None]:
-                gtgp_dry = 0
-            if gtgp_rice in ['-3', '-4', -3, None]:
-                gtgp_rice = 0
-            if (gtgp_dry + gtgp_rice) != 0:
-                gtgp_part = 1
-            else:
-                gtgp_part = 0
-            non_gtgp_area = (float(total_rice) + float(total_dry)) \
-                            - (float(gtgp_dry) + float(gtgp_rice))
-            age_1 = float(line[1])
-            gender_1 = float(line[10])
-            education_1 = float(line[19])
 
-            # individual land parcels in each household (non-gtgp and gtgp)
-            for line in _readCSV('hh_land.csv')[2:]:  # exclude headers; for each household:
-                for i in list(range(1,6)):  # for each of the household's five possible non-gtgp land parcels:
+        schedule_temp_list = []
+
+        # individual land parcels in each household (non-gtgp and gtgp)
+        for line in _readCSV('hh_land.csv')[2:]:  # exclude headers; for each household:
+            age_1 = float(line[45])
+            gender_1 = float(line[46])
+            education_1 = float(line[47])
+            hh_id = int(line[0])
+            hh_size = 0  # calculate later
+
+            total_rice = float(line[41])
+            if total_rice in [-2, -3, -4]:
+                total_rice = 0
+            gtgp_rice = float(line[42])
+            if gtgp_rice in [-2, -3, -4]:
+                gtgp_rice = 0
+            total_dry = float(line[43])
+            if total_dry in [-2, -3, -4]:
+                total_dry = 0
+            gtgp_dry = float(line[44])
+            if gtgp_dry in [-2, -3, -4]:
+                gtgp_dry = 0
+            # non_gtgp_area = float(total_rice) + float(total_dry) - float(gtgp_dry) - float(gtgp_rice)
+            # gtgp_area = float(gtgp_dry) + float(gtgp_rice)
+
+            for i in range(1,6):  # for each household, which has up to 5 each of possible non-GTGP and GTGP parcels:
+                non_gtgp_area = float(line[i + 47].replace("\"",""))
+                gtgp_area = float(line[i + 52].replace("\"",""))
+
+                if gtgp_area in [-2, -3, -4]:
+                    gtgp_area = 0
+                if non_gtgp_area in [-2, -3, -4]:
+                    non_gtgp_area = 0
+
+                if non_gtgp_area > 0:
+                    gtgp_enrolled = 0
                     non_gtgp_output = float(line[i].replace("\"",""))
                     pre_gtgp_output = 0
                     land_time = float(line[i + 25].replace("\"",""))  # non-gtgp travel time
                     plant_type = float(line[i + 10].replace("\"",""))  # non-gtgp plant type
                     land_type = float(line[i + 30].replace("\"",""))  # non-gtgp land type
-                    gtgp_enrolled = 0
-                    land_parcel_count += 1
 
-                    lp = Land(land_parcel_count, self, hh_id, gtgp_enrolled,
-                                         age_1, gender_1, education_1,
-                                         gtgp_dry, gtgp_rice, total_dry, total_rice,
-                                         land_type, land_time, plant_type, non_gtgp_output,
-                                         pre_gtgp_output)
-                    self.schedule.add(lp)
+                    if land_type not in [-2, -3, -4]:
+                        land_parcel_count += 1
+                        lp = Land(land_parcel_count, self, hh_id, gtgp_enrolled,
+                                             age_1, gender_1, education_1,
+                                             gtgp_dry, gtgp_rice, total_dry, total_rice,
+                                             land_type, land_time, plant_type, non_gtgp_output,
+                                             pre_gtgp_output, hh_size, non_gtgp_area, gtgp_area)
+                        self.schedule.add(lp)
+                        schedule_temp_list.append(lp)
 
-                for i in list(range(1,6)):  # for each of the household's five possible gtgp land parcels:
+                if gtgp_area > 0:
+                    gtgp_enrolled = 1
                     pre_gtgp_output = 0
                     non_gtgp_output = float(line[i].replace("\"",""))
                     land_time = float(line[i + 20].replace("\"",""))  # gtgp travel time
                     plant_type = float(line[i + 15].replace("\"",""))  # gtgp plant type
                     land_type = float(line[i + 35].replace("\"",""))  # gtgp land type
-                    gtgp_enrolled = 1
-                    land_parcel_count += 1
-
-                    lp = Land(land_parcel_count, self, hh_id, gtgp_enrolled,
-                                    age_1, gender_1, education_1,
-                                    gtgp_dry, gtgp_rice, total_dry, total_rice,
-                                    land_type, land_time, plant_type, non_gtgp_output,
-                                    pre_gtgp_output)
-                    self.schedule.add(lp)
+                    if land_type not in [-3, '-3', -4, '-4']:
+                        land_parcel_count += 1
+                        lp = Land(land_parcel_count, self, hh_id, gtgp_enrolled,
+                                        age_1, gender_1, education_1,
+                                        gtgp_dry, gtgp_rice, total_dry, total_rice,
+                                        land_type, land_time, plant_type, non_gtgp_output,
+                                        pre_gtgp_output, hh_size, non_gtgp_area, gtgp_area)
+                        self.schedule.add(lp)
+                        schedule_temp_list.append(lp)
 
         # Creation of humans (brown dots in simulation)
-        schedule_temp_list = []
         self.number_of_humans = 0
         line_counter = 0
         for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each household:
@@ -251,6 +254,50 @@ class Movement(Model):
                 work_status = 0
                 gtgp_part = 0
                 non_gtgp_area = 0
+
+                if gender == 1:
+                    if 0 < age <= 10:
+                        age_category = 0
+                    elif 10 < age <= 20:
+                        age_category = 1
+                    elif 20 < age <= 30:
+                        age_category = 2
+                    elif 30 < age <= 40:
+                        age_category = 3
+                    elif 40 < age <= 50:
+                        age_category = 4
+                    elif 50 < age <= 60:
+                        age_category = 5
+                    elif 60 < age <= 70:
+                        age_category = 6
+                    elif 70 < age <= 80:
+                        age_category = 7
+                    elif 80 < age <= 90:
+                        age_category = 8
+                    elif 90 < age:
+                        age_category = 9
+                elif gender != 1:
+                    if 0 < age <= 10:
+                        age_category = 10
+                    elif 10 < age <= 20:
+                        age_category = 11
+                    elif 20 < age <= 30:
+                        age_category = 12
+                    elif 30 < age <= 40:
+                        age_category = 13
+                    elif 40 < age <= 50:
+                        age_category = 14
+                    elif 50 < age <= 60:
+                        age_category = 15
+                    elif 60 < age <= 70:
+                        age_category = 16
+                    elif 70 < age <= 80:
+                        age_category = 17
+                    elif 80 < age <= 90:
+                        age_category = 18
+                    elif 90 < age:
+                        age_category = 19
+                human_demographic_structure_list[age_category] += 1
                 if str(person[0]) != '' and str(person[0]) != '-3':  # sorts out all blanks
                     self.number_of_humans += 1
                     human = Human(self.number_of_humans, self, starting_position, hh_id, age,  # creates human
@@ -258,7 +305,7 @@ class Movement(Model):
                                   resource_frequency, gender, education, work_status,
                                   marriage, past_hh_id, mig_years, migration_status, gtgp_part,
                                   non_gtgp_area, migration_network, mig_remittances,
-                                  income_local_off_farm, last_birth_time, death_rate)
+                                  income_local_off_farm, last_birth_time, death_rate, age_category)
                     if self.grid_type == 'with_humans':
                         self.grid.place_agent(human, starting_position)
                         self.schedule.add(human)
@@ -305,17 +352,61 @@ class Movement(Model):
                 mig_remittances = 0
                 last_birth_time = 0
                 death_rate = 0
+                if gender == 1:  # human male (monkeys are 0 and 1, humans are 1 and 2)
+                    if 0 < age <= 10:
+                        age_category = 0
+                    elif 10 < age <= 20:
+                        age_category = 1
+                    elif 20 < age <= 30:
+                        age_category = 2
+                    elif 30 < age <= 40:
+                        age_category = 3
+                    elif 40 < age <= 50:
+                        age_category = 4
+                    elif 50 < age <= 60:
+                        age_category = 5
+                    elif 60 < age <= 70:
+                        age_category = 6
+                    elif 70 < age <= 80:
+                        age_category = 7
+                    elif 80 < age <= 90:
+                        age_category = 8
+                    elif 90 < age:
+                        age_category = 9
+                elif gender != 1:
+                    if 0 < age <= 10:
+                        age_category = 10
+                    elif 10 < age <= 20:
+                        age_category = 11
+                    elif 20 < age <= 30:
+                        age_category = 12
+                    elif 30 < age <= 40:
+                        age_category = 13
+                    elif 40 < age <= 50:
+                        age_category = 14
+                    elif 50 < age <= 60:
+                        age_category = 15
+                    elif 60 < age <= 70:
+                        age_category = 16
+                    elif 70 < age <= 80:
+                        age_category = 17
+                    elif 80 < age <= 90:
+                        age_category = 18
+                    elif 90 < age:
+                        age_category = 19
+                human_demographic_structure_list[age_category] += 1
                 human = Human(self.number_of_humans, self, starting_position, hh_id, age,  # creates human
                               resource_check, starting_position, resource_position,
                               resource_frequency, gender, education, work_status,
                               marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
                               migration_network, mig_remittances, income_local_off_farm,
-                              last_birth_time, death_rate)
+                              last_birth_time, death_rate, age_category)
 
                 if self.grid_type == 'with_humans':
                     self.schedule.add(human)
                     schedule_temp_list.append(human)
                     self.grid.place_agent(human, starting_position)
+
         # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block create families
             starting_position = random.choice(startinglist)

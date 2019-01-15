@@ -18,6 +18,7 @@ human_avoidance_list = []  # sets coordinate positions the monkeys should not st
 birth_flag_list = []
 marriage_flag_list = []
 labor_list = []
+human_demographic_structure_list = [0] * 20
 
 # 169 = household IDs, 170 = 169 + 1 indices (+ 1 is for the 0th index)
 # 170 indices total; not all are used; these are just to store values for each household
@@ -48,7 +49,7 @@ class Human(Agent):
                  home_position, resource_position, resource_frequency, gender, education, work_status,
                  marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
                  migration_network, mig_remittances, income_local_off_farm,
-                 last_birth_time, death_rate):
+                 last_birth_time, death_rate, age_category):
         super().__init__(unique_id, model)
         self.current_position = current_position
         self.hh_id = hh_id
@@ -71,6 +72,7 @@ class Human(Agent):
         self.income_local_off_farm = income_local_off_farm
         self.last_birth_time = last_birth_time
         self.death_rate = death_rate
+        self.age_category = age_category
 
         if self.migration_status == 0 and self.hh_id != 'Migrated':
             if self.work_status == 1 and head_of_household_list[self.hh_id] == 0:
@@ -82,13 +84,18 @@ class Human(Agent):
             if self.migration_status == 1:
                 total_migration_list[self.past_hh_id] += 1
             if self.migration_status == 0:
-                # populate num_labor_list
                 hh_size_list[self.hh_id] += 1
                 if self.work_status == 1:
                     num_labor_list[self.hh_id] += 1
                     labor_list.append(self.unique_id)
                 if self.gender == 1 and self.marriage == 1 and self.unique_id not in married_male_list:
                     married_male_list.append(self.unique_id)
+            # local_income_off_farm added first step once per household
+            if self.hh_id != 'Migrated':
+                self.hoh_check()
+                if self.unique_id in head_of_household_list:
+                    from land import household_income_list
+                    household_income_list[self.hh_id] += float(self.income_local_off_farm)
 
         if self.migration_status == 0:
             self.age_check()
@@ -105,6 +112,7 @@ class Human(Agent):
             self.re_migration_check()
 
         self.age += 1 / 73
+        self.check_age_category()
         self.last_birth_time += 1 / 73
 
         # every step, perform a single/married male check
@@ -194,16 +202,48 @@ class Human(Agent):
         # The survival rate for each 5-day step is compounded 73 times, so x^73 = 0.85.
         # 0.998557 is the 5-day survival rate, and 1 - x is the 5-day death rate.
         else:
-            self.death_rate = 0.0000108
-        # I wanted people to have a 95% chance of reaching age 65 (death rate is lower if not elderly).
+            self.death_rate = 0.00000425
+        # I wanted people to have a 98% chance of reaching age 65 (death rate is lower if not elderly).
         # If a 'check' is every 5 days, 73 checks/year * 65 years = 4,745 checks.
-        # x^4745 = 0.95; the 5-day survival rate is 0.9999892, and 1 - x is the 5-day death rate.
+        # x^4745 = 0.98; the 5-day survival rate is 0.99999575, and 1 - x is the 5-day death rate.
 
         # These rates are changeable later.
+
+    def check_age_category(self):
+        # sorts humans in the right age category as they age
+        if self.gender == 1:
+            if (0 < self.age <= 10 and self.age_category == 0) or \
+                    (10 < self.age <= 20 and self.age_category == 1) or \
+                    (20 < self.age <= 30 and self.age_category == 2) or \
+                    (30 < self.age <= 40 and self.age_category == 3) or \
+                    (40 < self.age <= 50 and self.age_category == 4) or \
+                    (50 < self.age <= 60 and self.age_category == 5) or \
+                    (60 < self.age <= 70 and self.age_category == 6) or \
+                    (70 < self.age <= 80 and self.age_category == 7) or \
+                    (80 < self.age <= 90 and self.age_category == 8) or \
+                    (self.age > 90 and self.age_category == 9):
+                pass
+        elif self.gender != 1:
+            if (0 < self.age <= 10 and self.age_category == 10) or \
+                    (10 < self.age <= 20 and self.age_category == 11) or \
+                    (20 < self.age <= 30 and self.age_category == 12) or \
+                    (30 < self.age <= 40 and self.age_category == 13) or \
+                    (40 < self.age <= 50 and self.age_category == 14) or \
+                    (50 < self.age <= 60 and self.age_category == 15) or \
+                    (60 < self.age <= 70 and self.age_category == 16) or \
+                    (70 < self.age <= 80 and self.age_category == 17) or \
+                    (80 < self.age <= 90 and self.age_category == 18) or \
+                    (self.age > 90 and self.age_category == 19):
+                pass
+        else:
+            human_demographic_structure_list[(self.age_category)] -= 1
+            human_demographic_structure_list[(self.age_category + 1)] += 1
+            self.age_category += 1
 
     def hoh_check(self):
         # designates the oldest working person of a household as its gatherer
         # removes all others from the gatherer (head of household list)
+
         if self.age >= 59 and self.unique_id in head_of_household_list:
             head_of_household_list[self.hh_id] = 0
 
@@ -238,16 +278,24 @@ class Human(Agent):
                 education = 0
                 work_status = 0
                 marriage = 0
+                if gender == 1:
+                    age_category = 0
+                elif gender == 2:
+                    age_category = 1
                 ind = Human(last + 1, self.model, self.current_position, self.hh_id, age, self.resource_check,
                                       self.home_position, self.resource_position, self.resource_frequency, gender,
                                       education, work_status, marriage, self.past_hh_id, self.mig_years,
                                       self.migration_status, self.gtgp_part, self.non_gtgp_area,
                                       self.migration_network, self.mig_remittances, self.income_local_off_farm,
-                                      self.last_birth_time, self.death_rate)
+                                      self.last_birth_time, self.death_rate, age_category)
                 self.model.schedule.add(ind)
                 self.model.number_of_humans += 1
                 hh_size_list[self.hh_id] += 1
                 human_birth_list.append(last + 1)
+                if ind.gender == 1:
+                    human_demographic_structure_list[0] += 1
+                elif ind.gender == 2:
+                    human_demographic_structure_list[10] += 1
 
     def death_check(self):
         """Small chance of dying every step; chance increases if over 65, see age_check()"""
@@ -280,6 +328,7 @@ class Human(Agent):
                 hh_size_list[self.hh_id] -= 1
             except:
                 hh_size_list[self.past_hh_id] -= 1
+            human_demographic_structure_list[self.age_category] -= 1
 
             self.model.schedule.remove(self)
             if self in self.model.grid:
@@ -289,7 +338,7 @@ class Human(Agent):
         if random.random() < 0.000096:
             marriage_flag_list.append(1)
         if int(self.age) > 20 and int(self.gender) == 2 and int(self.marriage) != 1 \
-                and marriage_flag_list != []:  # marriage occurs
+                and marriage_flag_list != [] and hh_size_list[self.hh_id] > 1:  # marriage occurs
             # marriage late is set low because this is a 5-day rate
             # the yearly marriage rate is 0.007, or 0.7%
             self.marriage = 1
@@ -321,7 +370,7 @@ class Human(Agent):
             remittance = 0
         if remittance < 0:
             remittance = 0
-        self.remittance = float(remittance)
+        self.mig_remittances = float(remittance)
         if self.hh_id in non_gtgp_part_list:
             self.gtgp_part = 0
         elif self.hh_id in gtgp_part_list:
@@ -330,13 +379,15 @@ class Human(Agent):
                + 4.36 * float(self.migration_network) - 0.58 * float(non_gtgp_land_per_labor)
                + 0.27 * float(self.gtgp_part) - 0.13 * float(self.age) + 0.07 * float(self.gender)
                + 0.17 * float(self.education) + 0.88 * float(self.marriage) +
-               1.39 * float(self.work_status) + 0.001 * float(self.remittance))  # Shuang's formula
+               1.39 * float(self.work_status) + 0.001 * float(self.mig_remittances))  # Shuang's formula
         mig_prob = prob / (prob + 1)
         if random.random() < mig_prob and hh_size_list[self.hh_id] >= 2:  # out-migration occurs
             if hh_migration_flag[self.hh_id] == 0:  # only one migrant allowed per household at a time
                 hh_size_list[self.hh_id] -= 1
                 self.past_hh_id = self.hh_id
                 self.migration_status = 1
+                from land import household_income_list
+                household_income_list[self.past_hh_id] += self.mig_remittances
                 if self.unique_id in head_of_household_list:
                     head_of_household_list[self.past_hh_id] = 0
                     former_hoh_list[self.hh_id] = self.unique_id
@@ -363,6 +414,8 @@ class Human(Agent):
                 self.migration_status = 0
                 self.hh_id = self.past_hh_id
                 self.mig_years = 0
+                from land import household_income_list
+                household_income_list[self.past_hh_id] -= self.mig_remittances
                 hh_size_list[self.hh_id] += 1
                 hh_migration_flag[self.hh_id] = 0
                 if self.hh_id not in total_re_migration_list:
@@ -378,44 +431,55 @@ class Human(Agent):
 
     def move_to(self, pos):
         if pos != None:
-            self.model.grid.move_agent(self, pos)
+            try:
+                self.model.grid.move_agent(self, pos)
+            except Exception as e:
+                print(self.current_position, self.home_position)
+                print(e)
+            finally:
+                self.current_position = self.home_position
+                pass
 
     def move_to_point(self, destination, frequency):
-        """Moves human agent to assigned point at the frequency speed"""
+        """Moves human agent to assigned point according to frequency"""
         # index 0 represents x, index 1 represents y
         if frequency > 1:
+            x_towards = int(round((destination[0] - current_position[0]) / frequency))
+            if x_towards > 1:
+                x_towards -= 1
+            y_towards = int(round((destination[1] - current_position[1]) / frequency))
+            if y_towards > 1:
+                y_towards -= 1
             current_position = list(self.current_position)
-            if current_position[0] < destination[0]:
-                current_position[0] = current_position[0] + int(frequency)
-                for i in list(range(1, int(frequency))):
-                    human_avoidance_list.append(self.current_position + i)
-                if current_position[0] > destination[0]:  # if this overshoots:
+            if current_position[0] < destination[0]:  # if x is west
+                current_position[0] = current_position[0] + x_towards
+                x_change = int(frequency)
+                if current_position[0] >= destination[0]:  # if this overshoots:
                     current_position[0] = destination[0]
             elif current_position[0] == destination[0]:
                 pass  # don't move
             else:
-                current_position[0] = current_position[0] - int(frequency)
-                for i in list(range(1, int(frequency))):
-                    human_avoidance_list.append(self.current_position - i)
-                if current_position[0] < destination[0]:  # if this overshoots:
+                current_position[0] = current_position[0] - x_towards
+                x_change = 0 - int(frequency)
+                if current_position[0] <= destination[0]:  # if this overshoots:
                     current_position[0] = destination[0]
             if current_position[1] < destination[1]:
-                current_position[1] = current_position[1] + int(frequency)
-                for i in list(range(1, int(frequency))):
-                    human_avoidance_list.append(self.current_position + i)
-                if current_position[1] > destination[1]:  # if this overshoots:
+                current_position[1] = current_position[1] + y_towards
+                y_change = int(frequency)
+                if current_position[1] >= destination[1]:  # if this overshoots:
                     current_position[1] = destination[1]
             elif current_position[1] == destination[1]:
                 pass
             else:
-                current_position[1] = current_position[1] - int(frequency)
-                for i in list(range(1, int(frequency))):
-                    human_avoidance_list.append(self.current_position - i)
-                if current_position[1] < destination[1]:  # if this overshoots:
+                current_position[1] = current_position[1] - y_towards
+                y_change = 0 - int(frequency)
+                if current_position[1] <= destination[1]:  # if this overshoots:
                     current_position[1] = destination[1]
 
             current_position = tuple(current_position)
             self.move_to(current_position)
+            for i in list(range(1, int(frequency))):
+                human_avoidance_list.append((current_position[0] + x_change, current_position[1] + y_change))
             self.current_position = current_position
             if current_position[0] == destination[0] and current_position[1] == destination[1]:
                 self.resource_check = 1

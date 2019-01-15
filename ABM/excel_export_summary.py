@@ -22,7 +22,7 @@ def save_summary(steps, number_of_monkeys, monkey_birth_count, monkey_death_coun
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 
-    if steps == 0:
+    if steps == 6:
         filewriter = csv.writer(fnnr_export)
         filewriter.writerow(
             ['Steps', 'Total Monkeys', 'Births', 'Deaths', 'Age 0-1', 'Age 1-3', 'Age 3-7',
