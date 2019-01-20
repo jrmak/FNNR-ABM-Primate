@@ -69,7 +69,7 @@ class Monkey(Agent):
         # Birth from the mother's perspective
         if (49 < self.model.step_in_year < 55) \
                 and (self.gender == 1 and random.uniform(8, 9) <= self.age <= 25):
-            if self.last_birth_interval >= 3:
+            if self.last_birth_interval >= 2:
                 self.family.family_size += 1
                 self.birth(self.family, self.unique_id)
                 self.last_birth_interval = 0
@@ -104,7 +104,16 @@ class Monkey(Agent):
                 # 0.99973^73 = 98% chance to survive each year with ticks every 5 days
                 # 0.99958^73 = 97% chance to survive each year with ticks every 5 days
                 # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
-        elif 10 < self.age <= 30 and chance <= 0.0013:  # 0.0013 = 1 - 0.9987; 91% survival; see below
+        elif 10 < self.age <= 30 and gender == 0 and chance <= 0.00222:  # 0.00222 = 1 - 0.99778; 85% survival
+            # We want a 3:1 male to female ratio, so females will less likely to die and males will be more likely
+            self.death()
+            if 10 < self.age <= 25:
+                demographic_structure_list[4] -= 1
+            elif 25 < self.age < 30:
+                demographic_structure_list[5] -= 1
+                # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
+                # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
+        elif 10 < self.age <= 30 and gender == 1 and chance <= 0.000415:  # 0.000415 = 1 - 0.999585; 97% survival
             self.death()
             if 10 < self.age <= 25:
                 demographic_structure_list[4] -= 1
