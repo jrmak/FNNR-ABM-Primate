@@ -76,9 +76,9 @@ while os.path.exists(str(os.getcwd()) + "export_density_plot_" + human_setting +
     movement_session_id += 1
 save_density_plot(moved_list, movement_session_id)
 
-save_summary(run, t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
+save_summary(str(run), t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
              demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
-save_summary_humans(run, t, model.number_of_humans, len(human_birth_list), len(human_death_list),
+save_summary_humans(str(run), t, model.number_of_humans, len(human_birth_list), len(human_death_list),
                     len(human_marriage_list), len(labor_list),
                     len(single_male_list), len(married_male_list), sum(total_migration_list))  # 94 households total
 save_summary_human_demographics(str(run), t, human_demographic_structure_list[0],
@@ -92,7 +92,7 @@ save_summary_human_demographics(str(run), t, human_demographic_structure_list[0]
                                 human_demographic_structure_list[14], human_demographic_structure_list[15],
                                 human_demographic_structure_list[16], human_demographic_structure_list[17],
                                 human_demographic_structure_list[18], human_demographic_structure_list[19])
-save_summary_households(run, t, sum(non_gtgp_part_list), sum(gtgp_part_list),
+save_summary_households(str(run), t, sum(non_gtgp_part_list), sum(gtgp_part_list),
                         sum(non_gtgp_part_list) / 94, sum(gtgp_part_list) / 94,
                         sum(non_gtgp_area_list) / 94,
                         sum(gtgp_area_list) / 94,
