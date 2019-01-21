@@ -99,7 +99,7 @@ save_summary_households(str(run), t, sum(non_gtgp_part_list), sum(gtgp_part_list
                         sum(household_income_list) / 94)
 
 # functions above are called again after the last step
-
+"""
 plt.subplot(211)
 age_category_list = ('0-1', '1-3', '3-7', '7-10', '10-25', '25+')
 index = np.arange(len(age_category_list))
@@ -158,3 +158,4 @@ plt.tight_layout()
 
 if plot_setting == True:
     plt.show()  # shows all plots at once
+"""
