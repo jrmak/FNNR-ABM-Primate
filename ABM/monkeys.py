@@ -172,7 +172,7 @@ class Monkey(Agent):
         age = 0
         age_category = 0
         if gender == 1:
-            last_birth_interval = 0
+            last_birth_interval = random.uniform(-10,-7)
             female_list.append(last + 1)
         else:
             last_birth_interval = -9999
