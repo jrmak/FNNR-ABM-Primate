@@ -16,7 +16,7 @@ plot_setting = False  # pops up monkey demographic graphs that were exported to 
 # monkey/human settings
 family_setting = 20  # number of monkey families; default/recommended is 20; set to 1 for random walk mapping
 year_setting = 20  # number of years the model will run, as an integer multiple of 73 5-day time-steps; default is 10
-human_setting = "with_humans"  # "with_humans" or "without_humans" (strings with underscores); default is "with_humans"
+human_setting = "without_humans"  # "with_humans" or "without_humans" (strings with underscores); default is "with_humans"
 
 # land settings
 PES_span = 8
@@ -25,7 +25,7 @@ min_threshold = 0.3  # similar to no_pay_part in that it also multiplies with gt
 
 # land scenario settings
 scenario = 'flat'  # types are 'flat', 'land_type', or 'time' as strings with underscores; default is flat
-unit_comp_flat = 300  # only applies if 'flat' scenario is selected; stable compensation; default is ~250-500
+unit_comp_flat = 270  # only applies if 'flat' scenario is selected; stable compensation; default is ~250-500
 unit_comp_dry = 200  # 'land_type' scenario only; compensation for dry conversion
 unit_comp_rice = 400  # 'land_type' scenario only; compensation for rice conversion
 unit_comp_before = 250  # 'time' scenario only; compensation before scenario_breakpoint year
