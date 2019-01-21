@@ -72,18 +72,27 @@ if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_c
             save_density_plot(moved_list, i)
 
 movement_session_id = 0
-currentpath = str(inspect.getfile(inspect.currentframe()))[:-8]  # 'removes graph.py' at end
-os.chdir(currentpath)
 while os.path.exists(str(os.getcwd()) + "export_density_plot_" + human_setting + str(movement_session_id) + ".csv"):
     movement_session_id += 1
 save_density_plot(moved_list, movement_session_id)
 
-save_summary(t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
+save_summary(run, t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
              demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
-save_summary_humans(t, model.number_of_humans, len(human_birth_list), len(human_death_list),
+save_summary_humans(run, t, model.number_of_humans, len(human_birth_list), len(human_death_list),
                     len(human_marriage_list), len(labor_list),
                     len(single_male_list), len(married_male_list), sum(total_migration_list))  # 94 households total
-save_summary_households(t, sum(non_gtgp_part_list), sum(gtgp_part_list),
+save_summary_human_demographics(str(run), t, human_demographic_structure_list[0],
+                                human_demographic_structure_list[1],
+                                human_demographic_structure_list[2], human_demographic_structure_list[3],
+                                human_demographic_structure_list[4], human_demographic_structure_list[5],
+                                human_demographic_structure_list[6], human_demographic_structure_list[7],
+                                human_demographic_structure_list[8], human_demographic_structure_list[9],
+                                human_demographic_structure_list[10], human_demographic_structure_list[11],
+                                human_demographic_structure_list[12], human_demographic_structure_list[13],
+                                human_demographic_structure_list[14], human_demographic_structure_list[15],
+                                human_demographic_structure_list[16], human_demographic_structure_list[17],
+                                human_demographic_structure_list[18], human_demographic_structure_list[19])
+save_summary_households(run, t, sum(non_gtgp_part_list), sum(gtgp_part_list),
                         sum(non_gtgp_part_list) / 94, sum(gtgp_part_list) / 94,
                         sum(non_gtgp_area_list) / 94,
                         sum(gtgp_area_list) / 94,
