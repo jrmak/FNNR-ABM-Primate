@@ -2,6 +2,7 @@
 
 Welcome! This project seeks to understand population demographics and factors affecting the movement of Guizhou golden monkeys endemic to the Fanjingshan National Nature Reserve in Guizhou, China.
 It uses Mesa, a library framework with tools designed to support agent-based modeling in Python 3.X.
+EDIT: This model has been expanded since August and October; the information in the User's Manual and this readme is now outdated and will be updated in February.
 
 An overview of Mesa can be found at: https://mesa.readthedocs.io/en/master/overview.html
 A more thorough doc can be found at: https://media.readthedocs.org/pdf/mesa/latest/mesa.pdf
@@ -18,7 +19,7 @@ If you have errors running the code and it is library-related, make sure Mesa's 
 Monkey movements are semi-randomized, and based on the weighted value of their 8-neighbor surroundings.
 This weighted value is currently determined by vegetation, human presence, season, and elevation (changeable in code; requires raster layers converted to an ASCII file).
 
-A web app version of server.py can be found at http://abm-webapp-abm.193b.starter-ca-central-1.openshiftapps.com/.
+A web app version of server.py is being worked on.
 
 3b. Run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code). graph.py also provides all data output (Excel file export)--graph.py is the main file to run for data analysis; server.py is simply a demonstration.
 
