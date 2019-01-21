@@ -16,21 +16,22 @@ currentpath = str(inspect.getfile(inspect.currentframe()))[:-34]  # 'removes exc
 os.chdir(currentpath)  # uses current directory path
 
 
-def save_summary_households(steps, total_non_gtgp, total_gtgp, average_non_gtgp_per_hh, average_gtgp_per_hh,
-                        average_non_gtgp_land_area_per_hh, average_gtgp_land_area_per_hh,
-                        average_hh_income):
+def save_summary_households(run_number, steps, total_non_gtgp, total_gtgp, average_non_gtgp_per_hh,
+                            average_gtgp_per_hh, average_non_gtgp_land_area_per_hh, average_gtgp_land_area_per_hh,
+                            average_hh_income):
     """Exports entries onto a .csv file"""
     try:
         if scenario.lower() == 'flat':
             fnnr_export = open('abm_export_summary_household' + '_' + scenario + '_'
-                               + str(unit_comp_flat) + '.csv', 'a+')
+                               + str(unit_comp_flat) + '_' + run_number + '.csv', 'a+')
         elif scenario.lower() == 'land_type':
             fnnr_export = open('abm_export_summary_household' + '_' + scenario + '_'
-                               + str(unit_comp_dry) + 'd' + '_' + str(unit_comp_rice) + 'r' + '.csv', 'a+')
+                               + str(unit_comp_dry) + 'd' + '_' + str(unit_comp_rice) + 'r'
+                               + '_' + run_number + '.csv', 'a+')
         elif scenario.lower() == 'time':
             fnnr_export = open('abm_export_summary_household' + '_' + scenario + '_'
                                + str(unit_comp_before) + '_' + str(time_breakpoint)
-                               + '_' + str(unit_comp_after) + '.csv', 'a+')
+                               + '_' + str(unit_comp_after) + '_' + run_number + '.csv', 'a+')
         # a+ will create the file if it doesn't exist
         # a is also preferred to w here to append, rather than overwrite, values
     except IOError:

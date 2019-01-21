@@ -13,12 +13,11 @@ currentpath = str(inspect.getfile(inspect.currentframe()))[:-23]  # 'removes exc
 os.chdir(currentpath)  # uses current directory path
 
 
-def save_summary(steps, number_of_monkeys, monkey_birth_count, monkey_death_count, demographic_structure_list,
+def save_summary(run_number, steps, number_of_monkeys, monkey_birth_count, monkey_death_count, demographic_structure_list,
                  female_list, male_maingroup_list, reproductive_female_list):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary.csv', 'a+')  # a+ will create the file if it doesn't exist already
-        # a is also preferred to w here to append, rather than overwrite, values
+        fnnr_export = open('abm_export_summary' + run_number + '.csv', 'w+')  # "w+" resets, use "a+" to overwrite
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 

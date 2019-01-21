@@ -14,16 +14,15 @@ currentpath = str(inspect.getfile(inspect.currentframe()))[:-30]  # 'removes exc
 os.chdir(currentpath)  # uses current directory path
 
 
-def save_summary_humans(steps, number_of_humans, human_birth_count, human_death_count, human_marriage_count, num_labor,
-                 single_male_count, married_male_count, total_migration):
+def save_summary_humans(run_number, steps, number_of_humans, human_birth_count, human_death_count,
+                        human_marriage_count, num_labor, single_male_count, married_male_count, total_migration):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary_humans.csv', 'a+')  # a+ will create the file if it doesn't exist already
-        # a is also preferred to w here to append, rather than overwrite, values
+        fnnr_export = open('abm_export_summary_humans' + run_number + '.csv', 'w+')  # w+ resets every time
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 
-    if steps == 0:
+    if steps == 6:
         filewriter = csv.writer(fnnr_export)
         filewriter.writerow(
             ['Steps', 'Total Humans', 'Births', 'Deaths', 'Marriages', 'Laborers', 'Single Males', 'Married Males',
@@ -52,13 +51,13 @@ def save_summary_humans(steps, number_of_humans, human_birth_count, human_death_
     fnnr_export.flush()  # flush memory
     fnnr_export.close()
 
-def save_summary_human_demographics(steps, male_0, male_1, male_2, male_3, male_4, male_5, male_6,
+def save_summary_human_demographics(run_number, steps, male_0, male_1, male_2, male_3, male_4, male_5, male_6,
                                     male_7, male_8, male_9, female_0, female_1, female_2, female_3,
                                     female_4, female_5, female_6, female_7, female_8, female_9):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary_human_demographics.csv', 'a+')  # a+ will create the file if it doesn't exist already
-        # a is also preferred to w here to append, rather than overwrite, values
+        fnnr_export = open('abm_export_summary_human_demographics' + run_number + '.csv', 'w+')  # 'w+' resets every time
+        # use the string 'a+' setting to append every time instead of reset
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 
