@@ -56,7 +56,7 @@ def save_summary_human_demographics(run_number, steps, male_0, male_1, male_2, m
                                     female_4, female_5, female_6, female_7, female_8, female_9):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary_human_demographics' + run_number + '.csv', 'w+')  # 'w+' resets every time
+        fnnr_export = open('abm_export_summary_human_demographics' + run_number + '.csv', 'a+')  # 'w+' resets every time
         # use the string 'a+' setting to append every time instead of reset
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
