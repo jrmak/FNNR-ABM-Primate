@@ -65,6 +65,7 @@ for t in range(model_time):  # for each time-step in the time we just defined,
                                 sum(household_income_list) / 94
                                 )
 save_density_plot(moved_list, str(run))
+print('Done!')
 
 if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_config_file.py
     # this should only be run with 1 family at a time or else the graphs will be messed up
