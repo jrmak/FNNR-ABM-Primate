@@ -27,8 +27,8 @@ monkey_death_count = []
 
 model = Movement()  # run the model
 model_time = 73 * year_setting # 73 time-steps of 5 days each for 10 years, 730 steps total
-erase_summary()  # clears the Excel file to overwrite
-erase_human_summary()
+#erase_summary()  # clears the Excel file to overwrite
+#erase_human_summary()
 # erase_density_plot()  # delete files manually since they iterate when multiple are created
 run = 1  # do not change this; it will automatically search for the first number-as-string not taken
 while os.path.isfile(os.getcwd() + '\\' + 'abm_export_summary' + str(run) + '.csv'):
@@ -64,6 +64,7 @@ for t in range(model_time):  # for each time-step in the time we just defined,
                                 sum(gtgp_area_list) / 94,
                                 sum(household_income_list) / 94
                                 )
+save_density_plot(moved_list, str(run))
 
 if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_config_file.py
     # this should only be run with 1 family at a time or else the graphs will be messed up
@@ -71,32 +72,6 @@ if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_c
         if t == 73 * i:
             save_density_plot(moved_list, i)
 
-movement_session_id = 0
-while os.path.exists(str(os.getcwd()) + "export_density_plot_" + human_setting + str(movement_session_id) + ".csv"):
-    movement_session_id += 1
-save_density_plot(moved_list, movement_session_id)
-
-save_summary(str(run), t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
-             demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
-save_summary_humans(str(run), t, model.number_of_humans, len(human_birth_list), len(human_death_list),
-                    len(human_marriage_list), len(labor_list),
-                    len(single_male_list), len(married_male_list), sum(total_migration_list))  # 94 households total
-save_summary_human_demographics(str(run), t, human_demographic_structure_list[0],
-                                human_demographic_structure_list[1],
-                                human_demographic_structure_list[2], human_demographic_structure_list[3],
-                                human_demographic_structure_list[4], human_demographic_structure_list[5],
-                                human_demographic_structure_list[6], human_demographic_structure_list[7],
-                                human_demographic_structure_list[8], human_demographic_structure_list[9],
-                                human_demographic_structure_list[10], human_demographic_structure_list[11],
-                                human_demographic_structure_list[12], human_demographic_structure_list[13],
-                                human_demographic_structure_list[14], human_demographic_structure_list[15],
-                                human_demographic_structure_list[16], human_demographic_structure_list[17],
-                                human_demographic_structure_list[18], human_demographic_structure_list[19])
-save_summary_households(str(run), t, sum(non_gtgp_part_list), sum(gtgp_part_list),
-                        sum(non_gtgp_part_list) / 94, sum(gtgp_part_list) / 94,
-                        sum(non_gtgp_area_list) / 94,
-                        sum(gtgp_area_list) / 94,
-                        sum(household_income_list) / 94)
 
 # functions above are called again after the last step
 """
