@@ -40,6 +40,7 @@ for t in range(model_time):  # for each time-step in the time we just defined,
     monkey_death_count.append(model.monkey_death_count)
     model.step()  # see model.step() in model.py; monkey agents age, family-pixel agents move
     print('Loading, Progress', t, '/', model_time)
+    print('If this number remains 0, contact Judy: ' + str(sum(non_gtgp_part_list)/94))
     if t % 6 == 0 and t != 0:  # save beginning structure, then every 100 days thereafter
         save_summary(str(run), t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
