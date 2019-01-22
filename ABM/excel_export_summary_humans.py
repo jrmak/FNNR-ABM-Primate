@@ -18,7 +18,7 @@ def save_summary_humans(run_number, steps, number_of_humans, human_birth_count, 
                         human_marriage_count, num_labor, single_male_count, married_male_count, total_migration):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary_humans' + run_number + '.csv', 'w+')  # w+ resets every time
+        fnnr_export = open('abm_export_summary_humans' + run_number + '.csv', 'a+')  # w+ resets every time
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 
