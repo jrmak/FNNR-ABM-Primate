@@ -17,7 +17,7 @@ def save_summary(run_number, steps, number_of_monkeys, monkey_birth_count, monke
                  female_list, male_maingroup_list, reproductive_female_list):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary' + run_number + '.csv', 'w+')  # "w+" resets, use "a+" to overwrite
+        fnnr_export = open('abm_export_summary' + run_number + '.csv', 'a+')  # "w+" resets, use "a+" to overwrite
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 
