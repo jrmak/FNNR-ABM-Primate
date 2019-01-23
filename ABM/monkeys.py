@@ -113,7 +113,7 @@ class Monkey(Agent):
                 demographic_structure_list[5] -= 1
                 # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.000415:  # 0.000415 = 1 - 0.999585; 97% survival
+        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.0013:  # 0.0013 = 1 - 0.9987; 91% survival
             self.death()
             if 10 < self.age <= 25:
                 demographic_structure_list[4] -= 1
@@ -172,7 +172,7 @@ class Monkey(Agent):
         age = 0
         age_category = 0
         if gender == 1:
-            last_birth_interval = random.uniform(-9,-6)
+            last_birth_interval = random.uniform(-9, -6)
             female_list.append(last + 1)
         else:
             last_birth_interval = -9999
