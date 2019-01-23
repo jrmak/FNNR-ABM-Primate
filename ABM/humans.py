@@ -278,6 +278,10 @@ class Human(Agent):
                 education = 0
                 work_status = 0
                 marriage = 0
+                if gender == 1:
+                    age_category = 0
+                elif gender == 2:
+                    age_category = 10
                 ind = Human(last + 1, self.model, self.current_position, self.hh_id, age, self.resource_check,
                                       self.home_position, self.resource_position, self.resource_frequency, gender,
                                       education, work_status, marriage, self.past_hh_id, self.mig_years,
@@ -341,6 +345,10 @@ class Human(Agent):
             self.past_hh_id = self.hh_id
             hh_size_list[self.hh_id] -= 1
             self.hh_id = single_male_list[0][1]  # male's hh_id
+            n = 0
+            while self.hh_id == 'Migrated':
+                n += 1
+                self.hh_id = single_male_list[n][1]
             hh_size_list[self.hh_id] += 1
             married_male_list.append(single_male_list[0][0])  # male's unique_id
             marriage_flag_list.remove(1)
