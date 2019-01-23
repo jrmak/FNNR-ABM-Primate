@@ -33,8 +33,8 @@ class Monkey(Agent):
         if self.unique_id in reproductive_female_list:
             if self.unique_id not in random_mother_list:
                 random_mother_list.append(self.unique_id)
-            self.check_recent_death_infant()
             self.last_birth_interval += 1 / 73
+            self.check_recent_death_infant()
 
         # Check if male subgroup needs to break off of main group
         if self.unique_id in male_migration_list:
@@ -113,7 +113,7 @@ class Monkey(Agent):
                 demographic_structure_list[5] -= 1
                 # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.0013:  # 0.0013 = 1 - 0.9987; 91% survival
+        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.0013:  # 91% chance to survive
             self.death()
             if 10 < self.age <= 25:
                 demographic_structure_list[4] -= 1
@@ -145,6 +145,7 @@ class Monkey(Agent):
             if self.age_category == 4 and self.gender == 1:
                 if self.unique_id not in reproductive_female_list:
                     reproductive_female_list.append(self.unique_id)
+                last_birth_interval = random.uniform(0, 2.5)
 
             elif self.age_category == 4 and self.gender == 0:
                 # that is, if a male has just turned 10 years old,
@@ -171,11 +172,10 @@ class Monkey(Agent):
         gender = random.randint(0, 1)
         age = 0
         age_category = 0
+        last_birth_interval = 0
         if gender == 1:
-            last_birth_interval = random.uniform(-9, -6)
             female_list.append(last + 1)
         else:
-            last_birth_interval = -9999
             male_maingroup_list.append(last + 1)
         mother = mother_id
         if mother == 0 or mother == '0':

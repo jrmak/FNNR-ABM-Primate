@@ -199,7 +199,7 @@ class Human(Agent):
         # The average death rate in China is 7.3 per 1,000 people/year, or 0.0073 (Google).
         # However, death rates should be higher for the elderly, or else the population structure will skew.
         # I set death rates for those over age 65 to be 10% per year--0.9 yearly survival rate.
-        # The survival rate for each 5-day step is compounded 73 times, so x^73 = 0.85.
+        # The survival rate for each 5-day step is compounded 73 times, so x^73 = 0.9.
         # 0.998557 is the 5-day survival rate, and 1 - x is the 5-day death rate.
         else:
             self.death_rate = 0.00000425
@@ -270,7 +270,8 @@ class Human(Agent):
         if birth_flag_list != [] and self.gender == 2 and self.marriage == 1 and self.age < 55:
             if self.last_birth_time >= 2:  # 2 years is the set birth interval; can modify
                 self.last_birth_time = 0  # reset counter
-                birth_flag_list.remove(1)
+                if birth_flag_list != []:
+                    birth_flag_list.remove(1)
                 last = self.model.number_of_humans
                 # build more attributes
                 age = 0
@@ -345,10 +346,6 @@ class Human(Agent):
             self.past_hh_id = self.hh_id
             hh_size_list[self.hh_id] -= 1
             self.hh_id = single_male_list[0][1]  # male's hh_id
-            n = 0
-            while self.hh_id == 'Migrated':
-                n += 1
-                self.hh_id = single_male_list[n][1]
             hh_size_list[self.hh_id] += 1
             married_male_list.append(single_male_list[0][0])  # male's unique_id
             marriage_flag_list.remove(1)
