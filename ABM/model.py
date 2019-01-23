@@ -255,7 +255,7 @@ class Movement(Model):
                 gtgp_part = 0
                 non_gtgp_area = 0
 
-                if gender == 1:
+                if int(gender) == 1:
                     if 0 < age <= 10:
                         age_category = 0
                     elif 10 < age <= 20:
@@ -276,7 +276,7 @@ class Movement(Model):
                         age_category = 8
                     elif 90 < age:
                         age_category = 9
-                elif gender != 1:
+                elif str(gender) != "1":
                     if 0 < age <= 10:
                         age_category = 10
                     elif 10 < age <= 20:
@@ -298,7 +298,7 @@ class Movement(Model):
                     elif 90 < age:
                         age_category = 19
                 human_demographic_structure_list[age_category] += 1
-                if str(person[0]) != '' and str(person[0]) != '-3':  # sorts out all blanks
+                if str(person[0]) != '' and str(person[0]) != '-3' and str(person[1]) != '-3':  # sorts out all blanks
                     self.number_of_humans += 1
                     human = Human(self.number_of_humans, self, starting_position, hh_id, age,  # creates human
                                   resource_check, starting_position, resource_position,

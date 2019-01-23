@@ -211,7 +211,7 @@ class Human(Agent):
 
     def check_age_category(self):
         # sorts humans in the right age category as they age
-        if self.gender == 1:
+        if int(self.gender) == 1:
             if (0 < self.age <= 10 and self.age_category == 0) or \
                     (10 < self.age <= 20 and self.age_category == 1) or \
                     (20 < self.age <= 30 and self.age_category == 2) or \
@@ -222,7 +222,11 @@ class Human(Agent):
                     (70 < self.age <= 80 and self.age_category == 7) or \
                     (80 < self.age <= 90 and self.age_category == 8) or \
                     (self.age > 90 and self.age_category == 9):
-                pass
+                        pass
+            else:
+                human_demographic_structure_list[(self.age_category)] -= 1
+                human_demographic_structure_list[(self.age_category + 1)] += 1
+                self.age_category += 1
         elif self.gender != 1:
             if (0 < self.age <= 10 and self.age_category == 10) or \
                     (10 < self.age <= 20 and self.age_category == 11) or \
@@ -234,11 +238,11 @@ class Human(Agent):
                     (70 < self.age <= 80 and self.age_category == 17) or \
                     (80 < self.age <= 90 and self.age_category == 18) or \
                     (self.age > 90 and self.age_category == 19):
-                pass
-        else:
-            human_demographic_structure_list[(self.age_category)] -= 1
-            human_demographic_structure_list[(self.age_category + 1)] += 1
-            self.age_category += 1
+                        pass
+            else:
+                human_demographic_structure_list[(self.age_category)] -= 1
+                human_demographic_structure_list[(self.age_category + 1)] += 1
+                self.age_category += 1
 
     def hoh_check(self):
         # designates the oldest working person of a household as its gatherer
