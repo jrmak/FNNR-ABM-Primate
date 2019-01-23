@@ -278,10 +278,6 @@ class Human(Agent):
                 education = 0
                 work_status = 0
                 marriage = 0
-                if gender == 1:
-                    age_category = 0
-                elif gender == 2:
-                    age_category = 1
                 ind = Human(last + 1, self.model, self.current_position, self.hh_id, age, self.resource_check,
                                       self.home_position, self.resource_position, self.resource_frequency, gender,
                                       education, work_status, marriage, self.past_hh_id, self.mig_years,
