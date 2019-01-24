@@ -313,7 +313,8 @@ class Movement(Model):
 
             # creation of migrant
             hh_migrants = line[38:43]  # age, gender, marriage, education of migrants
-            if str(hh_migrants[0]) != '' and str(hh_migrants[0]) != '-3':  # if that household has any migrants, create migrant person
+            if str(hh_migrants[0]) != '' and str(hh_migrants[0]) != '-3'\
+                    and str(hh_migrants[1] != '' and str(hh_migrants[1] != '-3')):  # if that household has any migrants, create migrant person
                 self.number_of_humans += 1
                 age = float(hh_migrants[0])
                 gender = float(hh_migrants[1])

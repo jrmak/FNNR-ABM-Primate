@@ -81,8 +81,10 @@ class Human(Agent):
     def step(self):
         # human aging/demographic behavior
         if self.model.time == 1/73:  # first step list populating
+            if self.age > 15 and self.migration_status == 0:  # event check happens once a year
+                self.migration_check()  # minors don't migrate
             if self.migration_status == 1:
-                total_migration_list[self.past_hh_id] += 1
+                total_migration_list[self.past_hh_id] = 1
             if self.migration_status == 0:
                 hh_size_list[self.hh_id] += 1
                 if self.work_status == 1:
