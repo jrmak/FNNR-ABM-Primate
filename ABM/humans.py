@@ -274,7 +274,7 @@ class Human(Agent):
             # or you could use the yearly birth rate and have birth_check only occur randomly
             # around once a year.
         if birth_flag_list != [] and self.gender == 2 and self.marriage == 1 and self.age < 55:
-            if self.last_birth_time >= 2 and birth_flag_list != []:  # 2 years is the set birth interval; can modify
+            if self.last_birth_time >= 2:  # 2 years is the set birth interval; can modify
                 self.last_birth_time = 0  # reset counter
                 birth_flag_list.remove(1)
                 last = self.model.number_of_humans
