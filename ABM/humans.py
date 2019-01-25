@@ -197,17 +197,17 @@ class Human(Agent):
 
         # check age-based death rates
         if self.age > 65:
-            self.death_rate = 0.001443  # 5-day death rate
+            self.death_rate = 0.001142  # 5-day death rate
         # The average death rate in China is 7.3 per 1,000 people/year, or 0.0073 (Google).
         # However, death rates should be higher for the elderly, or else the population structure will skew.
         # I set death rates for those over age 65 to be 10% per year--0.9 yearly survival rate.
         # The survival rate for each 5-day step is compounded 73 times, so x^73 = 0.9.
         # 0.998557 is the 5-day survival rate, and 1 - x is the 5-day death rate.
         else:
-            self.death_rate = 0.00000215
-        # I wanted people to have a 99% chance of reaching age 65 (death rate is lower if not elderly).
+            self.death_rate = 0.000002
+        # I wanted people to have a >99% chance of reaching age 65 (death rate is lower if not elderly).
         # If a 'check' is every 5 days, 73 checks/year * 65 years = 4,745 checks.
-        # x^4745 = 0.98; the 5-day survival rate is 0.99999785, and 1 - x is the 5-day death rate.
+        # x^4745 = ~0.99; the 5-day survival rate is 0.999998, and 1 - x is the 5-day death rate.
 
         # These rates are changeable later.
 
