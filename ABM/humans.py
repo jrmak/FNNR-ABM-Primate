@@ -204,10 +204,10 @@ class Human(Agent):
         # The survival rate for each 5-day step is compounded 73 times, so x^73 = 0.9.
         # 0.998557 is the 5-day survival rate, and 1 - x is the 5-day death rate.
         else:
-            self.death_rate = 0.00000425
-        # I wanted people to have a 98% chance of reaching age 65 (death rate is lower if not elderly).
+            self.death_rate = 0.00000215
+        # I wanted people to have a 99% chance of reaching age 65 (death rate is lower if not elderly).
         # If a 'check' is every 5 days, 73 checks/year * 65 years = 4,745 checks.
-        # x^4745 = 0.98; the 5-day survival rate is 0.99999575, and 1 - x is the 5-day death rate.
+        # x^4745 = 0.98; the 5-day survival rate is 0.99999785, and 1 - x is the 5-day death rate.
 
         # These rates are changeable later.
 
@@ -266,11 +266,11 @@ class Human(Agent):
 
     def birth_check(self):
         """Small chance of giving birth every step if female, married, and under 55"""
-        if random.random() < 0.00017:  # 0.0121, or 1.21%, is the yearly birth rate.
+        if random.random() < 0.000167:  # 0.0121, or 1.21%, is the yearly birth rate.
             birth_flag_list.append(1)
             # This makes the birth rate for every 5 days (73 'checks' a year) 0.00017%,
             # because 1 - 0.0121 = 0.9879; 98.79% is the chance of not giving birth that year.
-            # 0.99983 ^73 = 0.9879 are the 5-day chances compounded 73 times, and 1 - 0.99983 = 0.00017.
+            # 0.999833 ^73 = 0.9879 are the 5-day chances compounded 73 times, and 1 - 0.99983 = 0.00017.
             # or you could use the yearly birth rate and have birth_check only occur randomly
             # around once a year.
         if birth_flag_list != [] and self.gender == 2 and self.marriage == 1 and self.age < 55:
