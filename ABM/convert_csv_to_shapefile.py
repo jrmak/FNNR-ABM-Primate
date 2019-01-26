@@ -7,7 +7,7 @@ as well as csvfile = open('this name here.csv', 'r').
 """
 import shapefile, csv
 
-name_of_shp = 'shapefile_export1' # change your shapefile name here
+name_of_shp = 'FNNR_movements' # change your shapefile name here
 
 csvfile = open('export_density_plot_wo10.csv', 'r')
 reader = csv.reader(csvfile, delimiter=',')
@@ -37,7 +37,7 @@ output_shapefile = shapefile.Writer(name_of_shp, shapeType = shapefile.POINT)
 
 # auto-balance means that each point record must have coordinates
 output_shapefile.autoBalance = 1
-output_shapefile.field('Count','C')
+output_shapefile.field('Count','F')  # F means float, C would be string
 output_shapefile.field('X','F')  # if this was a lat-long float, add ,'8','10' to the end of the parameters
 output_shapefile.field('Y','F')
 csvfile = open('export_density_plot_wo10_new.csv', 'r')
