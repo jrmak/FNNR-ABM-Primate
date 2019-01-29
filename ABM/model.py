@@ -249,7 +249,7 @@ class Movement(Model):
                 income_local_off_farm = int(line[47])
                 resource_check = 0
                 mig_remittances = 0
-                last_birth_time = random.uniform(0, 3)
+                last_birth_time = 0
                 past_hh_id = hh_id
                 migration_status = 0
                 death_rate = 0
@@ -299,7 +299,7 @@ class Movement(Model):
                         age_category = 18
                     elif 90 < age:
                         age_category = 19
-                children = 0
+                children = random.choice(range(5))
                 birth_plan_chance = random.random()
                 if gender == 2:
                     if birth_plan_chance < 0.03125:

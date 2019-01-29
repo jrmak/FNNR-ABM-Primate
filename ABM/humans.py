@@ -298,7 +298,7 @@ class Human(Agent):
     def birth_check(self):
         """Small chance of giving birth every step if female, married, and under 55"""
         if self.children < self.birth_plan:
-            if self.last_birth_time >= 2:  # 2 years is the set birth interval; can modify
+            if self.last_birth_time >= random.uniform(1, 3):  # 2 years is the set birth interval; can modify
                 last = self.model.human_id_count
                 self.children += 1
                 # build more attributes
