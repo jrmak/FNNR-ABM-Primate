@@ -3,9 +3,10 @@
 """
 Finds the symmetric difference of the two scenarios' heatmaps ('With Humans' vs. 'Without Humans').
 """
+directory_path = 'C:\\Users\\Judy\\Desktop'
 
-text1 = 'export_density_plot_w30.csv'
-text2 = 'export_density_plot_wo30.csv'
+text1 = directory_path + '\\10\\abm_export_density_plot_with_humans_10yr_' + '270' + '.csv'
+text2 = directory_path + '\\10\\abm_export_density_plot_with_humans_10yr_' + '540' + '.csv'
 
 def readCSV(file):
     list_to_read = []
@@ -45,7 +46,7 @@ symmetric_difference = set(newdict1.items()) ^ set(newdict2.items())
 #difference.update(symmetric_difference)
 difference = set(newdict1.items()) - set(newdict2.items())
 try:
-    diff = open('difference2.csv', 'a+')  # a+ will create the file if it doesn't exist already
+    diff = open('difference270-540_10.csv', 'a+')  # a+ will create the file if it doesn't exist already
     # diff = open('kappa_average_w.csv', 'a+')
     # diff = open('kappa_average_w.csv', 'a+')  # comparing with vs. without
 except IOError:
