@@ -44,7 +44,7 @@ class Movement(Model):
                  time = 0, step_in_year = 0,
                  number_of_families = family_setting, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0, monkey_id_count = 0,
-                 number_of_humans = 0, grid_type = human_setting, run_type = run_setting):
+                 number_of_humans = 0, grid_type = human_setting, run_type = run_setting, human_id_count = 0):
         # change the # of families here for graph.py, but use server.py to change # of families in the movement model
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
@@ -60,6 +60,7 @@ class Movement(Model):
         self.number_of_humans = number_of_humans
         self.grid_type = grid_type   # string 'with_humans' or 'without_humans'
         self.run_type = run_type  # string with 'normal_run' or 'first_run'
+        self.human_id_count = human_id_count
 
         # width = self._readASCII(vegetation_file)[1] # width as listed at the beginning of the ASCII file
         # height = self._readASCII(vegetation_file)[2] # height as listed at the beginning of the ASCII file
@@ -212,6 +213,7 @@ class Movement(Model):
 
         # Creation of humans (brown dots in simulation)
         self.number_of_humans = 0
+        self.human_id_count = 0
         line_counter = 0
         for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each household:
             hh_id = int(line[0])
@@ -255,7 +257,7 @@ class Movement(Model):
                 gtgp_part = 0
                 non_gtgp_area = 0
 
-                if int(gender) == 1:
+                if str(gender) == '1':
                     if 0 < age <= 10:
                         age_category = 0
                     elif 10 < age <= 20:
@@ -297,15 +299,34 @@ class Movement(Model):
                         age_category = 18
                     elif 90 < age:
                         age_category = 19
+                children = 0
+                birth_plan_chance = random.random()
+                if gender == 2:
+                    if birth_plan_chance < 0.03125:
+                        birth_plan = 0
+                    elif 0.03125 <= birth_plan_chance < 0.1875:
+                        birth_plan = 1
+                    elif 0.1875 <= birth_plan_chance < 0.5:
+                        birth_plan = 2
+                    elif 0.5 <= birth_plan_chance < 0.8125:
+                        birth_plan = 3
+                    elif 0.8125 <= birth_plan_chance < 0.96875:
+                        birth_plan = 4
+                    else:
+                        birth_plan = 5
+                elif gender != 2:
+                    birth_plan = 0
                 human_demographic_structure_list[age_category] += 1
                 if str(person[0]) != '' and str(person[0]) != '-3' and str(person[1]) != '-3':  # sorts out all blanks
                     self.number_of_humans += 1
-                    human = Human(self.number_of_humans, self, starting_position, hh_id, age,  # creates human
+                    self.human_id_count += 1
+                    human = Human(self.human_id_count, self, starting_position, hh_id, age,  # creates human
                                   resource_check, starting_position, resource_position,
                                   resource_frequency, gender, education, work_status,
                                   marriage, past_hh_id, mig_years, migration_status, gtgp_part,
                                   non_gtgp_area, migration_network, mig_remittances,
-                                  income_local_off_farm, last_birth_time, death_rate, age_category)
+                                  income_local_off_farm, last_birth_time, death_rate, age_category, children,
+                                  birth_plan)
                     if self.grid_type == 'with_humans':
                         self.grid.place_agent(human, starting_position)
                         self.schedule.add(human)
@@ -316,6 +337,7 @@ class Movement(Model):
             if str(hh_migrants[0]) != '' and str(hh_migrants[0]) != '-3'\
                     and str(hh_migrants[1] != '' and str(hh_migrants[1] != '-3')):  # if that household has any migrants, create migrant person
                 self.number_of_humans += 1
+                self.human_id_count += 1
                 age = float(hh_migrants[0])
                 gender = float(hh_migrants[1])
                 education = int(hh_migrants[2])
@@ -396,12 +418,12 @@ class Movement(Model):
                     elif 90 < age:
                         age_category = 19
                 human_demographic_structure_list[age_category] += 1
-                human = Human(self.number_of_humans, self, starting_position, hh_id, age,  # creates human
+                human = Human(self.human_id_count, self, starting_position, hh_id, age,  # creates human
                               resource_check, starting_position, resource_position,
                               resource_frequency, gender, education, work_status,
                               marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
                               migration_network, mig_remittances, income_local_off_farm,
-                              last_birth_time, death_rate, age_category)
+                              last_birth_time, death_rate, age_category, children, birth_plan)
 
                 if self.grid_type == 'with_humans':
                     self.schedule.add(human)
@@ -427,7 +449,7 @@ class Movement(Model):
 
             # Creation of individual monkeys (not in the visualization submodel, but for the demographic submodel)
             for monkey_family_member in range(family_size):   # creates the amount of monkeys indicated earlier
-                id = self.number_of_monkeys + 1
+                id = self.monkey_id_count
                 gender = random.randint(0, 1)
                 if gender == 1:  # gender = 1 is female, gender = 0 is male. this is different than with humans (1 or 2)
                     female_list.append(id)
@@ -462,7 +484,7 @@ class Movement(Model):
                             reproductive_female_list.append(id)
                     # starting representation of male defection/gender ratio
                     structure_convert = random.random()
-                    if structure_convert > 0.25:
+                    if structure_convert > 0.265:
                         gender = 1  # 75% of those aged 10-25 are female
                         last_birth_interval = random.uniform(0, 2.5)
                         if id not in reproductive_female_list:

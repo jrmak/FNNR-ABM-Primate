@@ -7,9 +7,13 @@ as well as csvfile = open('this name here.csv', 'r').
 """
 import shapefile, csv
 
-name_of_shp = 'FNNR_movements' # change your shapefile name here
+name_of_shp = 'shapefile_270' # change your shapefile name here
 
-csvfile = open('export_density_plot_wo10.csv', 'r')
+file_name = 'C:\\Users\\Judy\\Desktop\\270 Trimmed\\abm_export_density_plot_with_humans_' + '1' + '.csv'
+
+file_name_new = 'C:\\Users\\Judy\\Desktop\\270 Trimmed\\abm_export_density_plot_with_humans_' + '1_copy' + '.csv'
+
+csvfile = open(file_name, 'r')
 reader = csv.reader(csvfile, delimiter=',')
 csvlist = []
 for row in reader:
@@ -22,9 +26,9 @@ for i in csvstringlist:
   csvcounts[i] = csvcounts.get(i, 0) + 1
 
 csvfile.close()
-csvfile = open('export_density_plot_wo10.csv', 'r')
+csvfile = open(file_name, 'r')
 reader = csv.reader(csvfile, delimiter=',')
-newcsvfile = open('export_density_plot_wo10_new.csv', 'w', newline="")  # newline = "" needed, else space between rows
+newcsvfile = open(file_name_new, 'w', newline="")  # newline = "" needed, else space between rows
 writer = csv.writer(newcsvfile, delimiter=',')
 for row in reader:
     row.append(str(csvcounts[str(row).replace(" ", "")]))
@@ -37,10 +41,10 @@ output_shapefile = shapefile.Writer(name_of_shp, shapeType = shapefile.POINT)
 
 # auto-balance means that each point record must have coordinates
 output_shapefile.autoBalance = 1
-output_shapefile.field('Count','F')  # F means float, C would be string
 output_shapefile.field('X','F')  # if this was a lat-long float, add ,'8','10' to the end of the parameters
 output_shapefile.field('Y','F')
-csvfile = open('export_density_plot_wo10_new.csv', 'r')
+output_shapefile.field('Count','N')  # F means float, C would be string
+csvfile = open(file_name_new, 'r')
 reader = csv.reader(csvfile, delimiter=',')
 for row in reader:
     # create the point geometry
@@ -49,7 +53,3 @@ for row in reader:
     counts = int(row[2])
     output_shapefile.point(x, y)
     output_shapefile.record(x, y, counts)
-
-# When you add this to ArcMap using the 'Add Data' button, you will receive a warning about
-# this missing a projection system. That is okay; the x/y of the points are not in lat/long degrees,
-# but rather, grid coordinates from the 85 x 100 model grid.

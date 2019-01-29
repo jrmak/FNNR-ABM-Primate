@@ -88,7 +88,7 @@ def writeKappa(count, kappa_output, text_input):
     kappa30.close()
 
 
-threshold_list = [10, 20, 50, 100, 200, 300]
+threshold_list = [10, 100, 300, 600, 900]
 for i in threshold_list:
     # text1 = 'abm_export_density_plot_wo' + str(number) + '.csv'
     # text2 = 'abm_export_density_plot_wo' + str(number + 1) + '.csv'
@@ -102,24 +102,24 @@ for i in threshold_list:
         list1 = readCSV(currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_' + str(number) + '.csv')
         list2 = readCSV(currentpath + '\\0 Trimmed\\abm_export_density_plot_with_humans_' + str(number) + '.csv')
         kappa_number = kappa(*calculate_count_x(list1, list2, i))
-        writeKappa(i, kappa_number, '270-0')
+        writeKappa(i, kappa_number, '270_with_0')
         print('Progress: ' + str(number) + ' / 30 for ' + str(i))
-    for i in threshold_list:
-        for number in range(1, 31):
-            currentpath = os.getcwd()
-            list1 = readCSV(currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_' + str(number) + '.csv')
-            list2 = readCSV(currentpath + '\\540 Trimmed\\abm_export_density_plot_with_humans_' + str(number) + '.csv')
-            kappa_number = kappa(*calculate_count_x(list1, list2, i))
-            writeKappa(i, kappa_number, '270-540')
-            print('Progress: ' + str(number) + ' / 30 for ' + str(i))
-    for i in threshold_list:
-        for number in range(1, 30):
-            currentpath = os.getcwd()
-            list1 = readCSV(currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_' + str(number) + '.csv')
-            list2 = readCSV(currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_' + str(number + 1) + '.csv')
-            kappa_number = kappa(*calculate_count_x(list1, list2, i))
-            writeKappa(i, kappa_number, '270-self')
-            print('Progress: ' + str(number) + ' / 30 for ' + str(i))
+for i in threshold_list:
+    for number in range(1, 31):
+        currentpath = os.getcwd()
+        list1 = readCSV(currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_' + str(number) + '.csv')
+        list2 = readCSV(currentpath + '\\540 Trimmed\\abm_export_density_plot_with_humans_' + str(number) + '.csv')
+        kappa_number = kappa(*calculate_count_x(list1, list2, i))
+        writeKappa(i, kappa_number, '270_with_540')
+        print('Progress: ' + str(number) + ' / 30 for ' + str(i))
+for i in threshold_list:
+    for number in range(1, 30):
+        currentpath = os.getcwd()
+        list1 = readCSV(currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_' + str(number) + '.csv')
+        list2 = readCSV(currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_' + str(number + 1) + '.csv')
+        kappa_number = kappa(*calculate_count_x(list1, list2, i))
+        writeKappa(i, kappa_number, '270_with_self')
+        print('Progress: ' + str(number) + ' / 30 for ' + str(i))
 
 #text1 = 'difference2.csv'
 #text2 = 'maxent.csv'

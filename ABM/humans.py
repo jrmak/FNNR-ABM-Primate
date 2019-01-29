@@ -49,7 +49,7 @@ class Human(Agent):
                  home_position, resource_position, resource_frequency, gender, education, work_status,
                  marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
                  migration_network, mig_remittances, income_local_off_farm,
-                 last_birth_time, death_rate, age_category):
+                 last_birth_time, death_rate, age_category, children, birth_plan):
         super().__init__(unique_id, model)
         self.current_position = current_position
         self.hh_id = hh_id
@@ -73,14 +73,15 @@ class Human(Agent):
         self.last_birth_time = last_birth_time
         self.death_rate = death_rate
         self.age_category = age_category
-
-        if self.migration_status == 0 and self.hh_id != 'Migrated':
-            if self.work_status == 1 and head_of_household_list[self.hh_id] == 0:
-                head_of_household_list[self.hh_id] = self.unique_id
+        self.children = children
+        self.birth_plan = birth_plan
 
     def step(self):
         # human aging/demographic behavior
         if self.model.time == 1/73:  # first step list populating
+            if self.migration_status == 0 and self.hh_id != 'Migrated':
+                if self.work_status == 1 and head_of_household_list[self.hh_id] == 0:
+                    head_of_household_list[self.hh_id] = self.unique_id
             if self.age > 15 and self.migration_status == 0:  # event check happens once a year
                 self.migration_check()  # minors don't migrate
             if self.migration_status == 1:
@@ -103,7 +104,6 @@ class Human(Agent):
             self.age_check()
             self.hoh_check()
             self.marriage_check()
-            self.birth_check()
             self.death_check()
             self.movement()
 
@@ -117,6 +117,9 @@ class Human(Agent):
         self.check_age_category()
         self.last_birth_time += 1 / 73
 
+        if int(self.age) > 20 and self.gender == 2 and self.marriage == 1 and self.migration_status == 0:
+            self.birth_check()
+
         # every step, perform a single/married male check
         # since marriage happens from the female's point of view
         if int(self.age) > 20 and self.gender == 1 and self.marriage != 1 and self.migration_status == 0\
@@ -127,6 +130,35 @@ class Human(Agent):
             if [self.unique_id, self.hh_id] in single_male_list:
                 single_male_list.remove([self.unique_id, self.hh_id])
             self.marriage = 1
+
+        if 16 < self.age <= 20 and random.random() < 0.0192 * 2 / 73 and self.migration_status == 0:
+            # person out-migrates to college and does not return
+            self.migration_status = 2
+            hh_size_list[self.hh_id] -= 1
+            total_migration_list[self.hh_id] += 1
+            self.hh_id = 'Migrated'
+            if self.unique_id in head_of_household_list:
+                try:
+                    head_of_household_list[self.hh_id] = 0
+                except TypeError:  # head of household migrated
+                    head_of_household_list[self.past_hh_id] = 0
+            self.model.number_of_humans -= 1
+            if self.unique_id in labor_list:
+                labor_list.remove(self.unique_id)
+            if self.work_status == 1:
+                try:
+                    num_labor_list[self.hh_id] -= 1
+                except TypeError:
+                    num_labor_list[self.past_hh_id] -= 1
+            if self.unique_id in former_hoh_list:
+                try:
+                    former_hoh_list[self.hh_id] = 0
+                except TypeError:
+                    former_hoh_list[self.past_hh_id] = 0
+            human_demographic_structure_list[self.age_category] -= 1
+            self.model.schedule.remove(self)
+            if self in self.model.grid:
+                self.model.grid.remove_agent(self)
 
         random.shuffle(single_male_list)
 
@@ -187,7 +219,7 @@ class Human(Agent):
 
         # check education status; measured in years of education
         if 7 <= int(self.age) <= 19:
-            if random.random() > 0.1:
+            if random.random() < 0.9:
                 self.education += 1
                 # most adults in the FNNR did not get a full 12-13 years of education
         elif 19 < float(self.age) < 23 and self.migration_status == 1:
@@ -196,19 +228,18 @@ class Human(Agent):
                 # this is rare; in the household list, a few received beyond 12 years of education
 
         # check age-based death rates
-        if self.age > 65:
-            self.death_rate = 0.001142  # 5-day death rate
-        # The average death rate in China is 7.3 per 1,000 people/year, or 0.0073 (Google).
-        # However, death rates should be higher for the elderly, or else the population structure will skew.
-        # I set death rates for those over age 65 to be 10% per year--0.9 yearly survival rate.
-        # The survival rate for each 5-day step is compounded 73 times, so x^73 = 0.9.
-        # 0.998557 is the 5-day survival rate, and 1 - x is the 5-day death rate.
-        else:
-            self.death_rate = 0.000002
-        # I wanted people to have a >99% chance of reaching age 65 (death rate is lower if not elderly).
-        # If a 'check' is every 5 days, 73 checks/year * 65 years = 4,745 checks.
-        # x^4745 = ~0.99; the 5-day survival rate is 0.999998, and 1 - x is the 5-day death rate.
-
+        if self.age <= 6:
+           self.death_rate = 0.00745 * 0.3 / 73
+        elif 6 < self.age <= 13:
+            self.death_rate = 0.0009 * 0.3 / 73
+        elif 13 < self.age <= 16:
+            self.death_rate = 0.00131 * 0.3 / 73
+        elif 16 < self.age <= 21:
+            self.death_rate = 0.00196 * 0.3 / 73
+        elif 21 < self.age <= 60:
+            self.death_rate = 0.001291 * 0.3 / 73
+        elif 60 < self.age:
+            self.death_rate = 0.05354 * 0.3 / 73
         # These rates are changeable later.
 
     def check_age_category(self):
@@ -266,36 +297,44 @@ class Human(Agent):
 
     def birth_check(self):
         """Small chance of giving birth every step if female, married, and under 55"""
-        if random.random() < 0.000167:  # 0.0121, or 1.21%, is the yearly birth rate.
-            birth_flag_list.append(1)
-            # This makes the birth rate for every 5 days (73 'checks' a year) 0.000167%
-            # because 1 - 0.0121 = 0.9879; ~98.79% is the chance of not spawning a birth event that year.
-            # 0.999833 ^73 = 0.9879 are the 5-day chances compounded 73 times, and 1 - 0.999833 = 0.000167
-            # or you could use the yearly birth rate and have birth_check only occur randomly
-            # around once a year.
-        if birth_flag_list != [] and self.gender == 2 and self.marriage == 1 and self.age < 55:
+        if self.children < self.birth_plan:
             if self.last_birth_time >= 2:  # 2 years is the set birth interval; can modify
-                self.last_birth_time = 0  # reset counter
-                birth_flag_list.remove(1)
-                last = self.model.number_of_humans
+                last = self.model.human_id_count
+                self.children += 1
                 # build more attributes
                 age = 0
                 gender = random.choice([1, 2])
                 education = 0
                 work_status = 0
                 marriage = 0
+                children = 0
                 if gender == 1:
                     age_category = 0
+                    birth_plan = 0
                 elif gender == 2:
                     age_category = 10
+                    birth_plan_chance = random.random()
+                    if birth_plan_chance < 0.03125:
+                        birth_plan = 0
+                    elif 0.03125 <= birth_plan_chance < 0.1875:
+                        birth_plan = 1
+                    elif 0.1875 <= birth_plan_chance < 0.5:
+                        birth_plan = 2
+                    elif 0.5 <= birth_plan_chance < 0.8125:
+                        birth_plan = 3
+                    elif 0.8125 <= birth_plan_chance < 0.96875:
+                        birth_plan = 4
+                    else:
+                        birth_plan = 5
                 ind = Human(last + 1, self.model, self.current_position, self.hh_id, age, self.resource_check,
                                       self.home_position, self.resource_position, self.resource_frequency, gender,
                                       education, work_status, marriage, self.past_hh_id, self.mig_years,
                                       self.migration_status, self.gtgp_part, self.non_gtgp_area,
                                       self.migration_network, self.mig_remittances, self.income_local_off_farm,
-                                      self.last_birth_time, self.death_rate, age_category)
+                                      self.last_birth_time, self.death_rate, age_category, children, birth_plan)
                 self.model.schedule.add(ind)
                 self.model.number_of_humans += 1
+                self.model.human_id_count += 1
                 hh_size_list[self.hh_id] += 1
                 human_birth_list.append(last + 1)
                 if ind.gender == 1:
@@ -305,8 +344,7 @@ class Human(Agent):
 
     def death_check(self):
         """Small chance of dying every step; chance increases if over 65, see age_check()"""
-        chance = random.random()
-        if decimal.Decimal(chance) < decimal.Decimal(self.death_rate):
+        if random.random() < self.death_rate:
             if self.unique_id in head_of_household_list:
                 try:
                     head_of_household_list[self.hh_id] = 0
@@ -341,12 +379,13 @@ class Human(Agent):
                 self.model.grid.remove_agent(self)
 
     def marriage_check(self):
-        if random.random() < 0.000096:
+        if random.random() < 0.0001055:
             marriage_flag_list.append(1)
         if int(self.age) > 20 and int(self.gender) == 2 and int(self.marriage) != 1 \
                 and marriage_flag_list != [] and hh_size_list[self.hh_id] > 1:  # marriage occurs
             # marriage late is set low because this is a 5-day rate
-            # the yearly marriage rate is 0.007, or 0.7%
+            # the yearly marriage rate is 0.00767, or 0.767%
+            # x^73 = 0.999233 = marriage rate for 5 days
             self.marriage = 1
             self.past_hh_id = self.hh_id
             hh_size_list[self.hh_id] -= 1
@@ -356,7 +395,6 @@ class Human(Agent):
             marriage_flag_list.remove(1)
             if self.hh_id not in human_marriage_list:
                 human_marriage_list.append(self.hh_id)
-
 
     def migration_check(self):
         """Describes out-migration process and probability"""
@@ -403,15 +441,14 @@ class Human(Agent):
                     num_labor_list[self.hh_id] -= 1
                 if self.unique_id in labor_list:
                     labor_list.remove(self.unique_id)
-                if self.hh_id not in total_migration_list:
-                    total_migration_list[self.hh_id] = 1
+                total_migration_list[self.hh_id] += 1
                 self.work_status = 0
 
                 self.hh_id = 'Migrated'
 
     def re_migration_check(self):
         """Describes re-migration process and probability following out-migration"""
-        if self.hh_id == 'Migrated':
+        if self.migration_status == 1:
             self.mig_years += 1/73
 
             prob = math.exp(-1.2 + 0.06 * float(self.age) - 0.08 * self.mig_years)
@@ -432,7 +469,7 @@ class Human(Agent):
                     self.work_status = 1
                     num_labor_list[self.hh_id] += 1
                     labor_list.append(self.unique_id)
-                total_migration_list[self.hh_id] = 0
+                total_migration_list[self.hh_id] -= 1
 
 
     def move_to(self, pos):
