@@ -299,7 +299,8 @@ class Movement(Model):
                         age_category = 18
                     elif 90 < age:
                         age_category = 19
-                children = random.choice(range(5))
+                if self.marriage == 1:
+                    children = random.choice(range(5))
                 birth_plan_chance = random.random()
                 if gender == 2:
                     if birth_plan_chance < 0.03125:
