@@ -117,7 +117,7 @@ class Human(Agent):
         self.check_age_category()
         self.last_birth_time += 1 / 73
 
-        if int(self.age) > 20 and self.gender == 2 and self.marriage == 1 and self.migration_status == 0:
+        if int(self.age) > 20 and self.gender == 2 and self.marriage == 1 and self.migration_status == 0 and random.random() < 1/73:
             self.birth_check()
 
         # every step, perform a single/married male check
