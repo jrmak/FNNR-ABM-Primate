@@ -11,7 +11,6 @@ import decimal
 single_male_list = []
 married_male_list = []
 human_birth_list = []
-human_marriage_list = []
 human_death_list = []
 human_avoidance_list = []  # sets coordinate positions the monkeys should not step on, because humans are on it.
 # Neighboring cells of human activity may also be added to this list.
@@ -24,6 +23,7 @@ human_demographic_structure_list = [0] * 20
 # 170 indices total; not all are used; these are just to store values for each household
 hh_migration_flag = [0] * 170  # 1 if the head of household out-migrates, 0 if not or if returned
 num_labor_list = [0] * 170  # number of laborers in each household; index is hh #; 0th index is always 0
+human_marriage_list = [0] * 170
 head_of_household_list = [0] * 170
 former_hoh_list = [0] * 170
 hh_size_list = [0] * 170
@@ -103,8 +103,6 @@ class Human(Agent):
         if self.migration_status == 0:
             self.age_check()
             self.hoh_check()
-            self.marriage_check()
-            self.death_check()
             self.movement()
 
             if self.age > 15 and random.random() < 1/73:  # event check happens once a year
@@ -113,11 +111,16 @@ class Human(Agent):
         elif self.migration_status == 1 and random.random() < 1/73:  # event check happens once a year:
             self.re_migration_check()
 
+        if random.random() < 1/73 and self.migration_status == 0:
+            self.marriage_check()
+            self.death_check()
+
         self.age += 1 / 73
         self.check_age_category()
         self.last_birth_time += 1 / 73
 
-        if int(self.age) > 20 and self.gender == 2 and self.marriage == 1 and self.migration_status == 0 and random.random() < 1/73:
+        if 20 < int(self.age) < 45 and self.gender == 2 and self.marriage == 1 and self.migration_status == 0\
+                and random.random() < 1/73:
             self.birth_check()
 
         # every step, perform a single/married male check
@@ -126,12 +129,13 @@ class Human(Agent):
                 and [self.unique_id, self.hh_id] not in single_male_list:
             single_male_list.append([self.unique_id, self.hh_id])
 
+
         if self.unique_id in married_male_list:
             if [self.unique_id, self.hh_id] in single_male_list:
                 single_male_list.remove([self.unique_id, self.hh_id])
             self.marriage = 1
 
-        if 16 < self.age <= 20 and random.random() < 0.0192 * 2 / 73 and self.migration_status == 0:
+        if 16 < self.age <= 20 and random.random() < (0.0192 * 2 / 73) and self.migration_status == 0:
             # person out-migrates to college and does not return
             self.migration_status = 2
             hh_size_list[self.hh_id] -= 1
@@ -229,17 +233,17 @@ class Human(Agent):
 
         # check age-based death rates
         if self.age <= 6:
-           self.death_rate = 0.00745 * 0.3 / 73
+           self.death_rate = 0.00745 * 0.3
         elif 6 < self.age <= 13:
-            self.death_rate = 0.0009 * 0.3 / 73
+            self.death_rate = 0.0009 * 0.3
         elif 13 < self.age <= 16:
-            self.death_rate = 0.00131 * 0.3 / 73
+            self.death_rate = 0.00131 * 0.3
         elif 16 < self.age <= 21:
-            self.death_rate = 0.00196 * 0.3 / 73
+            self.death_rate = 0.00196 * 0.3
         elif 21 < self.age <= 60:
-            self.death_rate = 0.001291 * 0.3 / 73
+            self.death_rate = 0.001291 * 0.3
         elif 60 < self.age:
-            self.death_rate = 0.05354 * 0.3 / 73
+            self.death_rate = 0.05354 * 0.3
         # These rates are changeable later.
 
     def check_age_category(self):
@@ -296,9 +300,9 @@ class Human(Agent):
             self.resource_frequency = self.resource_frequency * 0.25
 
     def birth_check(self):
-        """Small chance of giving birth every step if female, married, and under 55"""
+        """Adds children to reserve"""
         if self.children < self.birth_plan:
-            if self.last_birth_time >= random.uniform(1, 3):  # 2 years is the set birth interval; can modify
+            if self.last_birth_time >= random.uniform(1, 3):
                 last = self.model.human_id_count
                 self.children += 1
                 # build more attributes
@@ -379,10 +383,11 @@ class Human(Agent):
                 self.model.grid.remove_agent(self)
 
     def marriage_check(self):
-        if random.random() < 0.0001055:
+#        if random.random() < 0.0001055:
+        if random.random() < 0.00767:
             marriage_flag_list.append(1)
         if int(self.age) > 20 and int(self.gender) == 2 and int(self.marriage) != 1 \
-                and marriage_flag_list != [] and hh_size_list[self.hh_id] > 1:  # marriage occurs
+                and marriage_flag_list != []:  # marriage occurs
             # marriage late is set low because this is a 5-day rate
             # the yearly marriage rate is 0.00767, or 0.767%
             # x^73 = 0.999233 = marriage rate for 5 days
@@ -393,8 +398,7 @@ class Human(Agent):
             hh_size_list[self.hh_id] += 1
             married_male_list.append(single_male_list[0][0])  # male's unique_id
             marriage_flag_list.remove(1)
-            if self.hh_id not in human_marriage_list:
-                human_marriage_list.append(self.hh_id)
+            human_marriage_list[self.hh_id] += 1
 
     def migration_check(self):
         """Describes out-migration process and probability"""
@@ -408,7 +412,7 @@ class Human(Agent):
         else:
             non_gtgp_land_per_labor = 0
         try:
-            remittance = random.normalvariate(1200, 16000)
+            remittance = random.normalvariate(1200, 400)
         # 1200 is the mean, and 400^2 is the st. dev. according to the original pseudocode, but this seems strange
         except:
             remittance = 0
@@ -424,7 +428,10 @@ class Human(Agent):
                + 0.27 * float(self.gtgp_part) - 0.13 * float(self.age) + 0.07 * float(self.gender)
                + 0.17 * float(self.education) + 0.88 * float(self.marriage) +
                1.39 * float(self.work_status) + 0.001 * float(self.mig_remittances))  # Shuang's formula
+        print(self.income_local_off_farm, self.migration_network, non_gtgp_land_per_labor, self.mig_remittances)
         mig_prob = prob / (prob + 1)
+        if 15 < self.age < 20 and self.gender == 2:
+            print(mig_prob)
         if random.random() < mig_prob and hh_size_list[self.hh_id] >= 2:  # out-migration occurs
             if hh_migration_flag[self.hh_id] == 0:  # only one migrant allowed per household at a time
                 hh_size_list[self.hh_id] -= 1
@@ -449,7 +456,7 @@ class Human(Agent):
     def re_migration_check(self):
         """Describes re-migration process and probability following out-migration"""
         if self.migration_status == 1:
-            self.mig_years += 1/73
+            self.mig_years += 1
 
             prob = math.exp(-1.2 + 0.06 * float(self.age) - 0.08 * self.mig_years)
             re_mig_prob = prob / (prob + 1)

@@ -40,7 +40,7 @@ for t in range(model_time):  # for each time-step in the time we just defined,
         save_summary(str(run), t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
         save_summary_humans(str(run), t, model.number_of_humans, len(human_birth_list), len(human_death_list),
-                            len(human_marriage_list), len(labor_list),
+                            sum(human_marriage_list), len(labor_list),
                             len(single_male_list), len(married_male_list), sum(total_migration_list)
                             )  # 94 households
         save_summary_human_demographics(str(run), t, human_demographic_structure_list[0],

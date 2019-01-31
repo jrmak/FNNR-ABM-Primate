@@ -69,7 +69,7 @@ class Monkey(Agent):
         # Birth from the mother's perspective
         if (49 < self.model.step_in_year < 55) \
                 and (self.gender == 1 and random.uniform(8, 9) <= self.age <= 25):
-            if self.last_birth_interval >= 2:
+            if self.last_birth_interval >= 3:
                 self.family.family_size += 1
                 self.birth(self.family, self.unique_id)
                 self.last_birth_interval = 0
@@ -113,7 +113,7 @@ class Monkey(Agent):
                 demographic_structure_list[5] -= 1
                 # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.0013:  # 91% chance to survive
+        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.0007:  # 95% chance to survive
             self.death()
             if 10 < self.age <= 25:
                 demographic_structure_list[4] -= 1
@@ -145,7 +145,6 @@ class Monkey(Agent):
             if self.age_category == 4 and self.gender == 1:
                 if self.unique_id not in reproductive_female_list:
                     reproductive_female_list.append(self.unique_id)
-                last_birth_interval = random.uniform(0, 2.5)
 
             elif self.age_category == 4 and self.gender == 0:
                 # that is, if a male has just turned 10 years old,
@@ -162,7 +161,7 @@ class Monkey(Agent):
     def check_recent_death_infant(self):
         # allow mothers who have recently lost an infant to give birth again in a short period
         if self.unique_id in recent_death_infant:
-            self.last_birth_interval = random.uniform(2, 2.4)
+            self.last_birth_interval = random.uniform(2, 2.5)
             recent_death_infant.remove(self.unique_id)
 
     def birth(self, parent_family, mother_id):

@@ -244,12 +244,13 @@ class Movement(Model):
                 gender = int(person[1])
                 education = int(person[2])
                 marriage = int(person[3])
+                if marriage != 1:
+                    marriage = 0
                 mig_years = 0
                 migration_network = int(line[37])
                 income_local_off_farm = int(line[47])
                 resource_check = 0
                 mig_remittances = 0
-                last_birth_time = 0
                 past_hh_id = hh_id
                 migration_status = 0
                 death_rate = 0
@@ -299,10 +300,11 @@ class Movement(Model):
                         age_category = 18
                     elif 90 < age:
                         age_category = 19
-                if self.marriage == 1:
-                    children = random.choice(range(5))
-                birth_plan_chance = random.random()
+                children = 0
                 if gender == 2:
+                    if marriage == 1 and age < 45:
+                        children = random.randint(0, 4)  # might already have kids
+                    birth_plan_chance = random.random()
                     if birth_plan_chance < 0.03125:
                         birth_plan = 0
                     elif 0.03125 <= birth_plan_chance < 0.1875:
@@ -317,6 +319,7 @@ class Movement(Model):
                         birth_plan = 5
                 elif gender != 2:
                     birth_plan = 0
+                last_birth_time = random.uniform(0, 1)
                 human_demographic_structure_list[age_category] += 1
                 if str(person[0]) != '' and str(person[0]) != '-3' and str(person[1]) != '-3':  # sorts out all blanks
                     self.number_of_humans += 1
@@ -352,6 +355,7 @@ class Movement(Model):
                 hh_id = 'Migrated'
                 migration_status = 1
                 migration_network = int(line[37])
+                last_birth_time = random.uniform(0, 1)
 
                 total_rice = float(line[43])
                 gtgp_rice = float(line[44])
@@ -374,7 +378,6 @@ class Movement(Model):
                                 - ((gtgp_dry) + (gtgp_rice))
                 resource_check = 0
                 mig_remittances = 0
-                last_birth_time = 0
                 death_rate = 0
                 if gender == 1:  # human male (monkeys are 0 and 1, humans are 1 and 2)
                     if 0 < age <= 10:
@@ -418,6 +421,25 @@ class Movement(Model):
                         age_category = 18
                     elif 90 < age:
                         age_category = 19
+                children = 0
+                if gender == 2:
+                    if marriage == 1 and age < 45:
+                        children = random.randint(0, 4)  # might already have kids
+                    birth_plan_chance = random.random()
+                    if birth_plan_chance < 0.03125:
+                        birth_plan = 0
+                    elif 0.03125 <= birth_plan_chance < 0.1875:
+                        birth_plan = 1
+                    elif 0.1875 <= birth_plan_chance < 0.5:
+                        birth_plan = 2
+                    elif 0.5 <= birth_plan_chance < 0.8125:
+                        birth_plan = 3
+                    elif 0.8125 <= birth_plan_chance < 0.96875:
+                        birth_plan = 4
+                    else:
+                        birth_plan = 5
+                elif gender != 2:
+                    birth_plan = 0
                 human_demographic_structure_list[age_category] += 1
                 human = Human(self.human_id_count, self, starting_position, hh_id, age,  # creates human
                               resource_check, starting_position, resource_position,
@@ -425,7 +447,6 @@ class Movement(Model):
                               marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
                               migration_network, mig_remittances, income_local_off_farm,
                               last_birth_time, death_rate, age_category, children, birth_plan)
-
                 if self.grid_type == 'with_humans':
                     self.schedule.add(human)
                     schedule_temp_list.append(human)
