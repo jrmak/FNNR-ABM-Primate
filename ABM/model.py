@@ -168,8 +168,10 @@ class Movement(Model):
             # gtgp_area = float(gtgp_dry) + float(gtgp_rice)
 
             for i in range(1,6):  # for each household, which has up to 5 each of possible non-GTGP and GTGP parcels:
-                non_gtgp_area = float(line[i + 47].replace("\"",""))
-                gtgp_area = float(line[i + 52].replace("\"",""))
+                # non_gtgp_area = float(line[i + 47].replace("\"",""))
+                # gtgp_area = float(line[i + 52].replace("\"",""))
+                non_gtgp_area = float(total_rice) + float(total_dry) - float(gtgp_dry) - float(gtgp_rice)
+                gtgp_area = float(gtgp_dry) + float(gtgp_rice)
 
                 if gtgp_area in [-2, -3, -4]:
                     gtgp_area = 0
@@ -245,12 +247,12 @@ class Movement(Model):
                 education = int(person[2])
                 marriage = int(person[3])
                 if marriage != 1:
-                    marriage = 0
+                    marriage = 6
                 mig_years = 0
                 migration_network = int(line[37])
                 income_local_off_farm = int(line[47])
                 resource_check = 0
-                mig_remittances = 0
+                mig_remittances = int(line[48])
                 past_hh_id = hh_id
                 migration_status = 0
                 death_rate = 0
@@ -377,7 +379,7 @@ class Movement(Model):
                 non_gtgp_area = ((total_rice) + (total_dry)) \
                                 - ((gtgp_dry) + (gtgp_rice))
                 resource_check = 0
-                mig_remittances = 0
+                mig_remittances = int(line[48])
                 death_rate = 0
                 if gender == 1:  # human male (monkeys are 0 and 1, humans are 1 and 2)
                     if 0 < age <= 10:
@@ -475,7 +477,7 @@ class Movement(Model):
                 gender = random.randint(0, 1)
                 if gender == 1:  # gender = 1 is female, gender = 0 is male. this is different than with humans (1 or 2)
                     female_list.append(id)
-                    last_birth_interval = 0
+                    last_birth_interval = random.uniform(0, 2)
                 else:
                     male_maingroup_list.append(id)  # as opposed to the all-male subgroup
                     last_birth_interval = -9999  # males will never give birth
@@ -508,7 +510,7 @@ class Movement(Model):
                     structure_convert = random.random()
                     if structure_convert > 0.265:
                         gender = 1  # 75% of those aged 10-25 are female
-                        last_birth_interval = random.uniform(0, 2.5)
+                        last_birth_interval = random.uniform(0, 2)
                         if id not in reproductive_female_list:
                             reproductive_female_list.append(id)
                 elif 0.96 < choice:  # 4% of starting monkey population

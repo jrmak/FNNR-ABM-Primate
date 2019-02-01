@@ -50,20 +50,22 @@ class Land(Agent):
         if self.model.time == 1/73:
             if self.gtgp_enrolled == 0:
                 non_gtgp_part_list[self.hh_id] += 1
-                non_gtgp_area_list[self.hh_id] += self.non_gtgp_area
+                non_gtgp_area_list[self.hh_id] += (self.total_rice + self.total_dry - self.gtgp_rice - self.gtgp_dry)
+                if non_gtgp_area_list[self.hh_id] == 0:
+                    non_gtgp_area_list[self.hh_id] = 0.3  # minimum non-GTGP
             elif self.gtgp_enrolled == 1:
                 gtgp_part_list[self.hh_id] += 1
-                gtgp_area_list[self.hh_id] += self.gtgp_area
+                gtgp_area_list[self.hh_id] += self.gtgp_rice + self.gtgp_dry
             old_land_income = self.land_income  # resets yearly
             self.land_output()
-            self.gtgp_participation()
+            # self.gtgp_participation()
             from humans import hh_size_list
             self.hh_size = hh_size_list[self.hh_id]
             household_income_list[self.hh_id] = (household_income_list[self.hh_id]
                                                  + self.land_income - old_land_income)
             land_income_list[self.hh_id] = (land_income_list[self.hh_id]
                                                  + self.land_income - old_land_income)
-        if self.model.step_in_year % land_step_measure:
+        if random.random() < 1/73:
             old_land_income = self.land_income  # resets yearly
             self.land_output()  # modifies self.land_income
             self.gtgp_participation()
@@ -144,7 +146,7 @@ class Land(Agent):
         prob = exp(2.52 - 0.012 * float(self.age_1) - 0.29 * float(self.gender_1) + 0.01 * float(self.education_1)
                     + 0.001 * float(self.hh_size) - 2.45 * self.land_type * 0.0006 * float(self.gtgp_net_income)
                     + 0.04 * self.land_time)  # Shuang's GTGP conversion formula
-        gtgp_part_prob = (prob / (prob + 1)) / land_step_measure
+        gtgp_part_prob = (prob / (prob + 1))
         if self.model.time > PES_span and self.gtgp_enrolled == 1:  # if PES payments have ended,
             gtgp_part_prob = no_pay_part * gtgp_part_prob # raise chances of reverting
             if random.random() < gtgp_part_prob * 0.3:  # 0.3 is a minimum threshold

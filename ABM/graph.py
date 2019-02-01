@@ -12,7 +12,7 @@ from model import *
 from families import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list, moved_list
 from humans import hh_size_list, human_birth_list, human_death_list, human_marriage_list,\
     single_male_list, married_male_list, \
-    labor_list, total_migration_list, human_demographic_structure_list
+    num_labor_list, total_migration_list, human_demographic_structure_list
 from land import non_gtgp_part_list, gtgp_part_list, non_gtgp_area_list, gtgp_area_list, household_income_list
 from fnnr_config_file import human_setting, year_setting, random_walk_graph_setting, plot_setting
 import os
@@ -40,7 +40,7 @@ for t in range(model_time):  # for each time-step in the time we just defined,
         save_summary(str(run), t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                  demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list)
         save_summary_humans(str(run), t, model.number_of_humans, len(human_birth_list), len(human_death_list),
-                            sum(human_marriage_list), len(labor_list),
+                            sum(human_marriage_list), sum(num_labor_list),
                             len(single_male_list), len(married_male_list), sum(total_migration_list)
                             )  # 94 households
         save_summary_human_demographics(str(run), t, human_demographic_structure_list[0],

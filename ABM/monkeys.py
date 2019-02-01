@@ -27,13 +27,13 @@ class Monkey(Agent):
     def step(self):
         # Aging
         self.check_age_category()  # changes the monkey's age category if they have just aged to a threshold #
-        self.age += (1 / 73)
+        self.age += (1/73)
 
         # Check if an individual is a mother of recently dead infant, and count time since last birth
         if self.unique_id in reproductive_female_list:
             if self.unique_id not in random_mother_list:
                 random_mother_list.append(self.unique_id)
-            self.last_birth_interval += 1 / 73
+            self.last_birth_interval += 1/73
             self.check_recent_death_infant()
 
         # Check if male subgroup needs to break off of main group
@@ -113,7 +113,7 @@ class Monkey(Agent):
                 demographic_structure_list[5] -= 1
                 # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.0007:  # 95% chance to survive
+        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.000415:  # 95% chance to survive
             self.death()
             if 10 < self.age <= 25:
                 demographic_structure_list[4] -= 1
