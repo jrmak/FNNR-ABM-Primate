@@ -424,7 +424,7 @@ class Human(Agent):
                + 0.27 * float(self.gtgp_part) - 0.13 * float(self.age) + 0.07 * float(self.gender)
                + 0.17 * float(self.education) + 0.88 * float(self.marriage) +
                1.39 * float(self.work_status) + 0.001 * float(self.mig_remittances))  # Shuang's formula
-        mig_prob = prob / (prob + 1)
+        mig_prob = prob / ((prob + 1) / 45)  # / 45 for ages 15-59; migration is a lifetime, not yearly, probability
         if random.random() < mig_prob and hh_size_list[self.hh_id] >= 2:  # out-migration occurs
             if hh_migration_flag[self.hh_id] == 0:  # only one migrant allowed per household at a time
                 hh_size_list[self.hh_id] -= 1
