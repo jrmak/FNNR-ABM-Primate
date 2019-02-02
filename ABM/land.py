@@ -2,7 +2,7 @@ from mesa.agent import Agent
 import random
 from fnnr_config_file import scenario, unit_comp_flat,\
     unit_comp_dry, unit_comp_rice, unit_comp_before, unit_comp_after, time_breakpoint, PES_span,\
-    land_step_measure, no_pay_part
+    land_step_measure, no_pay_part, min_threshold
 from math import exp
 
 household_income_list = [0] * 170
@@ -149,7 +149,7 @@ class Land(Agent):
         gtgp_part_prob = (prob / (prob + 1))
         if self.model.time > PES_span and self.gtgp_enrolled == 1:  # if PES payments have ended,
             gtgp_part_prob = no_pay_part * gtgp_part_prob # raise chances of reverting
-            if random.random() < gtgp_part_prob * 0.3:  # 0.3 is a minimum threshold
+            if random.random() < gtgp_part_prob * min_threshold:  # 0.3 is a minimum threshold
                 self.convert_gtgp_to_non_gtgp()
         if self.model.time < PES_span:
             if non_gtgp_area_list[self.hh_id] < minimum_non_gtgp and self.gtgp_enrolled == 1:  # keep minimum non-GTGP area

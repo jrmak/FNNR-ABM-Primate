@@ -14,14 +14,14 @@ plot_setting = False  # pops up monkey demographic graphs that were exported to 
 # Other plots can be generated in Excel.
 
 # monkey/human settings
-family_setting = 20  # number of monkey families; default/recommended is 20; set to 1 for random walk mapping
-year_setting = 20  # number of years the model will run, as an integer multiple of 73 5-day time-steps; default is 10
+family_setting = 1  # number of monkey families; default/recommended is 20; set to 1 for random walk mapping
+year_setting = 25  # number of years the model will run, as an integer multiple of 73 5-day time-steps; default is 10
 human_setting = "with_humans"  # "with_humans" or "without_humans" (strings with underscores); default is "with_humans"
 
 # land settings
 PES_span = 8
-no_pay_part = 0.4  # chances a household would remain enrolled in GTGP immediately after payment ends
-min_threshold = 0.3  # similar to no_pay_part in that it also multiplies with gtgp_part_prob
+no_pay_part = 0.25  # chances a household would remain enrolled in GTGP immediately after payment ends
+min_threshold = 0.25  # similar to no_pay_part in that it also multiplies with gtgp_part_prob
 
 # land scenario settings
 scenario = 'flat'  # types are 'flat', 'land_type', or 'time' as strings with underscores; default is flat

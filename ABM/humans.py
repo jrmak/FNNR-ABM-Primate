@@ -132,7 +132,7 @@ class Human(Agent):
             self.marriage = 1
 
         if 16 < self.age <= 20 and random.random() < (0.0192 * 2) and self.migration_status == 0\
-                and random.random() < 1/73:
+            and random.random() < ((1/73) / 4):
             # person out-migrates to college and does not return
             self.migration_status = 2
             hh_size_list[self.hh_id] -= 1
@@ -241,8 +241,6 @@ class Human(Agent):
 
     def check_age_category(self):
         # sorts humans in the right age category as they age
-        if 15 < self.age < 21 and self.model.time > 15:
-            print(self.unique_id, self.age, self.hh_id, self.age_category)
         if int(self.gender) == 1:
             if (0 < self.age <= 10 and self.age_category == 0) or \
                     (10 < self.age <= 20 and self.age_category == 1) or \
