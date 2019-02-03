@@ -241,6 +241,7 @@ class Human(Agent):
 
     def check_age_category(self):
         # sorts humans in the right age category as they age
+        id_list = [9, 38, 39, 103, 140, 189, 254, 270, 297, 298, 315, 320, 342]
         if int(self.gender) == 1:
             if (0 < self.age <= 10 and self.age_category == 0) or \
                     (10 < self.age <= 20 and self.age_category == 1) or \
