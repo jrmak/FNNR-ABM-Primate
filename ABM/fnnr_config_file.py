@@ -14,8 +14,8 @@ plot_setting = False  # pops up monkey demographic graphs that were exported to 
 # Other plots can be generated in Excel.
 
 # monkey/human settings
-family_setting = 1  # number of monkey families; default/recommended is 20; set to 1 for random walk mapping
-year_setting = 25  # number of years the model will run, as an integer multiple of 73 5-day time-steps; default is 10
+family_setting = 20  # number of monkey families; default/recommended is 20; set to 1 for random walk mapping
+year_setting = 20  # number of years the model will run, as an integer multiple of 73 5-day time-steps; default is 10
 human_setting = "with_humans"  # "with_humans" or "without_humans" (strings with underscores); default is "with_humans"
 
 # land settings

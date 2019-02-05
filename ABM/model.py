@@ -188,6 +188,10 @@ class Movement(Model):
 
                     if land_type not in [-2, -3, -4]:
                         land_parcel_count += 1
+                        if non_gtgp_output in [-3, '-3', -4, '-4']:
+                            non_gtgp_output = 0
+                        if pre_gtgp_output in [-3, '-3', -4, '-4']:
+                            pre_gtgp_output = 0
                         lp = Land(land_parcel_count, self, hh_id, gtgp_enrolled,
                                              age_1, gender_1, education_1,
                                              gtgp_dry, gtgp_rice, total_dry, total_rice,
@@ -205,6 +209,10 @@ class Movement(Model):
                     land_type = float(line[i + 35].replace("\"",""))  # gtgp land type
                     if land_type not in [-3, '-3', -4, '-4']:
                         land_parcel_count += 1
+                        if non_gtgp_output in [-3, '-3', -4, '-4']:
+                            non_gtgp_output = 0
+                        if pre_gtgp_output in [-3, '-3', -4, '-4']:
+                            pre_gtgp_output = 0
                         lp = Land(land_parcel_count, self, hh_id, gtgp_enrolled,
                                         age_1, gender_1, education_1,
                                         gtgp_dry, gtgp_rice, total_dry, total_rice,
@@ -333,8 +341,6 @@ class Movement(Model):
                                   non_gtgp_area, migration_network, mig_remittances,
                                   income_local_off_farm, last_birth_time, death_rate, age_category, children,
                                   birth_plan)
-                    if gender == 2 and 0.3 < age < 10:
-                        print(self.human_id_count)
                     if self.grid_type == 'with_humans':
                         self.grid.place_agent(human, starting_position)
                         self.schedule.add(human)
@@ -343,7 +349,7 @@ class Movement(Model):
             # creation of migrant
             hh_migrants = line[38:43]  # age, gender, marriage, education of migrants
             if str(hh_migrants[0]) != '' and str(hh_migrants[0]) != '-3'\
-                    and str(hh_migrants[1] != '' and str(hh_migrants[1] != '-3')):  # if that household has any migrants, create migrant person
+                    and str(hh_migrants[1]) != '' and str(hh_migrants[1]) != '-3':  # if that household has any migrants, create migrant person
                 self.number_of_humans += 1
                 self.human_id_count += 1
                 age = float(hh_migrants[0])
@@ -511,11 +517,12 @@ class Movement(Model):
                             reproductive_female_list.append(id)
                     # starting representation of male defection/gender ratio
                     structure_convert = random.random()
-                    if structure_convert > 0.265:
-                        gender = 1  # 75% of those aged 10-25 are female
-                        last_birth_interval = random.uniform(0, 2)
-                        if id not in reproductive_female_list:
-                            reproductive_female_list.append(id)
+                    if gender == 0:
+                        if structure_convert > 0.5:
+                            gender = 1  # 75% of those aged 10-25 are female
+                            last_birth_interval = random.uniform(0, 2)
+                            if id not in reproductive_female_list:
+                                reproductive_female_list.append(id)
                 elif 0.96 < choice:  # 4% of starting monkey population
                     age = random.uniform(25, 30)  # are randomly aged between
                     age_category = 5  # ages 25-30
