@@ -260,7 +260,7 @@ class Movement(Model):
                 migration_network = int(line[37])
                 income_local_off_farm = int(line[47])
                 resource_check = 0
-                mig_remittances = int(line[48])
+                mig_remittances = int(line[57])
                 past_hh_id = hh_id
                 migration_status = 0
                 death_rate = 0
