@@ -28,6 +28,7 @@ former_hoh_list = [0] * 170
 hh_size_list = [0] * 170
 total_migration_list = [0] * 170
 total_re_migration_list = [0] * 170
+first_step_income_list = [0] * 170
 
 
 def _readCSV(text):
@@ -79,6 +80,10 @@ class Human(Agent):
         # human aging/demographic behavior
         if self.model.time == 1/73:  # first step list populating
             if self.migration_status == 0 and self.hh_id != 'Migrated':
+                if first_step_income_list[self.hh_id] == 0:
+                    from land import household_income_list
+                    household_income_list[self.hh_id] += float(self.income_local_off_farm)
+                    first_step_income_list[self.hh_id] = 1
                 if self.work_status == 1 and head_of_household_list[self.hh_id] == 0:
                     head_of_household_list[self.hh_id] = self.unique_id
             if self.migration_status == 1:
@@ -92,9 +97,6 @@ class Human(Agent):
             # local_income_off_farm added first step once per household
             if self.hh_id != 'Migrated':
                 self.hoh_check()
-                if self.unique_id in head_of_household_list:
-                    from land import household_income_list
-                    household_income_list[self.hh_id] += float(self.income_local_off_farm)
 
         if self.migration_status == 0:
             self.age_check()

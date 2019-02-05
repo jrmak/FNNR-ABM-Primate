@@ -2,7 +2,7 @@ from mesa.agent import Agent
 import random
 from fnnr_config_file import scenario, unit_comp_flat,\
     unit_comp_dry, unit_comp_rice, unit_comp_before, unit_comp_after, time_breakpoint, PES_span,\
-    land_step_measure, no_pay_part, min_threshold
+    land_step_measure, no_pay_part, min_threshold, year_setting
 from math import exp
 
 household_income_list = [0] * 170
@@ -62,40 +62,48 @@ class Land(Agent):
             from humans import hh_size_list
             self.hh_size = hh_size_list[self.hh_id]
             household_income_list[self.hh_id] = (household_income_list[self.hh_id]
-                                                 + self.land_income - old_land_income)
+                                                 + self.land_income)
             land_income_list[self.hh_id] = (land_income_list[self.hh_id]
-                                                 + self.land_income - old_land_income)
-        if random.random() < 1/73:
-            old_land_income = self.land_income  # resets yearly
+                                                 + self.land_income)
+        if random.random() < 10000000/(73 * year_setting / 2):
+        # if random.random() < 1/73:
+            old_land_income = self.land_income  # resets
+            old_gtgp_income = self.gtgp_net_income
             self.land_output()  # modifies self.land_income
             self.gtgp_participation()
-            household_income_list[self.hh_id] = (household_income_list[self.hh_id]
-                                                 + self.land_income - old_land_income)
-            land_income_list[self.hh_id] = (land_income_list[self.hh_id]
-                                                 + self.land_income - old_land_income)
+            if self.gtgp_enrolled == 0:
+                household_income_list[self.hh_id] = (household_income_list[self.hh_id]
+                                                     + self.land_income - old_land_income)
+                land_income_list[self.hh_id] = (land_income_list[self.hh_id]
+                                                     + self.land_income - old_land_income)
+            elif self.gtgp_enrolled == 1:
+                household_income_list[self.hh_id] = (household_income_list[self.hh_id]
+                                                     + self.gtgp_net_income - old_gtgp_income)
+                land_income_list[self.hh_id] = (land_income_list[self.hh_id]
+                                                + self.gtgp_net_income - old_gtgp_income)
+            if int(self.hh_id) == 7:
+                print('7', household_income_list[self.hh_id])
+            if self.hh_id == 8:
+                print('8', household_income_list[self.hh_id], self.plant_type, self.pre_gtgp_output, self.non_gtgp_output)
 
     def land_output(self):
         """Calculates land output and income"""
         # unit prices are set in pseudo-code
-        if self.plant_type == 1:  # corn
+        if int(self.plant_type) == 1:  # corn
             unit_price = 0.7
-        elif self.plant_type == 2:  # potato
+        elif int(self.plant_type) == 2:  # potato
             unit_price = 0.8
-        elif self.plant_type == 3:  # sweet potato
+        elif int(self.plant_type) == 3:  # sweet potato
             unit_price = 0.9
-        elif self.plant_type == 4:  # rice
+        elif int(self.plant_type) == 4:  # rice
             unit_price = 2.3
-        elif self.plant_type == 5:  # abandoned fields
+        elif int(self.plant_type) == 5:  # abandoned fields
             unit_price = 0
         else:  # nuts, tea leaves, other vegetables, etc.
             unit_price = 1
-        if self.gtgp_enrolled == 1:
-            try:
-                land_output = float(self.pre_gtgp_output)
-            except ValueError:
-                pass
-        else:
-            land_output = float(self.non_gtgp_output)
+        land_output = float(self.non_gtgp_output)
+        if float(self.non_gtgp_output) == 0:
+            land_output = self.pre_gtgp_output
         crop_income = land_output * unit_price
 
         self.land_area = float(self.total_dry) + float(self.total_rice)
@@ -114,7 +122,7 @@ class Land(Agent):
                 comp_amount = self.land_area * unit_comp_after
 
         self.gtgp_net_income = comp_amount - crop_income
-        self.land_income = comp_amount + crop_income
+        self.land_income = crop_income
 
     def convert_non_gtgp_to_gtgp(self):
         self.gtgp_enrolled = 1
