@@ -258,9 +258,9 @@ class Movement(Model):
                     marriage = 6
                 mig_years = 0
                 migration_network = int(line[37])
-                income_local_off_farm = int(line[47])
+                income_local_off_farm = int(line[57])
                 resource_check = 0
-                mig_remittances = int(line[57])
+                mig_remittances = int(line[48])
                 past_hh_id = hh_id
                 migration_status = 0
                 death_rate = 0
@@ -365,13 +365,14 @@ class Movement(Model):
                 hh_id = 'Migrated'
                 migration_status = 1
                 migration_network = int(line[37])
+
                 last_birth_time = random.uniform(0, 1)
 
                 total_rice = float(line[43])
                 gtgp_rice = float(line[44])
                 total_dry = float(line[45])
                 gtgp_dry = float(line[46])
-                income_local_off_farm = float(line[47])
+                income_local_off_farm = float(line[57])
                 if total_rice in ['-3', '-4', -3, None]:
                     total_rice = 0
                 if total_dry in ['-3', '-4', -3, None]:
@@ -518,9 +519,9 @@ class Movement(Model):
                     # starting representation of male defection/gender ratio
                     structure_convert = random.random()
                     if gender == 0:
-                        if structure_convert > 0.5:
-                            gender = 1  # 75% of those aged 10-25 are female
-                            last_birth_interval = random.uniform(0, 2)
+                        if structure_convert < 0.6:
+                            gender = 1
+                            last_birth_interval = random.uniform(0, 3)
                             if id not in reproductive_female_list:
                                 reproductive_female_list.append(id)
                 elif 0.96 < choice:  # 4% of starting monkey population

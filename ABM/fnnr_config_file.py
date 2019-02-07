@@ -25,7 +25,7 @@ min_threshold = 0.25  # similar to no_pay_part in that it also multiplies with g
 
 # land scenario settings
 scenario = 'flat'  # types are 'flat', 'land_type', or 'time' as strings with underscores; default is flat
-unit_comp_flat = 270  # only applies if 'flat' scenario is selected; stable compensation; default is ~250-500
+unit_comp_flat = 540  # only applies if 'flat' scenario is selected; stable compensation; default is ~250-500
 unit_comp_dry = 200  # 'land_type' scenario only; compensation for dry conversion
 unit_comp_rice = 400  # 'land_type' scenario only; compensation for rice conversion
 unit_comp_before = 250  # 'time' scenario only; compensation before scenario_breakpoint year
