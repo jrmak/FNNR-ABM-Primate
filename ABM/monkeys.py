@@ -105,7 +105,9 @@ class Monkey(Agent):
                 # 0.99958^73 = 97% chance to survive each year with ticks every 5 days
                 # 0.999441^73 = 96%
                 # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
-        elif 10 < self.age <= 30 and self.gender == 0 and chance <= 0.00222:  # 0.00222 = 1 - 0.99778; 85% survival
+                #
+                # 0.998095 = 87%
+        elif 10 < self.age <= 30 and self.gender == 0 and chance <= 0.001905: # 87% chance to survive
             # We want a 3:1 male to female ratio, so females will less likely to die and males will be more likely
             self.death()
             if 10 < self.age <= 25:
@@ -114,7 +116,7 @@ class Monkey(Agent):
                 demographic_structure_list[5] -= 1
                 # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.0007:  # 95% chance to survive
+        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.000701:  # 95% chance to survive
             self.death()
             if 10 < self.age <= 25:
                 demographic_structure_list[4] -= 1

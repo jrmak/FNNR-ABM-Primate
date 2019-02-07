@@ -65,7 +65,7 @@ class Land(Agent):
                                                  + self.land_income)
             land_income_list[self.hh_id] = (land_income_list[self.hh_id]
                                                  + self.land_income)
-        if random.random() < 10000000/(73 * year_setting / 2):
+        if random.random() < 1/(73):
         # if random.random() < 1/73:
             old_land_income = self.land_income  # resets
             old_gtgp_income = self.gtgp_net_income
@@ -81,10 +81,12 @@ class Land(Agent):
                                                      + self.gtgp_net_income - old_gtgp_income)
                 land_income_list[self.hh_id] = (land_income_list[self.hh_id]
                                                 + self.gtgp_net_income - old_gtgp_income)
-            if int(self.hh_id) == 7:
-                print('7', household_income_list[self.hh_id])
-            if self.hh_id == 8:
-                print('8', household_income_list[self.hh_id], self.plant_type, self.pre_gtgp_output, self.non_gtgp_output)
+            """
+            if self.hh_id == 1:
+                print('1', household_income_list[self.hh_id], self.plant_type, self.pre_gtgp_output, self.non_gtgp_output)
+            if self.hh_id == 9:
+                print('9', household_income_list[self.hh_id], self.plant_type, self.pre_gtgp_output, self.non_gtgp_output)
+            """
 
     def land_output(self):
         """Calculates land output and income"""
@@ -152,7 +154,7 @@ class Land(Agent):
             self.gtgp_rice = 0
 
         prob = exp(2.52 - 0.012 * float(self.age_1) - 0.29 * float(self.gender_1) + 0.01 * float(self.education_1)
-                    + 0.001 * float(self.hh_size) - 2.45 * self.land_type * 0.0006 * float(self.gtgp_net_income)
+                    + 0.001 * float(self.hh_size) - 2.45 * self.land_type + 0.0006 * float(self.gtgp_net_income)
                     + 0.04 * self.land_time)  # Shuang's GTGP conversion formula
         gtgp_part_prob = (prob / (prob + 1))
         if self.model.time > PES_span and self.gtgp_enrolled == 1:  # if PES payments have ended,
