@@ -1,14 +1,15 @@
 import os
 
 """
+This script needs to be modified before it is usable.
 After you run the model some X number of trials per setting, put all of the trials for each setting in one folder.
-Then create an empty .csv that is the same as the file name stated here. This is so it can added to.
+Then create an empty .csv that is the same as the set_file_name stated here. This is so it can added to.
 Finally, run this script from the same directory as the other .csv files.
 
 This code assumes 3 sets of 30 trials and 1460 steps (20 years). It will take each of the 30 trials' outputs for each setting.
-Then it writes the output for steps 6 (0 years), 732 (10 years), and 1460 (20 years).
+Then it writes the output for steps 6 (0 years), 732 (10 years), and 1458 (20 years).
 After this, averages for 30 trials can be generated for each time frame, which will make for more accurate graphs/plots.
-Repeat this code for each setting.
+Repeat this code for each setting, then again for each type of output file (human demographics, monkey demographics, etc.).
 """
 
 set_file_name = 'demo_540.csv'
