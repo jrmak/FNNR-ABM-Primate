@@ -11,7 +11,7 @@ Running the model
 run_setting = "normal_run"  # "normal_run" or "first_run" (strings with underscores); default is "normal_run"
 plot_setting = False  # pops up monkey demographic graphs that were exported to the Excel files; default is False
 # Note: due to time constraints and unfamiliarity with matplotlib, I only have monkey demographic plots in my model.
-# Other plots can be generated in Excel.
+# Plots should usually be generated in Excel.
 
 # monkey/human settings
 family_setting = 20  # number of monkey families; default/recommended is 20; set to 1 for random walk mapping
@@ -25,7 +25,7 @@ min_threshold = 0.25  # similar to no_pay_part in that it also multiplies with g
 
 # land scenario settings
 scenario = 'flat'  # types are 'flat', 'land_type', or 'time' as strings with underscores; default is flat
-unit_comp_flat = 540  # only applies if 'flat' scenario is selected; stable compensation; default is ~250-500
+unit_comp_flat = 270  # only applies if 'flat' scenario is selected; stable compensation; default is ~250-500
 unit_comp_dry = 200  # 'land_type' scenario only; compensation for dry conversion
 unit_comp_rice = 400  # 'land_type' scenario only; compensation for rice conversion
 unit_comp_before = 250  # 'time' scenario only; compensation before scenario_breakpoint year

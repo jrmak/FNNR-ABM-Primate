@@ -17,8 +17,8 @@ os.chdir(currentpath)  # uses current directory path
 
 
 def save_summary_households(run_number, steps, total_non_gtgp, total_gtgp, average_non_gtgp_per_hh,
-                            average_gtgp_per_hh, average_non_gtgp_land_area_per_hh, average_gtgp_land_area_per_hh,
-                            average_hh_income):
+                            average_gtgp_per_hh, average_non_gtgp_land_area_per_hh, average_gtgp_land_area_per_hh
+                            ):
     """Exports entries onto a .csv file"""
     try:
         if scenario.lower() == 'flat':
@@ -42,7 +42,7 @@ def save_summary_households(run_number, steps, total_non_gtgp, total_gtgp, avera
         filewriter.writerow(
             ['Steps', 'Total # Non-GTGP Parcels', 'Total # GTGP Parcels',
              'Avg # Non-GTGP Parcels', 'Avg GTGP Parcels', 'Avg Non-GTGP Area',
-             'Avg GTGP Area', 'Avg Household Income'
+             'Avg GTGP Area'
              ])
     fnnr_export.writelines(str(steps))
     fnnr_export.writelines(',')
@@ -58,8 +58,8 @@ def save_summary_households(run_number, steps, total_non_gtgp, total_gtgp, avera
     fnnr_export.writelines(',')
     fnnr_export.writelines(str(average_gtgp_land_area_per_hh))
     fnnr_export.writelines(',')
-    fnnr_export.writelines(str(average_hh_income))
-    fnnr_export.writelines(',')
+    #nnr_export.writelines(str(average_hh_income))
+    #fnnr_export.writelines(',')
     fnnr_export.writelines('\n')
     fnnr_export.flush()  # flush memory
     fnnr_export.close()
