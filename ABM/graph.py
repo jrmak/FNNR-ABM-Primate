@@ -26,7 +26,7 @@ monkey_death_count = []
 model = Movement()  # run the model
 model_time = 73 * year_setting # 73 time-steps of 5 days each for 10 years, 730 steps total
 run = 1  # do not change this; it will automatically search for the first number-as-string not taken
-while os.path.isfile(os.getcwd() + '\\' + 'abm_export_summary' + str(run) + '.csv'):
+while os.path.isfile(os.getcwd() + '\\' + 'abm_export_summary_humans' + str(run) + '.csv'):
     # if folder exists in current directory, loop up until it finds a unique number
     run += 1
 for t in range(model_time):  # for each time-step in the time we just defined,
