@@ -88,7 +88,7 @@ def writeKappa(count, kappa_output, text_input):
     kappa30.close()
 
 
-threshold_list = [10, 100, 300, 600, 900]
+threshold_list = [50, 100, 200, 400, 600]
 for i in threshold_list:
     # text1 = 'abm_export_density_plot_wo' + str(number) + '.csv'
     # text2 = 'abm_export_density_plot_wo' + str(number + 1) + '.csv'

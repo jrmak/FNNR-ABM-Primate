@@ -5,13 +5,14 @@ Please install the pyshp library using pip, conda, or your IDE's interpreter too
 When the code is run, make sure your imported .csv and exported shapefile are named; change name_of_shp in this code
 as well as csvfile = open('this name here.csv', 'r').
 """
-import shapefile, csv
+import shapefile, csv, os
 
 name_of_shp = 'shapefile_270' # change your shapefile name here
 
-file_name = 'C:\\Users\\Judy\\Desktop\\270 Trimmed\\abm_export_density_plot_with_humans_' + '1' + '.csv'
+currentpath = os.getcwd()
+file_name = currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_1.csv'
 
-file_name_new = 'C:\\Users\\Judy\\Desktop\\270 Trimmed\\abm_export_density_plot_with_humans_' + '1_copy' + '.csv'
+file_name_new = currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_1_copy.csv'
 
 csvfile = open(file_name, 'r')
 reader = csv.reader(csvfile, delimiter=',')
