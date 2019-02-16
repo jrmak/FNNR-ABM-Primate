@@ -104,7 +104,7 @@ class Monkey(Agent):
                 # 0.99958^73 = 97% chance to survive each year with ticks every 5 days
                 # 0.999441^73 = 96%
                 # 0.9993^73 = 95% chance to survive each year with ticks every 5 days
-                # 0.999298^73 = 94.5% chance
+                # 0.9992255^73 = 94.5% chance
                 # 0.999153^73 = 94% chance
                 # 0.998095 = 87%
         elif 10 < self.age <= 30 and self.gender == 0 and chance <= 0.001905: # 87% chance to survive
@@ -116,7 +116,7 @@ class Monkey(Agent):
                 demographic_structure_list[5] -= 1
                 # 0.99778^73 = 85% chance to survive each year with ticks every 5 days
                 # 0.9987^73 = 91% chance to survive each year with ticks every 5 days
-        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.000702:  # 94.5% chance to survive
+        elif 10 < self.age <= 30 and self.gender == 1 and chance <= 0.0007745:  # 94.5% chance to survive
             # 94.5% chance to survive for females and 87% chance to survive for males creates an average of a 91%
             # survival rate for all monkeys aged 10-25.
             self.death()
