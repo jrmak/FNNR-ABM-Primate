@@ -4,6 +4,7 @@ This document imports human data from the Excel file containing Shuang's survey 
 """
 
 from mesa.agent import Agent
+from fnnr_config_file import college_likelihood
 import random
 import math
 import decimal
@@ -133,7 +134,7 @@ class Human(Agent):
                 single_male_list.remove([self.unique_id, self.hh_id])
             self.marriage = 1
 
-        if 16 < self.age <= 20 and random.random() < (0.0192 * 2) and self.migration_status == 0\
+        if 16 < self.age <= 20 and random.random() < (0.0192 * college_likelihood) and self.migration_status == 0\
             and random.random() < ((1/73) / 4):
             # person out-migrates to college and does not return
             self.migration_status = 2
