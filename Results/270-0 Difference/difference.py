@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from collections import Counter
 
 """
 Finds the symmetric difference of the two scenarios' heatmaps ('With Humans' vs. 'Without Humans').
@@ -39,20 +40,28 @@ def sum_dict_values(sample_dict):
 newdict1 = sum_dict_values(dict1)
 newdict2 = sum_dict_values(dict2)
 
-union_difference = {x: abs(newdict1[x] - newdict2[x]) for x in newdict1 if x in newdict2}
-symmetric_difference = set(newdict1.items()) ^ set(newdict2.items())
+def difference_dict(dict1, dict2):
+    output_dict = {}
+    for key in dict1.keys():
+        if key in dict2.keys():
+            output_dict[key] = abs(dict1[key] - dict2[key])
+    return output_dict
 
-#difference = union_difference.copy()
-#difference.update(symmetric_difference)
-difference = set(newdict1.items()) - set(newdict2.items())
+def difference_dict_percentage(dict1, dict2):
+    output_dict = {}
+    for key in dict1.keys():
+        if key in dict2.keys():
+            output_dict[key] = int(round(abs(dict1[key] - dict2[key])/max([dict1[key], dict2[key]]) * 100, 0))
+    return output_dict
+
+difference = difference_dict_percentage(newdict1, newdict2)
+print(difference)
 
 try:
-    diff = open('difference270-0_10.csv', 'a+')  # a+ will create the file if it doesn't exist already
-    # diff = open('kappa_average_w.csv', 'a+')
-    # diff = open('kappa_average_w.csv', 'a+')  # comparing with vs. without
+    diff = open('difference270-0_10_percentage.csv', 'w+')  # a+ will create the file if it doesn't exist already
 except IOError:
     print('Please close Excel and retry.')  # will not work if the .csv is already open
-for k, v in difference:
+for k, v in difference.items():
     for i in range(v):
         diff.writelines(k)
         diff.writelines('\n')
