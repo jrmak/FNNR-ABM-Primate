@@ -428,22 +428,21 @@ class Human(Agent):
                1.39 * float(self.work_status) + 0.001 * float(self.mig_remittances))  # Shuang's formula
         mig_prob = (prob / (prob + 1) / 45)  # / 45 for ages 15-59; migration is a lifetime, not yearly, probability
         if random.random() < mig_prob and hh_size_list[self.hh_id] >= 2:  # out-migration occurs
-            if hh_migration_flag[self.hh_id] == 0:  # only one migrant allowed per household at a time
-                hh_size_list[self.hh_id] -= 1
-                self.past_hh_id = self.hh_id
-                self.migration_status = 1
-                from land import household_income_list
-                household_income_list[self.past_hh_id] += self.mig_remittances
-                if self.unique_id in head_of_household_list:
-                    head_of_household_list[self.past_hh_id] = 0
-                    former_hoh_list[self.hh_id] = self.unique_id
-                    self.resource_frequency = self.resource_frequency * 0.5
-                hh_migration_flag[self.hh_id] = 1
-                if self.work_status == 1:
-                    num_labor_list[self.hh_id] -= 1
-                total_migration_list[self.hh_id] += 1
-                self.work_status = 0
-                self.hh_id = 'Migrated'
+            hh_size_list[self.hh_id] -= 1
+            self.past_hh_id = self.hh_id
+            self.migration_status = 1
+            from land import household_income_list
+            household_income_list[self.past_hh_id] += self.mig_remittances
+            if self.unique_id in head_of_household_list:
+                head_of_household_list[self.past_hh_id] = 0
+                former_hoh_list[self.hh_id] = self.unique_id
+                self.resource_frequency = self.resource_frequency * 0.5
+            hh_migration_flag[self.hh_id] = 1
+            if self.work_status == 1:
+                num_labor_list[self.hh_id] -= 1
+            total_migration_list[self.hh_id] += 1
+            self.work_status = 0
+            self.hh_id = 'Migrated'
 
     def re_migration_check(self):
         """Describes re-migration process and probability following out-migration"""
