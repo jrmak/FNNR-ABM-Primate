@@ -95,6 +95,9 @@ class Human(Agent):
                     num_labor_list[self.hh_id] += 1
                 if self.gender == 1 and self.marriage == 1 and self.unique_id not in married_male_list:
                     married_male_list.append(self.unique_id)
+            if int(self.age) > 20 and self.gender == 1 and self.marriage != 1 and self.migration_status == 0 \
+                    and [self.unique_id, self.hh_id] not in single_male_list:
+                single_male_list.append([self.unique_id, self.hh_id])
             # local_income_off_farm added first step once per household
             if self.hh_id != 'Migrated':
                 self.hoh_check()
@@ -134,47 +137,17 @@ class Human(Agent):
                 single_male_list.remove([self.unique_id, self.hh_id])
             self.marriage = 1
 
-        if 16 < self.age <= 20 and random.random() < (0.0192 * college_likelihood) and self.migration_status == 0\
-            and random.random() < ((1/73) / 4):
-            # person out-migrates to college and does not return
-            self.migration_status = 2
-            hh_size_list[self.hh_id] -= 1
-            total_migration_list[self.hh_id] += 1
-            self.hh_id = 'Migrated'
-            if self.unique_id in head_of_household_list:
-                try:
-                    head_of_household_list[self.hh_id] = 0
-                except TypeError:  # head of household migrated
-                    head_of_household_list[self.past_hh_id] = 0
-            self.model.number_of_humans -= 1
-            if self.work_status == 1:
-                try:
-                    num_labor_list[self.hh_id] -= 1
-                except TypeError:
-                    num_labor_list[self.past_hh_id] -= 1
-                self.work_status = 0
-            if self.unique_id in former_hoh_list:
-                try:
-                    former_hoh_list[self.hh_id] = 0
-                except TypeError:
-                    former_hoh_list[self.past_hh_id] = 0
-            human_demographic_structure_list[self.age_category] -= 1
-            self.model.schedule.remove(self)
-            if self in self.model.grid:
-                self.model.grid.remove_agent(self)
-
         random.shuffle(single_male_list)
 
     def movement(self):
     # human movement and resource collection behavior only occurs with 1 gatherer per household
         if self.unique_id in head_of_household_list:
-            if len(human_avoidance_list) > 372 * 9:  # 372 humans, 8 neighbors/9 cells, so 94 * 9 instances per step
+            if len(human_avoidance_list) > self.model.number_of_humans * 9:  # 8 neighbors/9 cells, so 94 * 9 instances per step
                 del human_avoidance_list[:]  # reset the list every step (once it hits a length of 372 * 9)
             load_dict = {}
             masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
             current_position = list(self.current_position)  # changes tuple into a list to edit; content remains the same
-            if self.current_position not in masterdict['Forest'] + masterdict['Household'] + masterdict['PES']  \
-                + masterdict['Farm'] + masterdict['Elevation_Out_of_Bound'] + human_avoidance_list + \
+            if self.current_position not in masterdict['Elevation_Out_of_Bound'] + human_avoidance_list + \
                     masterdict['Outside_FNNR']:
                 human_avoidance_list.append(self.current_position)
             human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
@@ -222,10 +195,6 @@ class Human(Agent):
             if random.random() < 0.9:
                 self.education += 1
                 # most adults in the FNNR did not get a full 12-13 years of education
-        elif 19 < float(self.age) < 23 and self.migration_status == 1:
-            if random.random() < 0.5:
-                self.education += 1  # went to college and got further education
-                # this is rare; in the household list, a few received beyond 12 years of education
 
         # check age-based death rates
         if self.age <= 6:
@@ -242,9 +211,38 @@ class Human(Agent):
             self.death_rate = 0.05354 * 0.5
         # These rates are changeable later.
 
+        if 16 < self.age <= 20 and random.random() < (0.0192 * college_likelihood) and self.migration_status == 0\
+            and random.random() < ((1/73) / 4):
+            # person out-migrates to college and does not return
+            self.migration_status = 2
+            self.education += 4
+            hh_size_list[self.hh_id] -= 1
+            total_migration_list[self.hh_id] += 1
+            self.hh_id = 'Migrated'
+            if self.unique_id in head_of_household_list:
+                try:
+                    head_of_household_list[self.hh_id] = 0
+                except TypeError:  # head of household migrated
+                    head_of_household_list[self.past_hh_id] = 0
+            self.model.number_of_humans -= 1
+            if self.work_status == 1:
+                try:
+                    num_labor_list[self.hh_id] -= 1
+                except TypeError:
+                    num_labor_list[self.past_hh_id] -= 1
+                self.work_status = 0
+            if self.unique_id in former_hoh_list:
+                try:
+                    former_hoh_list[self.hh_id] = 0
+                except TypeError:
+                    former_hoh_list[self.past_hh_id] = 0
+            human_demographic_structure_list[self.age_category] -= 1
+            self.model.schedule.remove(self)
+            if self in self.model.grid:
+                self.model.grid.remove_agent(self)
+
     def check_age_category(self):
         # sorts humans in the right age category as they age
-        id_list = [9, 38, 39, 103, 140, 189, 254, 270, 297, 298, 315, 320, 342]
         if int(self.gender) == 1:
             if (0 < self.age <= 10 and self.age_category == 0) or \
                     (10 < self.age <= 20 and self.age_category == 1) or \
@@ -291,22 +289,24 @@ class Human(Agent):
                     self.work_status = 0
 
     def hoh_check(self):
-        # designates the oldest working person of a household as its gatherer
-        # removes all others from the gatherer (head of household list)
+        """Activated when the head of household has migrated or retires"""
 
         if self.age >= 59 and self.unique_id in head_of_household_list:
             head_of_household_list[self.hh_id] = 0
 
         if self.work_status == 1 and head_of_household_list[self.hh_id] == 0:
             head_of_household_list[self.hh_id] = self.unique_id
+            self.model.grid.place_agent(self, starting_position)
             if former_hoh_list[self.hh_id] != 0:
                 self.resource_frequency = self.resource_frequency * 0.5
 
-        if self.age >= 59 or self.age < 15 and num_labor_list[self.hh_id] == 0\
+        elif self.age >= 59 or self.age < 15 and num_labor_list[self.hh_id] == 0\
                 and head_of_household_list[self.hh_id] == 0:
             head_of_household_list[self.hh_id] = self.unique_id
             self.work_status = 1
+            self.model.grid.place_agent(self, starting_position)
             self.resource_frequency = self.resource_frequency * 0.25
+
 
     def birth_check(self):
         """Adds children to reserve"""
@@ -443,6 +443,8 @@ class Human(Agent):
             total_migration_list[self.hh_id] += 1
             self.work_status = 0
             self.hh_id = 'Migrated'
+            if self in self.model.grid:
+                self.model.grid.remove_agent(self)
 
     def re_migration_check(self):
         """Describes re-migration process and probability following out-migration"""
