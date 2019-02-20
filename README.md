@@ -24,3 +24,4 @@ A web app version of server.py is being worked on.
 3b. Run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code). graph.py also provides all data output (Excel file export)--graph.py is the main file to run for data analysis; server.py is simply a demonstration.
 
 For more information, contact the owner of this repository.
+This project is open-source and follows the GNU GPLv3 license; a copy of it can be found under 'Data'. Essentially, any derivative work must also be open source.
