@@ -100,14 +100,14 @@ class Human(Agent):
                     num_labor_list[self.hh_id] += 1
                 if self.gender == 1 and self.marriage == 1 and self.unique_id not in married_male_list:
                     married_male_list.append(self.unique_id)
-            if int(self.age) > 20 and self.gender == 1 and self.marriage != 1 and self.migration_status == 0 \
+            if int(self.age) > 20 and self.gender == 1 and self.marriage != 1 and self.hh_id != 'Migrated' \
                     and [self.unique_id, self.hh_id] not in single_male_list:
                 single_male_list.append([self.unique_id, self.hh_id])
             # local_income_off_farm added first step once per household
             if self.hh_id != 'Migrated':
                 self.hoh_check()
 
-        if self.migration_status == 0:
+        if self.migration_status == 0 and self.hh_id != 'Migrated':
             self.age_check()
             self.hoh_check()
             self.movement()
