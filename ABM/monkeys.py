@@ -3,6 +3,7 @@ This file handles the demographic submodel for the Guizhou golden monkey populat
 """
 
 from families import *
+import os
 
 male_migration_list = []
 new_family_counter = [0]
@@ -10,6 +11,12 @@ new_male_family_counter = [0]
 old_family_ids = {}
 new_families_dict = {}
 new_male_families_dict = {}
+
+run = 1  # do not change this; it will automatically search for the first number-as-string not taken
+while os.path.isfile(os.getcwd() + '\\' + 'fnnr_monkey_log_file' + str(run) + '.txt'):
+    # if folder exists in current directory, loop up until it finds a unique number
+    run += 1
+monkey_log = 'fnnr_monkey_log_file' + str(run) + '.txt'
 
 class Monkey(Agent):
     #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions
@@ -47,6 +54,10 @@ class Monkey(Agent):
 
         # if a family group is too large, it splits into two
         if self.family.family_size > 46 and self.family.split_flag == 0:  # start splitting/create new family
+            log = open(monkey_log, 'a+')
+            log.writelines('Family Split, ' + 'Step ' + str(int(self.model.time * 73)) + ': Family,' + str(self.family))
+            log.writelines('\n')
+            log.close()
             new_family_counter.append(new_family_counter[-1] + 1)
             self.family.split_flag = new_family_counter[-1]  # old family split_flag
             old_family_ids.setdefault(self.family.unique_id, []).append(new_family_counter[-1])
@@ -150,6 +161,12 @@ class Monkey(Agent):
             demographic_structure_list[(self.age_category)] -= 1
             demographic_structure_list[(self.age_category + 1)] += 1
             self.age_category += 1
+            log = open(monkey_log, 'a+')
+            log.writelines('Aging, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                           + ',' + str(self.age) + ',' + str(self.gender) + ',' + 'aged to age category' + ','
+                           + str(self.age_category))
+            log.writelines('\n')
+            log.close()
 
             if self.age_category == 4 and self.gender == 1:
                 if self.unique_id not in reproductive_female_list:
@@ -196,9 +213,19 @@ class Monkey(Agent):
         self.model.monkey_id_count += 1
         self.model.monkey_birth_count += 1
         demographic_structure_list[0] += 1
+        log = open(monkey_log, 'a+')
+        log.writelines('Birth, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                       + ',' + str(self.age) + ',' + str(self.gender) + ',' + 'gave birth to,' + (str(last + 1)))
+        log.writelines('\n')
+        log.close()
 
     def death(self):
         # death from the perspective of a monkey agent
+        log = open(monkey_log, 'a+')
+        log.writelines('Death, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                       + ',' + str(self.age) + ',' + str(self.gender) + ',' + 'died')
+        log.writelines('\n')
+        log.close()
         self.family.family_size -= 1
         if self.family.family_size == 0:  # if this individual is the last member in their family--for all-male groups
             global_family_id_list.remove(self.family)

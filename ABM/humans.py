@@ -7,7 +7,7 @@ from mesa.agent import Agent
 from fnnr_config_file import college_likelihood
 import random
 import math
-import decimal
+import os
 
 single_male_list = []
 married_male_list = []
@@ -31,6 +31,11 @@ total_migration_list = [0] * 170
 total_re_migration_list = [0] * 170
 first_step_income_list = [0] * 170
 
+run = 1  # do not change this; it will automatically search for the first number-as-string not taken
+while os.path.isfile(os.getcwd() + '\\' + 'fnnr_human_log_file' + str(run) + '.txt'):
+    # if folder exists in current directory, loop up until it finds a unique number
+    run += 1
+human_log = 'fnnr_human_log_file' + str(run) + '.txt'
 
 def _readCSV(text):
     # reads in a .csv file.
@@ -214,6 +219,11 @@ class Human(Agent):
         if 16 < self.age <= 20 and random.random() < (0.0192 * college_likelihood) and self.migration_status == 0\
             and random.random() < ((1/73) / 4):
             # person out-migrates to college and does not return
+            log = open(human_log, 'a+')
+            log.writelines('College, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                           + ',' + str(self.age) + ',' + str(self.gender) + ',' + 'went to college')
+            log.writelines('\n')
+            log.close()
             self.migration_status = 2
             self.education += 4
             hh_size_list[self.hh_id] -= 1
@@ -256,6 +266,12 @@ class Human(Agent):
                     (self.age > 90 and self.age_category == 9):
                         pass
             else:
+                log = open(human_log, 'a+')
+                log.writelines('Aging, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                               + ',' + str(self.age) + ',' + str(self.gender) + ',' + 'aged to age category' + ','
+                               + str(self.age_category + 1))
+                log.writelines('\n')
+                log.close()
                 human_demographic_structure_list[(self.age_category)] -= 1
                 human_demographic_structure_list[(self.age_category + 1)] += 1
                 self.age_category += 1
@@ -278,6 +294,12 @@ class Human(Agent):
                     (self.age > 90 and self.age_category == 19):
                         pass
             else:
+                log = open(human_log, 'a+')
+                log.writelines('Aging, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                               + ',' + str(self.age) + ',' + str(self.gender) + ',' + 'aged to age category' + ','
+                               + str(self.age_category + 1))
+                log.writelines('\n')
+                log.close()
                 human_demographic_structure_list[(self.age_category)] -= 1
                 human_demographic_structure_list[(self.age_category + 1)] += 1
                 self.age_category += 1
@@ -296,7 +318,7 @@ class Human(Agent):
 
         if self.work_status == 1 and head_of_household_list[self.hh_id] == 0:
             head_of_household_list[self.hh_id] = self.unique_id
-            self.model.grid.place_agent(self, starting_position)
+            self.model.grid.place_agent(self, self.home_position)
             if former_hoh_list[self.hh_id] != 0:
                 self.resource_frequency = self.resource_frequency * 0.5
 
@@ -304,7 +326,7 @@ class Human(Agent):
                 and head_of_household_list[self.hh_id] == 0:
             head_of_household_list[self.hh_id] = self.unique_id
             self.work_status = 1
-            self.model.grid.place_agent(self, starting_position)
+            self.model.grid.place_agent(self, self.home_position)
             self.resource_frequency = self.resource_frequency * 0.25
 
 
@@ -313,6 +335,11 @@ class Human(Agent):
         if self.children < self.birth_plan:
             if self.last_birth_time >= random.uniform(1, 4):
                 last = self.model.human_id_count
+                log = open(human_log, 'a+')
+                log.writelines('Birth, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id) +
+                ',' + str(self.age) + ',' + str(self.gender) + ',' + ' gave birth to Agent,' + str(last + 1))
+                log.writelines('\n')
+                log.close()
                 self.children += 1
                 # build more attributes
                 age = 0
@@ -358,6 +385,11 @@ class Human(Agent):
     def death_check(self):
         """Small chance of dying every step; chance increases if over 65, see age_check()"""
         if random.random() < self.death_rate:
+            log = open(human_log, 'a+')
+            log.writelines('Death, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                           + ',' + str(self.age) + ',' + str(self.gender) + ',' + 'died')
+            log.writelines('\n')
+            log.close()
             if self.unique_id in head_of_household_list:
                 try:
                     head_of_household_list[self.hh_id] = 0
@@ -398,6 +430,12 @@ class Human(Agent):
             # marriage late is set low because this is a 5-day rate
             # the yearly marriage rate is 0.00767, or 0.767%
             # x^73 = 0.999233 = marriage rate for 5 days
+            log = open(human_log, 'a+')
+            log.writelines('Marriage, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                           + ',' + str(self.age) + ',' + str(self.gender) + ',' + ' got married to Agent #,'
+                           + str(single_male_list[0][0]))
+            log.writelines('\n')
+            log.close()
             self.marriage = 1
             hh_size_list[self.hh_id] -= 1
             self.hh_id = single_male_list[0][1]  # male's hh_id
@@ -428,6 +466,11 @@ class Human(Agent):
                1.39 * float(self.work_status) + 0.001 * float(self.mig_remittances))  # Shuang's formula
         mig_prob = (prob / (prob + 1) / 45)  # / 45 for ages 15-59; migration is a lifetime, not yearly, probability
         if random.random() < mig_prob and hh_size_list[self.hh_id] >= 2:  # out-migration occurs
+            log = open(human_log, 'a+')
+            log.writelines('Migration, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                           + ',' + str(self.age) + ',' + str(self.gender) + ',' + 'migrated out')
+            log.writelines('\n')
+            log.close()
             hh_size_list[self.hh_id] -= 1
             self.past_hh_id = self.hh_id
             self.migration_status = 1
@@ -453,6 +496,11 @@ class Human(Agent):
             re_mig_prob = (prob / (prob + 1) / 45) # 45 for ages 15-59; migration is a lifetime, not yearly, probability
             self.mig_years += 1
             if random.random() < re_mig_prob:  # re-migration occurs
+                log = open(human_log, 'a+')
+                log.writelines('Re-migration, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                               + ',' + str(self.age) + ',' + str(self.gender) + ',' + 're-migrated')
+                log.writelines('\n')
+                log.close()
                 self.migration_status = 0
                 self.hh_id = self.past_hh_id
                 self.mig_years = 0
