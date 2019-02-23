@@ -51,15 +51,21 @@ class Family(Agent):
             for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
                 correlation = 0.8
                 if random.uniform(0, 1) < correlation:
-                    from humans import human_avoidance_list
-                    if self.current_position not in human_avoidance_list:
+                    from humans import human_avoidance_dict
+                    if self.current_position not in human_avoidance_dict:
                         self.move_to_point(self.current_position, yangaoping)
+                    else:
+                        if random.random() > human_avoidance_dict[self.current_position]:
+                            self.move_to_point(self.current_position, yangaoping)
                 else:
                     neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                     current_position = self.neighbor_choice(neig, masterdict)
-                    from humans import human_avoidance_list
-                    if current_position not in human_avoidance_list:
+                    from humans import human_avoidance_dict
+                    if current_position not in human_avoidance_dict:
                         self.move_to(current_position)
+                    else:
+                        if random.random() > human_avoidance_dict[current_position]:
+                            self.move_to(current_position)
                         if current_position is not None:
                             self.current_position = current_position
                             moved_list.append(self.current_position)  # moved_list records positions for the heatmap
@@ -94,15 +100,21 @@ class Family(Agent):
             for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
                 correlation = 0.8
                 if random.uniform(0, 1) < correlation:
-                    from humans import human_avoidance_list
-                    if self.current_position not in human_avoidance_list:
+                    from humans import human_avoidance_dict
+                    if self.current_position not in human_avoidance_dict:
                         self.move_to_point(self.current_position, rest_of_reserve_choice)
+                    else:
+                        if random.random() > human_avoidance_dict[self.current_position]:
+                            self.move_to_point(self.current_position, rest_of_reserve_choice)
                 else:
                     neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                     current_position = self.neighbor_choice(neig, masterdict)
-                    from humans import human_avoidance_list
-                    if current_position not in human_avoidance_list:
+                    from humans import human_avoidance_dict
+                    if current_position not in human_avoidance_dict:
                         self.move_to(current_position)
+                    else:
+                        if random.random() > human_avoidance_dict[current_position]:
+                            self.move_to(current_position)
                 if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
                     self.current_position in masterdict['Outside_FNNR']:
                     # the movement formula may land the monkeys in territory where they cannot move.
@@ -130,9 +142,12 @@ class Family(Agent):
             for i in range(random.randint(5, 10)):
                 neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                 current_position = self.neighbor_choice(neig, masterdict)
-                from humans import human_avoidance_list
-                if current_position not in human_avoidance_list:
+                from humans import human_avoidance_dict
+                if current_position not in human_avoidance_dict:
                     self.move_to(current_position)
+                else:
+                    if random.random() > human_avoidance_dict[current_position]:
+                        self.move_to(current_position)
                     if current_position is not None:
                         self.current_position = current_position
                         moved_list.append(self.current_position)  # moved_list records positions for the heatmap
@@ -157,10 +172,14 @@ class Family(Agent):
         else:
             current_position[1] = current_position[1] - 1
         current_position = tuple(current_position)
-        from humans import human_avoidance_list
-        if current_position not in human_avoidance_list:
+        from humans import human_avoidance_dict
+        if current_position not in human_avoidance_dict:
             self.move_to(current_position)
             self.current_position = current_position
+        else:
+            if random.random() > human_avoidance_dict[current_position]:
+                self.move_to(current_position)
+                self.current_position = current_position
 
     def check_vegetation_of_neighbor(self, neighborlist, neighbordict):
         # returns a list of neighbors as vegetation types

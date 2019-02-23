@@ -13,7 +13,7 @@ single_male_list = []
 married_male_list = []
 human_birth_list = []
 human_death_list = []
-human_avoidance_list = []  # sets coordinate positions the monkeys should not step on, because humans are on it.
+human_avoidance_dict = {}  # sets coordinate positions the monkeys should not step on, because humans are on it.
 # Neighboring cells of human activity may also be added to this list.
 birth_flag_list = []
 marriage_flag_list = []
@@ -147,17 +147,14 @@ class Human(Agent):
     def movement(self):
     # human movement and resource collection behavior only occurs with 1 gatherer per household
         if self.unique_id in head_of_household_list:
-            if len(human_avoidance_list) > self.model.number_of_humans * 9:  # 8 neighbors/9 cells, so 94 * 9 instances per step
-                del human_avoidance_list[:]  # reset the list every step (once it hits a length of 372 * 9)
+            if len(human_avoidance_dict) > self.model.number_of_humans * 9:  # 8 neighbors/9 cells, so 94 * 9 instances per step
+                human_avoidance_dict.clear() # reset the list every step (once it hits a length of 372 * 9)
             load_dict = {}
             masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
             current_position = list(self.current_position)  # changes tuple into a list to edit; content remains the same
-            if self.current_position not in masterdict['Elevation_Out_of_Bound'] + human_avoidance_list + \
-                    masterdict['Outside_FNNR']:
-                human_avoidance_list.append(self.current_position)
             human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
             for human_neighbor in human_neighboring_grids:
-                 human_avoidance_list.append(human_neighbor)
+                human_avoidance_dict.setdefault((human_neighbor), self.resource_frequency)
             if self.resource_check == 0 and self.resource_position is not None and self.resource_position != '':
                 # if the human does not have the resource, head towards it
                 try:
@@ -171,7 +168,8 @@ class Human(Agent):
                     # print('Error moving', self.resource_position)
                     pass
             else:
-                self.move_to_point(tuple(self.home_position), self.resource_frequency)  # else, head home
+                for i in range(self.resource_position - self.home_position):
+                    self.move_to_point(tuple(self.home_position), self.resource_frequency)  # else, head home
                 if current_position[0] == list(self.home_position)[0] and current_position[1] == list(self.home_position)[1]:
                     # if you are back home, go out and collect resources again if frequency permits
                     self.resource_check = 0
@@ -532,50 +530,28 @@ class Human(Agent):
     def move_to_point(self, destination, frequency):
         """Moves human agent to assigned point according to frequency"""
         # index 0 represents x, index 1 represents y
-        if frequency > 1:
-            x_towards = int(round((destination[0] - current_position[0]) / frequency))
-            if x_towards > 1:
-                x_towards -= 1
-            y_towards = int(round((destination[1] - current_position[1]) / frequency))
-            if y_towards > 1:
-                y_towards -= 1
-            current_position = list(self.current_position)
-            if current_position[0] < destination[0]:  # if x is west
-                current_position[0] = current_position[0] + x_towards
-                x_change = int(frequency)
-                if current_position[0] >= destination[0]:  # if this overshoots:
-                    current_position[0] = destination[0]
-            elif current_position[0] == destination[0]:
-                pass  # don't move
-            else:
-                current_position[0] = current_position[0] - x_towards
-                x_change = 0 - int(frequency)
-                if current_position[0] <= destination[0]:  # if this overshoots:
-                    current_position[0] = destination[0]
-            if current_position[1] < destination[1]:
-                current_position[1] = current_position[1] + y_towards
-                y_change = int(frequency)
-                if current_position[1] >= destination[1]:  # if this overshoots:
-                    current_position[1] = destination[1]
-            elif current_position[1] == destination[1]:
-                pass
-            else:
-                current_position[1] = current_position[1] - y_towards
-                y_change = 0 - int(frequency)
-                if current_position[1] <= destination[1]:  # if this overshoots:
-                    current_position[1] = destination[1]
 
-            current_position = tuple(current_position)
-            self.move_to(current_position)
-            for i in list(range(1, int(frequency))):
-                human_avoidance_list.append((current_position[0] + x_change, current_position[1] + y_change))
-            self.current_position = current_position
-            if current_position[0] == destination[0] and current_position[1] == destination[1]:
-                self.resource_check = 1
+        if current_position[0] < destination[0]:  # if the current position is away from Yaogaoping,
+            current_position[0] = current_position[0] + 1  # move it closer
+        elif current_position[0] == destination[0]:
+            pass
         else:
-            self.resource_frequency += self.resource_frequency / 6  # 6 * 5 days in a step = 30 days in a month
-            # resource frequency is listed monthly in the source file
-            # this indicates time passing each step until the gatherer can move
+            current_position[0] = current_position[0] - 1
+
+        if current_position[1] < destination[1]:
+            current_position[1] = current_position[1] + 1
+        elif current_position[1] == destination[1]:
+            pass
+        else:
+            current_position[1] = current_position[1] - 1
+        current_position = tuple(current_position)
+        self.move_to(current_position)
+        self.current_position = current_position
+
+        human_avoidance_dict.setdefault((current_position[0], current_position[1]), frequency)
+
+        if current_position[0] == destination[0] and current_position[1] == destination[1]:
+            self.resource_check = 1
 
 class Resource(Agent):
     # Resources are fuelwood, mushrooms, herbs, etc. (see 'type') that humans collect.

@@ -38,7 +38,5 @@ land_step_measure = 6  # every 5 days (time-step) * land_count = land time resol
 Configuring randomwalk.py
 """
 random_walk_graph_setting = False  # generates random walks; set to True only if family_setting = 1; default is False
-model_exported_density_plot_file = 'export_density_plot_with_humans_1.csv'
-# change the # to your model run. make sure name is a string ending in .csv ('export_density_plot_with_humans_1.csv')
 if random_walk_graph_setting == True and family_setting != 1:
     print("Please set the random_walk_graph_setting to False if you are running the model with multiple families.")
