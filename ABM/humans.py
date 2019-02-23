@@ -48,9 +48,6 @@ def _readCSV(text):
     return cells
 
 class Human(Agent):
-    # the pixel that represents each group of monkeys with the same family id.
-    # it moves on the visualization grid, unlike individual monkey agents.
-    # it is currently not important in the demographic model, just the visualization model.
     def __init__(self, unique_id, model, current_position, hh_id, age, resource_check,
                  home_position, resource_position, resource_frequency, gender, education, work_status,
                  marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
@@ -82,6 +79,8 @@ class Human(Agent):
         self.children = children
         self.birth_plan = birth_plan
 
+        self.current_position = self.home_position
+
     def step(self):
         # human aging/demographic behavior
         if self.model.time == 1/73:  # first step list populating
@@ -110,7 +109,9 @@ class Human(Agent):
         if self.migration_status == 0 and self.hh_id != 'Migrated':
             self.age_check()
             self.hoh_check()
-            self.movement()
+            if self.hh_id not in [1, 18, 40, 45, 51, 79, 81, 89, 91, 109, 133, 139, 148, 160, 168]:
+                self.movement()
+                pass
 
             if 15 < self.age < 59 and random.random() < 1/73:  # event check happens once a year
                 self.migration_check()  # minors don't migrate
@@ -149,54 +150,47 @@ class Human(Agent):
         if self.unique_id in head_of_household_list:
             if len(human_avoidance_dict) > self.model.number_of_humans * 9:  # 8 neighbors/9 cells, so 94 * 9 instances per step
                 human_avoidance_dict.clear() # reset the list every step (once it hits a length of 372 * 9)
-            load_dict = {}
-            masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
-            current_position = list(self.current_position)  # changes tuple into a list to edit; content remains the same
-            human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
-            for human_neighbor in human_neighboring_grids:
-                human_avoidance_dict.setdefault((human_neighbor), self.resource_frequency)
+
             if self.resource_check == 0 and self.resource_position is not None and self.resource_position != '':
                 # if the human does not have the resource, head towards it
-                try:
-                    if self.resource_frequency == 0:
-                        from model import resource_dict
-                        resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
-                        self.resource_frequency = resource.frequency
-                        self.resource_position = resource.position
+                if self.resource_frequency == 0:
+                    from model import resource_dict
+                    resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
+                    self.resource_frequency = resource.frequency
+                    self.resource_position = resource.position
+                while self.current_position != self.resource_position:
                     self.move_to_point(self.resource_position, self.resource_frequency)
-                except:
-                    # print('Error moving', self.resource_position)
-                    pass
+                    human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
+                    for human_neighbor in human_neighboring_grids:
+                        if self.resource_frequency > 6:
+                            human_avoidance_dict.setdefault((human_neighbor), ((self.resource_frequency - 6) / 6))
+
             else:
-                for i in range(self.resource_position - self.home_position):
+                while self.current_position != self.home_position:
                     self.move_to_point(tuple(self.home_position), self.resource_frequency)  # else, head home
-                if current_position[0] == list(self.home_position)[0] and current_position[1] == list(self.home_position)[1]:
-                    # if you are back home, go out and collect resources again if frequency permits
+                if self.current_position[0] == list(self.home_position)[0] and self.current_position[1] == list(self.home_position)[1]:
+                    # if you are back home, go out and collect resources again
                     self.resource_check = 0
-                    try:
-                        from model import resource_dict
-                        resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
-                        self.resource_frequency = resource.frequency
-                        self.resource_position = resource.position
-                        # print(self.resource_position, self.current_position, self.home_position)
-                    except KeyError:
-                        pass  # this "pass" occurs because
-                        # not all households collect resources
+                    from model import resource_dict
+                    resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
+                    self.resource_frequency = resource.frequency
+                    self.resource_position = resource.position
 
     def age_check(self):
         """Check working and education age, as well as age-based death rates"""
         # check working status
         if 15 <= float(self.age) < 59:
-            if self.work_status == 0:
+            if self.work_status == 5 or self.work_status == 6:
                 self.work_status = 1
                 num_labor_list[self.hh_id] += 1
         else:
-            self.work_status = 0
+            self.work_status = 6
 
         # check education status; measured in years of education
         if 7 <= int(self.age) <= 19:
             if random.random() < 0.9:
                 self.education += 1
+                self.work_status == 5
                 # most adults in the FNNR did not get a full 12-13 years of education
 
         # check age-based death rates
@@ -238,7 +232,7 @@ class Human(Agent):
                     num_labor_list[self.hh_id] -= 1
                 except TypeError:
                     num_labor_list[self.past_hh_id] -= 1
-                self.work_status = 0
+                self.work_status = 6
             if self.unique_id in former_hoh_list:
                 try:
                     former_hoh_list[self.hh_id] = 0
@@ -278,7 +272,7 @@ class Human(Agent):
                         num_labor_list[self.hh_id] -= 1
                     except TypeError:
                         num_labor_list[self.past_hh_id] -= 1
-                    self.work_status = 0
+                    self.work_status = 6
         elif self.gender != 1:
             if (0 < self.age <= 10 and self.age_category == 10) or \
                     (10 < self.age <= 20 and self.age_category == 11) or \
@@ -306,7 +300,7 @@ class Human(Agent):
                         num_labor_list[self.hh_id] -= 1
                     except TypeError:
                         num_labor_list[self.past_hh_id] -= 1
-                    self.work_status = 0
+                    self.work_status = 6
 
     def hoh_check(self):
         """Activated when the head of household has migrated or retires"""
@@ -316,7 +310,6 @@ class Human(Agent):
 
         if self.work_status == 1 and head_of_household_list[self.hh_id] == 0:
             head_of_household_list[self.hh_id] = self.unique_id
-            self.model.grid.place_agent(self, self.home_position)
             if former_hoh_list[self.hh_id] != 0:
                 self.resource_frequency = self.resource_frequency * 0.5
 
@@ -324,7 +317,6 @@ class Human(Agent):
                 and head_of_household_list[self.hh_id] == 0:
             head_of_household_list[self.hh_id] = self.unique_id
             self.work_status = 1
-            self.model.grid.place_agent(self, self.home_position)
             self.resource_frequency = self.resource_frequency * 0.25
 
 
@@ -343,7 +335,7 @@ class Human(Agent):
                 age = 0
                 gender = random.choice([1, 2])
                 education = 0
-                work_status = 0
+                work_status = 6
                 marriage = 6
                 children = 0
                 if gender == 1:
@@ -370,6 +362,7 @@ class Human(Agent):
                                       self.migration_status, self.gtgp_part, self.non_gtgp_area,
                                       self.migration_network, self.mig_remittances, self.income_local_off_farm,
                                       self.last_birth_time, self.death_rate, age_category, children, birth_plan)
+                self.model.grid.place_agent(ind, self.home_position)
                 self.model.schedule.add(ind)
                 self.model.number_of_humans += 1
                 self.model.human_id_count += 1
@@ -457,6 +450,8 @@ class Human(Agent):
             self.gtgp_part = 0
         elif self.hh_id in gtgp_part_list:
             self.gtgp_part = 1
+        self.mig_remittances = self.mig_remittances * 1.03  # yearly inflation
+        self.income_local_off_farm = self.income_local_off_farm * 1.03  # yearly inflation
         prob = math.exp(2.07 - 0.00015 * float(self.income_local_off_farm) + 0.67 * float(num_labor_list[self.hh_id])
                + 4.36 * float(self.migration_network) - 0.58 * float(non_gtgp_land_per_labor)
                + 0.27 * float(self.gtgp_part) - 0.13 * float(self.age) + 0.07 * float(self.gender)
@@ -482,7 +477,7 @@ class Human(Agent):
             if self.work_status == 1:
                 num_labor_list[self.hh_id] -= 1
             total_migration_list[self.hh_id] += 1
-            self.work_status = 0
+            self.work_status = 6
             self.hh_id = 'Migrated'
             if self in self.model.grid:
                 self.model.grid.remove_agent(self)
@@ -508,8 +503,10 @@ class Human(Agent):
                 hh_migration_flag[self.hh_id] = 0
                 if self.hh_id not in total_re_migration_list:
                     total_re_migration_list[self.hh_id] += 1
-                if self.unique_id == former_hoh_list[self.hh_id]:
+                if self.unique_id in former_hoh_list:
                     self.resource_frequency = self.resource_frequency * 2
+                    if self.age < 59 and head_of_household_list[self.hh_id] == 0:
+                        head_of_household_list[self.hh_id] = self.unique_id
                 if 15 < int(self.age) < 59:
                     self.work_status = 1
                     num_labor_list[self.hh_id] += 1
@@ -530,6 +527,7 @@ class Human(Agent):
     def move_to_point(self, destination, frequency):
         """Moves human agent to assigned point according to frequency"""
         # index 0 represents x, index 1 represents y
+        current_position = list(self.current_position)  # changes tuple into a list to edit; content remains the same
 
         if current_position[0] < destination[0]:  # if the current position is away from Yaogaoping,
             current_position[0] = current_position[0] + 1  # move it closer
@@ -548,7 +546,7 @@ class Human(Agent):
         self.move_to(current_position)
         self.current_position = current_position
 
-        human_avoidance_dict.setdefault((current_position[0], current_position[1]), frequency)
+        human_avoidance_dict.setdefault((current_position[0], current_position[1]), frequency / 6)
 
         if current_position[0] == destination[0] and current_position[1] == destination[1]:
             self.resource_check = 1
