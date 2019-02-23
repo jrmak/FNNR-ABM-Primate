@@ -198,7 +198,6 @@ class Movement(Model):
                                              land_type, land_time, plant_type, non_gtgp_output,
                                              pre_gtgp_output, hh_size, non_gtgp_area, gtgp_area)
                         self.schedule.add(lp)
-                        schedule_temp_list.append(lp)
 
                 if gtgp_area > 0:
                     gtgp_enrolled = 1
@@ -219,7 +218,6 @@ class Movement(Model):
                                         land_type, land_time, plant_type, non_gtgp_output,
                                         pre_gtgp_output, hh_size, non_gtgp_area, gtgp_area)
                         self.schedule.add(lp)
-                        schedule_temp_list.append(lp)
 
         # Creation of humans (brown dots in simulation)
         self.number_of_humans = 0
@@ -344,7 +342,6 @@ class Movement(Model):
                     if self.grid_type == 'with_humans':
                         self.grid.place_agent(human, starting_position)
                         self.schedule.add(human)
-                        schedule_temp_list.append(human)  # glitch--model runs out of memory otherwise
 
             # creation of migrant
             hh_migrants = line[38:43]  # age, gender, marriage, education of migrants
@@ -460,12 +457,11 @@ class Movement(Model):
                               last_birth_time, death_rate, age_category, children, birth_plan)
                 if self.grid_type == 'with_humans':
                     self.schedule.add(human)
-                    schedule_temp_list.append(human)
                     self.grid.place_agent(human, starting_position)
 
 
         # Creation of monkey families (moving agents in the visualization)
-        for i in range(self.number_of_families):  # the following code block create families
+        for i in range(self.number_of_families):  # the following code block creates families
             starting_position = random.choice(startinglist)
             saved_position = starting_position
             from families import Family
@@ -478,7 +474,6 @@ class Movement(Model):
                             saved_position, split_flag)
             self.grid.place_agent(family, starting_position)
             self.schedule.add(family)
-            schedule_temp_list.append(family)
             global_family_id_list.append(family_id)
 
             # Creation of individual monkeys (not in the visualization submodel, but for the demographic submodel)
@@ -535,8 +530,6 @@ class Movement(Model):
                 self.monkey_id_count += 1
                 list_of_family_members.append(monkey.unique_id)
                 self.schedule.add(monkey)
-        #for x in schedule_temp_list:
-            #self.schedule.add(x)
 
     def step(self):
         # necessary; tells model to move forward
