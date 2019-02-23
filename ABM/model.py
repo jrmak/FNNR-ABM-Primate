@@ -142,8 +142,6 @@ class Movement(Model):
         # Creation of land parcels
         land_parcel_count = 0
 
-        schedule_temp_list = []
-
         # individual land parcels in each household (non-gtgp and gtgp)
         for line in _readCSV('hh_land.csv')[2:]:  # exclude headers; for each household:
             age_1 = float(line[45])
@@ -254,6 +252,12 @@ class Movement(Model):
                 marriage = int(person[3])
                 if marriage != 1:
                     marriage = 6
+                if 15 < age < 59:
+                    work_status = 1
+                elif 7 < age < 15:
+                    work_status = 5
+                else:
+                    work_status = 6
                 mig_years = 0
                 migration_network = int(line[37])
                 income_local_off_farm = int(line[57])
@@ -262,7 +266,6 @@ class Movement(Model):
                 past_hh_id = hh_id
                 migration_status = 0
                 death_rate = 0
-                work_status = 0
                 gtgp_part = 0
                 non_gtgp_area = 0
 
@@ -356,8 +359,10 @@ class Movement(Model):
                 mig_years = int(hh_migrants[4])
                 if 15 < age < 59:
                     work_status = 1
+                elif 7 < age < 15:
+                    work_status = 5
                 else:
-                    work_status = 0
+                    work_status = 6
                 past_hh_id = hh_id
                 hh_id = 'Migrated'
                 migration_status = 1
@@ -456,9 +461,8 @@ class Movement(Model):
                               migration_network, mig_remittances, income_local_off_farm,
                               last_birth_time, death_rate, age_category, children, birth_plan)
                 if self.grid_type == 'with_humans':
-                    self.schedule.add(human)
                     self.grid.place_agent(human, starting_position)
-
+                    self.schedule.add(human)
 
         # Creation of monkey families (moving agents in the visualization)
         for i in range(self.number_of_families):  # the following code block creates families

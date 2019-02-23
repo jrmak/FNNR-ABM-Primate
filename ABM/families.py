@@ -83,7 +83,7 @@ class Family(Agent):
                     if self.current_position is not None:
                         moved_list.append(self.current_position)  # moved_list records positions for the heatmap
 
-        elif 26 < self.model.step_in_year < 34 or 56 < self.model.step_in_year < 64:  # head back to rest of reserve
+        elif 26 < self.model.step_in_year < 37 or 56 < self.model.step_in_year < 67:  # head back to rest of reserve
             # after breeding season ends, head away from Yangaoping
             rest_of_reserve = {}
             if self.model.run_type == 'first_run':
@@ -96,7 +96,7 @@ class Family(Agent):
                 self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'save')
             rest_of_reserve = self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'load')
             rest_of_reserve_choice = random.choice(rest_of_reserve)
-            center = [50, 50]
+            center = [50, 50]  # only head towards this if out of bound
             for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
                 correlation = 0.8
                 if random.uniform(0, 1) < correlation:
@@ -130,7 +130,7 @@ class Family(Agent):
         else:
             # When it is not about to be breeding season/during it/just past it, move according to vegetation
             if self.current_position in masterdict['Elevation_Out_of_Bound'] or self.current_position \
-                in masterdict['Outside_FNNR']:
+                    in masterdict['Outside_FNNR']:
                 center = [50, 50]
                 for i in range(random.randint(5, 10)):
                     self.move_to_point(self.current_position, center)
@@ -139,7 +139,7 @@ class Family(Agent):
                     center = [50, 50]
                     for i in range(random.randint(5, 10)):
                         self.move_to_point(self.current_position, center)
-            for i in range(random.randint(5, 10)):
+            for i in range(5):
                 neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                 current_position = self.neighbor_choice(neig, masterdict)
                 from humans import human_avoidance_dict
