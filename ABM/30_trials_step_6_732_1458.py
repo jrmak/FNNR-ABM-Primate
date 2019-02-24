@@ -3,7 +3,7 @@ import os
 """
 This script needs to be modified before it is usable.
 After you run the model some X number of trials per setting, put all of the trials for each setting in one folder.
-Then create an empty .csv that is the same as the set_file_name stated here. This is so it can added to.
+Create subfolders for each file type (human demographics, monkey demographics).
 Finally, run this script from the same directory as the other .csv files.
 
 This code assumes 3 sets of 30 trials and 1460 steps (20 years). It will take each of the 30 trials' outputs for each setting.
@@ -12,7 +12,7 @@ After this, averages for 30 trials can be generated for each time frame, which w
 Repeat this code for each setting, then again for each type of output file (human demographics, monkey demographics, etc.).
 """
 
-set_file_name = 'demo_540.csv'
+set_file_name = 'GTGP_270.csv'
 
 def read_first_line(filename, x):
     if filename[-3:] == 'csv' and filename is not set_file_name:

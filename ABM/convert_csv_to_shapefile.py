@@ -7,12 +7,12 @@ as well as csvfile = open('this name here.csv', 'r').
 """
 import shapefile, csv, os
 
-name_of_shp = 'shapefile_270' # change your shapefile name here
+name_of_shp = 'difference_270-0_20_percentage' # change your shapefile name here
 
 currentpath = os.getcwd()
-file_name = currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_1.csv'
+file_name = currentpath + '\\difference270-0_20_percentage.csv'
 
-file_name_new = currentpath + '\\270 Trimmed\\abm_export_density_plot_with_humans_1_copy.csv'
+file_name_new = currentpath + '\\difference270-0_20_percentage_copy.csv'
 
 csvfile = open(file_name, 'r')
 reader = csv.reader(csvfile, delimiter=',')
