@@ -2,7 +2,7 @@
 # 2/11/2019
 
 """
-This document runs the server and helps visualize the agents.
+Run the moedel through this module.
 """
 from excel_export_summary_monkeys import save_summary
 from excel_export_summary_humans import save_summary_humans, save_summary_human_demographics
@@ -65,8 +65,10 @@ if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_c
     # this should only be run with 1 family at a time or else the graphs will be messed up
     for i in [1, 3, 5]:
         if t == 73 * i:
-            save_density_plot(moved_list, i)
+            save_density_plot(moved_list, str(i) + '_walk')
 
+# uncomment out the below if needed; requires the latest version of matplotlib
+"""
 plt.subplot(211)
 age_category_list = ('0-1', '1-3', '3-7', '7-10', '10-25', '25+')
 index = np.arange(len(age_category_list))
@@ -127,3 +129,4 @@ plt.tight_layout()
 
 if plot_setting == True:
     plt.show()  # shows all plots at once
+"""

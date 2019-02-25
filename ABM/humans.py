@@ -110,8 +110,8 @@ class Human(Agent):
             self.age_check()
             self.hoh_check()
             if self.hh_id not in [1, 18, 40, 45, 51, 79, 81, 89, 91, 109, 133, 139, 148, 160, 168]:
+                # above households do no gather resources
                 self.movement()
-                pass
 
             if 15 < self.age < 59 and random.random() < 1/73:  # event check happens once a year
                 self.migration_check()  # minors don't migrate
@@ -122,6 +122,9 @@ class Human(Agent):
         if random.random() < 1/73:
             self.marriage_check()
             self.death_check()
+
+        if self.migration_status == 0:
+            self.hh_id = self.past_hh_id
 
         self.age += 1/73
         self.check_age_category()
@@ -158,16 +161,14 @@ class Human(Agent):
                     resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
                     self.resource_frequency = resource.frequency
                     self.resource_position = resource.position
-                while self.current_position != self.resource_position:
-                    self.move_to_point(self.resource_position, self.resource_frequency)
-                    human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
-                    for human_neighbor in human_neighboring_grids:
-                        if self.resource_frequency > 6:
-                            human_avoidance_dict.setdefault((human_neighbor), ((self.resource_frequency - 6) / 6))
 
             else:
                 while self.current_position != self.home_position:
                     self.move_to_point(tuple(self.home_position), self.resource_frequency)  # else, head home
+                    human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
+                    for human_neighbor in human_neighboring_grids:
+                        if self.resource_frequency > 6:
+                            human_avoidance_dict.setdefault((human_neighbor), ((self.resource_frequency - 6) / 6))
                 if self.current_position[0] == list(self.home_position)[0] and self.current_position[1] == list(self.home_position)[1]:
                     # if you are back home, go out and collect resources again
                     self.resource_check = 0
@@ -530,18 +531,18 @@ class Human(Agent):
         current_position = list(self.current_position)  # changes tuple into a list to edit; content remains the same
 
         if current_position[0] < destination[0]:  # if the current position is away from Yaogaoping,
-            current_position[0] = current_position[0] + 1  # move it closer
+            current_position[0] += 1  # move it closer
         elif current_position[0] == destination[0]:
             pass
-        else:
-            current_position[0] = current_position[0] - 1
+        elif current_position[0] > destination[0]:
+            current_position[0] -= 1
 
         if current_position[1] < destination[1]:
-            current_position[1] = current_position[1] + 1
+            current_position[1] += 1
         elif current_position[1] == destination[1]:
             pass
-        else:
-            current_position[1] = current_position[1] - 1
+        elif current_position[1] > destination[1]:
+            current_position[1] -= 1
         current_position = tuple(current_position)
         self.move_to(current_position)
         self.current_position = current_position
