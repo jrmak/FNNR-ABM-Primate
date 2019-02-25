@@ -161,10 +161,16 @@ class Human(Agent):
                     resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
                     self.resource_frequency = resource.frequency
                     self.resource_position = resource.position
+                while self.current_position != self.resource_position:
+                    self.move_to_point(self.resource_position, self.resource_frequency)
+                    human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
+                    for human_neighbor in human_neighboring_grids:
+                        if self.resource_frequency > 6:
+                            human_avoidance_dict.setdefault((human_neighbor), ((self.resource_frequency - 6) / 6))
 
-            else:
+            else:  # if self.resource_check == 1, head home
                 while self.current_position != self.home_position:
-                    self.move_to_point(tuple(self.home_position), self.resource_frequency)  # else, head home
+                    self.move_to_point(tuple(self.home_position), self.resource_frequency)
                     human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
                     for human_neighbor in human_neighboring_grids:
                         if self.resource_frequency > 6:

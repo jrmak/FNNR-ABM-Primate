@@ -48,8 +48,9 @@ class Family(Agent):
             yangaoping = [random.randint(50, 70), random.randint(70, 90)]
             # The grid is drawn from the bottom, so even though it is currently 85 x 100,
             # these numbers are relatively high because they indicate the top right corner of the grid
+            correlation = 0.8
+            from humans import human_avoidance_dict
             for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
-                correlation = 0.8
                 if random.uniform(0, 1) < correlation:
                     from humans import human_avoidance_dict
                     self.move_to_point(self.current_position, yangaoping)
@@ -79,7 +80,7 @@ class Family(Agent):
                         # According to the pseudocode, monkeys move up to 2500m (not in a straight line) every 5 days.
                         self.move_to_point(self.current_position, yangaoping)
 
-        elif 26 < self.model.step_in_year < 37 or 56 < self.model.step_in_year < 67:  # head back to rest of reserve
+        elif 26 < self.model.step_in_year < 35 or 56 < self.model.step_in_year < 65:  # head back to rest of reserve
             # after breeding season ends, head away from Yangaoping
             rest_of_reserve = {}
             if self.model.run_type == 'first_run':
@@ -93,8 +94,9 @@ class Family(Agent):
             rest_of_reserve = self.model.saveLoad(rest_of_reserve, 'rest_of_reserve_dict', 'load')
             rest_of_reserve_choice = random.choice(rest_of_reserve)
             center = [50, 50]  # only head towards this if out of bound
+            correlation = 0.8
+            from humans import human_avoidance_dict
             for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
-                correlation = 0.8
                 if random.uniform(0, 1) < correlation:
                     from humans import human_avoidance_dict
                     self.move_to_point(self.current_position, rest_of_reserve_choice)
@@ -119,12 +121,15 @@ class Family(Agent):
                     # this territory is not very common, so if that occurs, the monkeys simply keep moving.
                     for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
                         self.move_to_point(self.current_position, center)
-
         else:
             # When it is not about to be breeding season/during it/just past it, move according to vegetation
+            from humans import human_avoidance_dict
+            for i in range(random.randint(5, 10)):
+                neig = self.model.grid.get_neighborhood(self.current_position, True, False)
+                current_position = self.neighbor_choice(neig, masterdict)
+                self.move_to_point(self.current_position, current_position)
             if self.current_position in masterdict['Elevation_Out_of_Bound'] or self.current_position \
                     in masterdict['Outside_FNNR']:
-                center = [50, 50]
                 for i in range(random.randint(5, 10)):
                     self.move_to_point(self.current_position, center)
                 if self.current_position in masterdict['Elevation_Out_of_Bound'] or self.current_position \
@@ -165,10 +170,14 @@ class Family(Agent):
         if current_position not in human_avoidance_dict:
             self.move_to_temp(current_position)
             self.current_position = current_position
+        elif random.random() > human_avoidance_dict[current_position]:
+            self.move_to(current_position)
+            self.current_position = current_position
         else:
             if random.random() > human_avoidance_dict[current_position]:
                 self.move_to_temp(current_position)
                 self.current_position = current_position
+                # if this fails, they do not move
 
     def check_vegetation_of_neighbor(self, neighborlist, neighbordict):
         # returns a list of neighbors as vegetation types
