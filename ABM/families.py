@@ -52,28 +52,33 @@ class Family(Agent):
             from humans import human_avoidance_dict
             for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
                 if random.uniform(0, 1) < correlation:
+                    from humans import human_avoidance_dict
                     self.move_to_point(self.current_position, yangaoping)
-                else:  # move to a neighbor instead of moving to Yangaoping
+                    if self.current_position in human_avoidance_dict and random.random() > human_avoidance_dict[self.current_position]:
+                        neig = self.model.grid.get_neighborhood(self.current_position, True, False)
+                        current_position = self.neighbor_choice(neig, masterdict)
+                        from humans import human_avoidance_dict
+                        if current_position not in human_avoidance_dict:
+                            self.move_to(current_position)
+                else:
                     neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                     current_position = self.neighbor_choice(neig, masterdict)
-                    if current_position not in human_avoidance_dict:  # if neighbor is not occupied by human
-                        self.move_to_point(self.current_position, current_position)
-                    else:  # repeat one more time to pick another neighbor; if this fails, stay put
-                        current_position = self.neighbor_choice(neig, masterdict)
-                        if current_position not in human_avoidance_dict:
-                            self.move_to_point(self.current_position, current_position)
-
-            # at the end of the step, usher monkey away from out-of-range areas if they end up there
-            if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
-                self.current_position in masterdict['Outside_FNNR']:
-                # the movement formula may land the monkeys in territory where they cannot move.
-                # this territory is not very common, so if that occurs, the monkeys simply keep moving.
-                for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one.
-                    # the range is 5 because each step at the 85x100 resolution is approximately 300m in resolution.
-                    # According to the pseudocode, monkeys move up to 2500m (not in a straight line) every 5 days.
-                    self.move_to_point(self.current_position, yangaoping)
-                    if self.current_position is not None:
-                        moved_list.append(self.current_position)  # moved_list records positions for the heatmap
+                    from humans import human_avoidance_dict
+                    if current_position not in human_avoidance_dict:
+                        self.move_to(current_position)
+                    else:
+                        if random.random() > human_avoidance_dict[current_position]:
+                            self.move_to(current_position)
+                        if current_position is not None:
+                            self.current_position = current_position
+                if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
+                    self.current_position in masterdict['Outside_FNNR']:
+                    # the movement formula may land the monkeys in territory where they cannot move.
+                    # this territory is not very common, so if that occurs, the monkeys simply keep moving.
+                    for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one.
+                        # the range is 5 because each step at the 85x100 resolution is approximately 300m in resolution.
+                        # According to the pseudocode, monkeys move up to 2500m (not in a straight line) every 5 days.
+                        self.move_to_point(self.current_position, yangaoping)
 
         elif 26 < self.model.step_in_year < 35 or 56 < self.model.step_in_year < 65:  # head back to rest of reserve
             # after breeding season ends, head away from Yangaoping
@@ -93,24 +98,29 @@ class Family(Agent):
             from humans import human_avoidance_dict
             for i in range(random.randint(5, 10)):  # when returning to the rest of the reserve after Yangaoping
                 if random.uniform(0, 1) < correlation:
+                    from humans import human_avoidance_dict
                     self.move_to_point(self.current_position, rest_of_reserve_choice)
+                    if self.current_position in human_avoidance_dict and random.random() > human_avoidance_dict[self.current_position]:
+                        neig = self.model.grid.get_neighborhood(self.current_position, True, False)
+                        current_position = self.neighbor_choice(neig, masterdict)
+                        from humans import human_avoidance_dict
+                        if current_position not in human_avoidance_dict:
+                            self.move_to(current_position)
                 else:
                     neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                     current_position = self.neighbor_choice(neig, masterdict)
-                    if current_position not in human_avoidance_dict:  # if neighbor is not occupied by human
-                        self.move_to_point(self.current_position, current_position)
-                    else:  # repeat one more time to pick another neighbor; if this fails, stay put
-                        current_position = self.neighbor_choice(neig, masterdict)
-                        if current_position not in human_avoidance_dict:
-                            self.move_to_point(self.current_position, current_position)
-
-            if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
-                self.current_position in masterdict['Outside_FNNR']:
-                # the movement formula may land the monkeys in territory where they cannot move.
-                # this territory is not very common, so if that occurs, the monkeys simply keep moving.
-                for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
-                    self.move_to_point(self.current_position, center)
-
+                    from humans import human_avoidance_dict
+                    if current_position not in human_avoidance_dict:
+                        self.move_to(current_position)
+                    else:
+                        if random.random() > human_avoidance_dict[current_position]:
+                            self.move_to(current_position)
+                if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
+                    self.current_position in masterdict['Outside_FNNR']:
+                    # the movement formula may land the monkeys in territory where they cannot move.
+                    # this territory is not very common, so if that occurs, the monkeys simply keep moving.
+                    for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one
+                        self.move_to_point(self.current_position, center)
         else:
             # When it is not about to be breeding season/during it/just past it, move according to vegetation
             from humans import human_avoidance_dict
@@ -122,6 +132,22 @@ class Family(Agent):
                     in masterdict['Outside_FNNR']:
                 for i in range(random.randint(5, 10)):
                     self.move_to_point(self.current_position, center)
+                if self.current_position in masterdict['Elevation_Out_of_Bound'] or self.current_position \
+                        in masterdict['Outside_FNNR']:  # repeat last step if still out of bounds
+                    center = [50, 50]
+                    for i in range(random.randint(5, 10)):
+                        self.move_to_point(self.current_position, center)
+            for i in range(5):
+                neig = self.model.grid.get_neighborhood(self.current_position, True, False)
+                current_position = self.neighbor_choice(neig, masterdict)
+                from humans import human_avoidance_dict
+                if current_position not in human_avoidance_dict:
+                    self.move_to(current_position)
+                else:
+                    if random.random() > human_avoidance_dict[current_position]:
+                        self.move_to(current_position)
+                    if current_position is not None:
+                        self.current_position = current_position
 
     def move_to_point(self, current_position, new_position):
         # Brings a pixel to a certain point using a correlated walk. Uses self.move_to within the function.
@@ -142,16 +168,14 @@ class Family(Agent):
         current_position = tuple(current_position)
         from humans import human_avoidance_dict
         if current_position not in human_avoidance_dict:
-            self.move_to(current_position)
+            self.move_to_temp(current_position)
             self.current_position = current_position
         elif random.random() > human_avoidance_dict[current_position]:
             self.move_to(current_position)
             self.current_position = current_position
         else:
-            neig = self.model.grid.get_neighborhood(self.current_position, True, False)
-            current_position = self.neighbor_choice(neig, masterdict)
-            if current_position not in human_avoidance_dict:  # if neighbor is not occupied by human
-                self.move_to(current_position)
+            if random.random() > human_avoidance_dict[current_position]:
+                self.move_to_temp(current_position)
                 self.current_position = current_position
                 # if this fails, they do not move
 
@@ -296,7 +320,11 @@ class Family(Agent):
                     direction = self.saved_position
             return direction
 
+    def move_to_temp(self, current_position):
+        if current_position != None:
+            self.model.grid.move_agent(self, current_position)
+
     def move_to(self, current_position):
         if current_position != None:
             self.model.grid.move_agent(self, current_position)
-            moved_list.append(self.current_position)  # moved_list records positions for the heatmap
+            moved_list.append(self.current_position)
