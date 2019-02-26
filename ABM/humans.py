@@ -109,14 +109,15 @@ class Human(Agent):
         if self.migration_status == 0 and self.hh_id != 'Migrated':
             self.age_check()
             self.hoh_check()
+
             if self.hh_id not in [1, 18, 40, 45, 51, 79, 81, 89, 91, 109, 133, 139, 148, 160, 168]:
                 # above households do no gather resources
                 self.movement()
 
-            if 15 < self.age < 59 and random.random() < 1/73:  # event check happens once a year
-                self.migration_check()  # minors don't migrate
+        if 15 < self.age < 59 and random.random() < 1/73 and self.hh_id != 'Migrated':  # event check happens once a year
+            self.migration_check()  # minors don't migrate
 
-        elif self.migration_status == 1 and random.random() < 1/73:  # event check happens once a year:
+        elif self.hh_id == 'Migrated' and random.random() < 1/73:  # event check happens once a year:
             self.re_migration_check()
 
         if random.random() < 1/73:
@@ -320,7 +321,6 @@ class Human(Agent):
             self.work_status = 1
             self.resource_frequency = self.resource_frequency * 0.25
 
-
     def birth_check(self):
         """Adds children to reserve"""
         if self.children < self.birth_plan:
@@ -440,7 +440,6 @@ class Human(Agent):
         """Describes out-migration process and probability"""
 
         from land import non_gtgp_part_list, gtgp_part_list, non_gtgp_area_list
-
         self.non_gtgp_area = non_gtgp_area_list[self.hh_id]
 
         if num_labor_list[self.hh_id] != 0:
@@ -522,7 +521,8 @@ class Human(Agent):
                 print(self.current_position, self.home_position)
                 print(e)
             finally:
-                self.current_position = self.home_position
+                if self.current_position is None:
+                    self.current_position = self.home_position
                 pass
 
     def move_to_point(self, destination, frequency):
