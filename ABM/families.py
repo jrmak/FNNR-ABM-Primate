@@ -1,3 +1,4 @@
+# !/usr/bin/python
 """
 This file determines behavior for family agents in the visualization grid.
 """
@@ -68,14 +69,14 @@ class Family(Agent):
                     current_position = self.neighbor_choice(neig, masterdict)
                     if current_position is not None and current_position not in \
                             masterdict['Elevation_Out_of_Bound'] and current_position not in \
-                            masterdict['Outside_FNNR'] and (current_position not in human_avoidance_dict \
-                                                            or random.random() \
+                            masterdict['Outside_FNNR'] and (current_position not in human_avoidance_dict
+                                                            or random.random()
                                                             > human_avoidance_dict[current_position]):
                         self.move_to(current_position)
                         self.current_position = current_position
 
-                if self.current_position in masterdict['Elevation_Out_of_Bound'] or  \
-                    self.current_position in masterdict['Outside_FNNR']:  # at the end
+                if self.current_position in masterdict['Elevation_Out_of_Bound'] or \
+                        self.current_position in masterdict['Outside_FNNR']:  # at the end
                     # the movement formula may land the monkeys in territory where they cannot move.
                     # this territory is not very common, so if that occurs, the monkeys simply keep moving.
                     for i in range(random.randint(5, 10)):  # the monkeys move multiple pixels each step, not just one.
@@ -83,7 +84,7 @@ class Family(Agent):
                         # According to the pseudocode, monkeys move up to 2500m (not in a straight line) every 5 days.
                         self.move_to_point(self.current_position, yangaoping)
                         if self.current_position not in masterdict['Elevation_Out_of_Bound'] \
-                                    and self.current_position not in masterdict['Outside_FNNR']:
+                                and self.current_position not in masterdict['Outside_FNNR']:
                             moved_list.append(self.current_position)  # moved_list records positions for the heatmap
                 else:
                     if self.current_position is not None:
@@ -110,7 +111,7 @@ class Family(Agent):
                     neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                     current_position = self.neighbor_choice(neig, masterdict)
                     if current_position is not None and current_position not in masterdict['Elevation_Out_of_Bound'] \
-                            and current_position not in masterdict['Outside_FNNR'] and (current_position \
+                            and current_position not in masterdict['Outside_FNNR'] and (current_position
                             not in human_avoidance_dict or random.random() > current_position[human_avoidance_dict]):
                         self.move_to(current_position)
                         self.current_position = current_position
@@ -310,12 +311,12 @@ class Family(Agent):
             try:
                 assert int(newsum) == 1
             except AssertionError:
-                if self.current_position != None:
+                if self.current_position is not None:
                     direction = self.current_position
                 else:
                     direction = self.saved_position
             return direction
 
     def move_to(self, current_position):
-        if current_position != None:
+        if current_position is not None:
             self.model.grid.move_agent(self, current_position)

@@ -12,22 +12,23 @@ import pickle
 
 
 """
-Runs the main model.
+Operates the main model. Do not run this code directly; use server.py or graph.py.
 It creates the agents and defines their attributes.
 It also sets up the environmental grid using imported vegetation, elevation, and resource layers.
 Then every step, it calls for agents to act.
 """
+
 
 # NOTE: right now, the number of monkey families is set to 1 for model testing purposes (model runs faster).
 # The actual number should be around 20. Change this in __init__() under Movement(Model).
 
 global_family_id_list = []
 household_list = [2, 3, 5, 6, 8, 9, 11, 14, 15, 16, 17, 19, 22, 25, 27, 30, 31, 32, 34, 35, 36, 39, 41, 42, 43, 46,
-                 47, 48, 49, 53, 54, 55, 57, 63, 64, 71, 72, 85, 100, 101, 102, 103, 104, 108, 113, 118, 120, 121,
-                 123, 128, 129, 131, 132, 134, 135, 136, 137, 138, 140, 141, 142, 143, 144, 145, 146, 148, 149, 150,
-                 151, 153, 154, 155, 157, 159, 161, 163, 165, 166, 167, 169]
-vegetation_file = 'agg_veg60.txt'  # change these filenames to another file in the same directory as needed
-elevation_file = 'agg_dem_87100.txt'
+                  47, 48, 49, 53, 54, 55, 57, 63, 64, 71, 72, 85, 100, 101, 102, 103, 104, 108, 113, 118, 120, 121,
+                  123, 128, 129, 131, 132, 134, 135, 136, 137, 138, 140, 141, 142, 143, 144, 145, 146, 148, 149, 150,
+                  151, 153, 154, 155, 157, 159, 161, 163, 165, 166, 167, 169]
+vegetation_file = 'vegetation.txt'  # change these filenames to another file in the same directory as needed
+elevation_file = 'DEM.txt'
 household_file = 'hh_ascii400.txt'
 farm_file = 'farm_ascii300.txt'
 pes_file = 'pes_ascii200.txt'
@@ -37,6 +38,7 @@ forest_file = 'forest_ascii200.txt'
 
 masterdict = {}
 resource_dict = {}
+
 
 class Movement(Model):
 
@@ -50,7 +52,7 @@ class Movement(Model):
         super().__init__()
         self.width = width
         self.height = height
-        self.time = time # time increases by 1/73 (decimal) each step
+        self.time = time  # time increases by 1/73 (decimal) each step
         self.step_in_year = step_in_year  # 1-73; each step is 5 days, and 5 * 73 = 365 days in a year
         self.number_of_families = number_of_families
         self.number_of_monkeys = number_of_monkeys  # total, not in each family
@@ -80,7 +82,7 @@ class Movement(Model):
 
         # generate land
         if self.run_type == 'first_run':
-            gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function below
+            gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function
             gridlist2 = self._readASCII(elevation_file)[0]  # list of all elevation values
             gridlist3 = self._readASCII(household_file)[0]  # list of all household coordinate values
             gridlist4 = self._readASCII(pes_file)[0]  # list of all PES coordinate values
@@ -97,7 +99,8 @@ class Movement(Model):
                 self._populate(empty_masterdict, gridlist5, x, width, height)
             for x in [Forest]:
                 self._populate(empty_masterdict, gridlist6, x, width, height)
-            for x in [Bamboo, Coniferous, Broadleaf, Mixed, Lichen, Deciduous, Shrublands, Clouds, Farmland, Outside_FNNR]:
+            for x in [Bamboo, Coniferous, Broadleaf, Mixed, Lichen, Deciduous,
+                      Shrublands, Clouds, Farmland, Outside_FNNR]:
                 self._populate(empty_masterdict, gridlist, x, width, height)
             self.saveLoad(empty_masterdict, 'masterdict_veg', 'save')
             self.saveLoad(self.grid, 'grid_veg', 'save')
@@ -117,19 +120,17 @@ class Movement(Model):
 
         startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
         # Agents will start out in high-probability areas.
-        for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES']    \
-            + masterdict['Farm'] + masterdict['Forest']:
+        for coordinate in masterdict['Elevation_Out_of_Bound'] + masterdict['Household'] + masterdict['PES'] \
+                    + masterdict['Farm'] + masterdict['Forest']:
                 if coordinate in startinglist:
-                    startinglist.remove(coordinate)  # the original starting list includes areas that monkeys
-                                                     # cannot start in
-
+                    startinglist.remove(coordinate)
         # Creation of resources (yellow dots in simulation)
         # These include Fuelwood, Herbs, Bamboo, etc., but right now resource type and frequency are not used
         if self.grid_type == 'with_humans':
             for line in _readCSV('hh_survey.csv')[1:]:  # see 'hh_survey.csv'
                 hh_id_match = int(line[0])
                 resource_name = line[1]  # frequency is monthly; currently not-used
-                frequency = float(line[2]) / 6 # divided by 6 for 5-day frequency, as opposed to 30-day (1 month)
+                frequency = float(line[2]) / 6  # divided by 6 for 5-day frequency, as opposed to 30-day (1 month)
                 y = int(line[5])
                 x = int(line[6])
                 resource = Resource(_readCSV('hh_survey.csv')[1:].index(line),
@@ -165,7 +166,7 @@ class Movement(Model):
             # non_gtgp_area = float(total_rice) + float(total_dry) - float(gtgp_dry) - float(gtgp_rice)
             # gtgp_area = float(gtgp_dry) + float(gtgp_rice)
 
-            for i in range(1,6):  # for each household, which has up to 5 each of possible non-GTGP and GTGP parcels:
+            for i in range(1, 6):  # for each household, which has up to 5 each of possible non-GTGP and GTGP parcels:
                 # non_gtgp_area = float(line[i + 47].replace("\"",""))
                 # gtgp_area = float(line[i + 52].replace("\"",""))
                 non_gtgp_area = float(total_rice) + float(total_dry) - float(gtgp_dry) - float(gtgp_rice)
@@ -211,10 +212,10 @@ class Movement(Model):
                         if pre_gtgp_output in [-3, '-3', -4, '-4']:
                             pre_gtgp_output = 0
                         lp = Land(land_parcel_count, self, hh_id, gtgp_enrolled,
-                                        age_1, gender_1, education_1,
-                                        gtgp_dry, gtgp_rice, total_dry, total_rice,
-                                        land_type, land_time, plant_type, non_gtgp_output,
-                                        pre_gtgp_output, hh_size, non_gtgp_area, gtgp_area)
+                                  age_1, gender_1, education_1,
+                                  gtgp_dry, gtgp_rice, total_dry, total_rice,
+                                  land_type, land_time, plant_type, non_gtgp_output,
+                                  pre_gtgp_output, hh_size, non_gtgp_area, gtgp_area)
                         self.schedule.add(lp)
 
         # Creation of humans (brown dots in simulation)
@@ -224,7 +225,8 @@ class Movement(Model):
         for line in _readCSV('hh_citizens.csv')[1:]:  # exclude headers; for each household:
             hh_id = int(line[0])
             line_counter += 1
-            starting_position = (int(_readCSV('household.csv')[line_counter][4]), int(_readCSV('household.csv')[line_counter][3]))
+            starting_position = (int(_readCSV('household.csv')[line_counter][4]),
+                                 int(_readCSV('household.csv')[line_counter][3]))
             try:
                 resource = random.choice(resource_dict[str(hh_id)])  # random resource point for human
                 resource_position = resource.position
@@ -349,7 +351,8 @@ class Movement(Model):
             # creation of migrant
             hh_migrants = line[38:43]  # age, gender, marriage, education of migrants
             if str(hh_migrants[0]) != '' and str(hh_migrants[0]) != '-3'\
-                    and str(hh_migrants[1]) != '' and str(hh_migrants[1]) != '-3':  # if that household has any migrants, create migrant person
+                    and str(hh_migrants[1]) != '' and str(hh_migrants[1]) != '-3':
+                # if that household has any migrants, create migrant person
                 self.number_of_humans += 1
                 self.human_id_count += 1
                 age = float(hh_migrants[0])
@@ -556,7 +559,6 @@ class Movement(Model):
         for line in abody:
             cells.append(line.split(" "))
         return [cells, int(width), int(height)]
-
 
     def _populate(self, masterdict, grid, land_type, width, height):
         # places land tiles on the grid - connects color/land cover category with ASCII file values

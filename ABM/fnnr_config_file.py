@@ -1,3 +1,4 @@
+# !/usr/bin/python
 """
 Configuration Settings
 """
@@ -17,7 +18,7 @@ plot_setting = False  # pops up monkey demographic graphs that were exported to 
 family_setting = 20  # number of monkey families; default/recommended is 20; set to 1 for random walk mapping
 year_setting = 20  # number of years the model will run, as an integer multiple of 73 5-day time-steps; default is 10
 human_setting = "with_humans"  # "with_humans" or "without_humans" (strings with underscores); default is "with_humans"
-college_likelihood = 2  # factor from 1 to 5 that influences the likelihood that FNNR teenagers will attend college; default is 2
+college_likelihood = 2  # value from 1-5 that influences the likelihood that teenagers will attend college; default is 2
 
 # land settings
 PES_span = 8
@@ -38,5 +39,5 @@ land_step_measure = 6  # every 5 days (time-step) * land_count = land time resol
 Configuring randomwalk.py
 """
 random_walk_graph_setting = False  # generates random walks; set to True only if family_setting = 1; default is False
-if random_walk_graph_setting == True and family_setting != 1:
+if random_walk_graph_setting is True and family_setting != 1:
     print("Please set the random_walk_graph_setting to False if you are running the model with multiple families.")

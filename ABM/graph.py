@@ -1,8 +1,8 @@
 # !/usr/bin/python
-# 2/11/2019
+# 2/27/2019
 
 """
-Run the moedel through this module.
+Run the model through this module.
 """
 from excel_export_summary_monkeys import save_summary
 from excel_export_summary_humans import save_summary_humans, save_summary_human_demographics
