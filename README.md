@@ -15,13 +15,13 @@ Instructions for Running the Code:
 
 2. Download the code. Files are found in the ABM folder, though the Data folder has some files that are used for processing the data, using Microsoft Excel for some parts. Please refer to the later sections of the User's Manual, found in the parent directory of this repository, for more information.
 
-3a. Run 'server.py' to launch a web browser with an interactive visualization module of monkey movement.
+3a. Edit settings in 'fnnr_config_file.py' (optional) and run 'server.py' to launch a web browser with an interactive visualization module of monkey movement and human resource gathering.
 Monkey movements are semi-randomized, and based on the weighted value of their 8-neighbor surroundings.
 This weighted value is currently determined by vegetation, human presence, season, and elevation (changeable in code; requires raster layers converted to an ASCII file).
-
+Human movement during resource gathering will be recorded in the data, but shown only as a flicker between resource sites.
 A web app version of server.py is being worked on.
 
-3b. Run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code). graph.py also provides all data output (Excel file export)--graph.py is the main file to run for data analysis; server.py is simply a demonstration.
+3b. Edit settings in 'fnnr_config_file.py' (optional) and run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code). graph.py also provides all data output (Excel file export)--graph.py is the main file to run for data analysis; server.py is simply a demonstration.
 
 For more information, contact the owner of this repository.
 This project is open-source and follows the GNU GPLv3 license; a copy of it can be found under 'Data'. Essentially, any derivative work must also be open source.
