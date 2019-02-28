@@ -5,7 +5,7 @@ Deletes coordinates from a csv file if its y value is below 65 (for an 85x100 sp
 this creates an 85x35 segment of the top portion).
 """
 
-text = 'abm_export_density_plot_wo'
+text = 'abm_export_density_plot_with_humans_'
 
 #text = 'testing.csv'
 def readCSV(file, number):
@@ -25,5 +25,5 @@ def readCSV(file, number):
     f.truncate()
     f.close()
 
-# for number in range(1, 31):
-#     readCSV(text, number)
+for number in range(1, 31):
+     readCSV(text, number)

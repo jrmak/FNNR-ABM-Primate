@@ -1,0 +1,2281 @@
+Sun Jul 22 18:17:45 PDT 2018
+MaxEnt version 3.4.1
+Checking header of C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\Isothermality.asc
+Checking header of C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\Precipitation Seasonality.asc
+Checking header of C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\Slope.asc
+Checking header of C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\Vegetation Categories.asc
+Checking header of C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\Resampled Bias Grid.asc
+Reading samples from ggm_maxent_44.csv
+Read samples: max memory 536870912, total allocated 130023424, free 53572528, used 76450896, increment -28897816
+Extractor: max memory 536870912, total allocated 130023424, free 53077168, used 76946256, increment 495360
+Extracting random background and sample data
+441461 points with values for all grids
+Adding samples to background in feature space
+Command line used: 
+Command line to repeat: java density.MaxEnt nowarnings noprefixes responsecurves jackknife "outputdirectory=C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited" "samplesfile=C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\ggm_maxent_44.csv" "environmentallayers=C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII" randomseed noremoveduplicates randomtestpoints=25 "biasfile=C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\Resampled Bias Grid.asc" replicates=10 replicatetype=bootstrap writebackgroundpredictions nooutputgrids maximumiterations=5000 biastype=3 -N Annual Mean Precipitation -N Annual Mean Temperature -N Bias Grid -N Elevation -N Golden_monkey_avg -N Golden_monkey_max -N Golden_monkey_median -N Golden_monkey_min -N Golden_monkey_stddev -N Resampled Bias Grid -N Temperature Seasonality -t Vegetation Categories
+Species: Golden_monkey_0 Golden_monkey_1 Golden_monkey_2 Golden_monkey_3 Golden_monkey_4 Golden_monkey_5 Golden_monkey_6 Golden_monkey_7 Golden_monkey_8 Golden_monkey_9
+Layers: Isothermality Precipitation Seasonality Slope Vegetation Categories
+Layertypes: Continuous Continuous Continuous Categorical
+responsecurves: true
+jackknife: true
+outputdirectory: C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited
+samplesfile: C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\ggm_maxent_44.csv
+environmentallayers: C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII
+randomseed: true
+removeduplicates: false
+randomtestpoints: 25
+biasfile: C:\Users\jmak4\PycharmProjects\799B\Maxent ASCII\Resampled Bias Grid.asc
+replicates: 10
+replicatetype: bootstrap
+writebackgroundpredictions: true
+outputgrids: false
+maximumiterations: 5000
+biastype: 3
+
+getSamples: max memory 536870912, total allocated 130023424, free 47834288, used 82189136, increment 5242880
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 46976168, used 83047256, increment 858120
+Golden_monkey_0: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 43632408, used 86391016, increment 3343760
+linearPredictor: max memory 536870912, total allocated 130023424, free 43552128, used 86471296, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 43552128, used 86471296, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 43552128, used 86471296, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+Time since start: 5.965
+360: time = 5.402000 loss = 6.174069 testLoss 6.117445
+Resulting gain: 0.914198794200308
+Golden_monkey_0 response curves
+Time since start: 7.167
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 103914176, used 26109248, increment -60362048
+Golden_monkey_0 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 102889728, used 27133696, increment 1024448
+linearPredictor: max memory 536870912, total allocated 130023424, free 102889728, used 27133696, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 102889728, used 27133696, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 102889728, used 27133696, increment 0
+Initial loss: 7.088267689480358
+Time since start: 8.767
+300: time = 1.571000 loss = 6.742310
+Resulting gain: 0.34595769168560864
+Golden_monkey_0 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 103333000, used 26690424, increment -443272
+Golden_monkey_0 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 102313240, used 27710184, increment 1019760
+linearPredictor: max memory 536870912, total allocated 130023424, free 102232960, used 27790464, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 102232960, used 27790464, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 102232960, used 27790464, increment 0
+Initial loss: 7.088267689480358
+Time since start: 9.879
+180: time = 1.026000 loss = 6.467287
+Resulting gain: 0.6209805508741537
+Golden_monkey_0 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 103194144, used 26829280, increment -961184
+Golden_monkey_0 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 102178392, used 27845032, increment 1015752
+linearPredictor: max memory 536870912, total allocated 130023424, free 102098112, used 27925312, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 102098112, used 27925312, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 102098112, used 27925312, increment 0
+Initial loss: 7.088267689480358
+80: time = 0.336000 loss = 6.996157
+Resulting gain: 0.09211091120037818
+Golden_monkey_0 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 103184712, used 26838712, increment -1086600
+Golden_monkey_0 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 103174744, used 26848680, increment 9968
+linearPredictor: max memory 536870912, total allocated 130023424, free 103174744, used 26848680, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 103174744, used 26848680, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 103174744, used 26848680, increment 0
+Initial loss: 7.088267689480358
+120: time = 0.172000 loss = 6.686514
+Resulting gain: 0.40175329480081157
+Golden_monkey_0 response curves
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 89096408, used 40927016, increment 14078336
+Golden_monkey_0 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Time since start: 10.891
+Density: max memory 536870912, total allocated 130023424, free 86747728, used 43275696, increment 2348680
+linearPredictor: max memory 536870912, total allocated 130023424, free 86667448, used 43355976, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 86667448, used 43355976, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 86667448, used 43355976, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+Time since start: 13.372
+240: time = 2.481000 loss = 6.251058 testLoss 6.266668
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 37249704, used 92773720, increment 49417744
+Golden_monkey_0 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 35102288, used 94921136, increment 2147416
+linearPredictor: max memory 536870912, total allocated 130023424, free 35022008, used 95001416, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 35022008, used 95001416, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 35022008, used 95001416, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+Time since start: 17.074
+360: time = 3.616000 loss = 6.416382 testLoss 6.285067
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 39137424, used 90886000, increment -4115416
+Golden_monkey_0 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 36949928, used 93073496, increment 2187496
+linearPredictor: max memory 536870912, total allocated 130023424, free 36869648, used 93153776, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 36869648, used 93153776, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 36869648, used 93153776, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+Time since start: 21.473
+460: time = 4.305000 loss = 6.194553 testLoss 6.116007
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 55411432, used 74611992, increment -18541784
+Golden_monkey_0 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 52113880, used 77909544, increment 3297552
+linearPredictor: max memory 536870912, total allocated 130023424, free 51589592, used 78433832, increment 524288
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 51589592, used 78433832, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 51589592, used 78433832, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+Time since start: 25.042
+300: time = 3.440000 loss = 6.304572 testLoss 6.255645
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 73013648, used 57009776, increment -21424056
+Golden_monkey_0 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 72043392, used 57980032, increment 970256
+linearPredictor: max memory 536870912, total allocated 130023424, free 71963112, used 58060312, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 71963112, used 58060312, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 71963112, used 58060312, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+Time since start: 26.913
+300: time = 1.825000 loss = 6.742310 testLoss 6.699920
+Res.gain: 0.34595769168560864
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 41973384, used 88050040, increment 29989728
+Golden_monkey_0 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 41005744, used 89017680, increment 967640
+linearPredictor: max memory 536870912, total allocated 130023424, free 40925464, used 89097960, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 40925464, used 89097960, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 40925464, used 89097960, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+Time since start: 28.29
+180: time = 1.315000 loss = 6.467287 testLoss 6.532077
+Res.gain: 0.6209805508741537
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 89354040, used 40669384, increment -48428576
+Golden_monkey_0 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 88044000, used 41979424, increment 1310040
+linearPredictor: max memory 536870912, total allocated 130023424, free 88044000, used 41979424, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 87521760, used 42501664, increment 522240
+Sequential: max memory 536870912, total allocated 130023424, free 87521760, used 42501664, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+80: time = 0.541000 loss = 6.996157 testLoss 7.028200
+Res.gain: 0.09211091120037818
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 77002648, used 53020776, increment 10519112
+Golden_monkey_0 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 76991208, used 53032216, increment 11440
+linearPredictor: max memory 536870912, total allocated 130023424, free 76991208, used 53032216, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 76991208, used 53032216, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 76991208, used 53032216, increment 0
+Initial loss: 7.088267689480358
+Initial test loss: 7.088267689480358
+120: time = 0.354000 loss = 6.686514 testLoss 6.499848
+Res.gain: 0.40175329480081157
+Time since start: 29.344
+getSamples: max memory 536870912, total allocated 130023424, free 68100256, used 61923168, increment 8890952
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 67406960, used 62616464, increment 693296
+Golden_monkey_1: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 63829624, used 66193800, increment 3577336
+linearPredictor: max memory 536870912, total allocated 130023424, free 63829624, used 66193800, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 63829624, used 66193800, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 63829624, used 66193800, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+Time since start: 33.175
+320: time = 3.738000 loss = 6.371243 testLoss 5.998483
+Resulting gain: 0.7159183714126547
+Golden_monkey_1 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 41373976, used 88649448, increment 22455648
+Golden_monkey_1 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 40342048, used 89681376, increment 1031928
+linearPredictor: max memory 536870912, total allocated 130023424, free 40342048, used 89681376, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 40342048, used 89681376, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 40342048, used 89681376, increment 0
+Initial loss: 7.087161487582597
+Time since start: 34.685
+100: time = 0.772000 loss = 6.895239
+Resulting gain: 0.19192238364876246
+Golden_monkey_1 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 45740160, used 84283264, increment -5398112
+Golden_monkey_1 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 44543224, used 85480200, increment 1196936
+linearPredictor: max memory 536870912, total allocated 130023424, free 44462944, used 85560480, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 44462944, used 85560480, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 44462944, used 85560480, increment 0
+Initial loss: 7.087161487582597
+Time since start: 35.839
+140: time = 1.045000 loss = 6.717092
+Resulting gain: 0.3700690995363516
+Golden_monkey_1 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 50973488, used 79049936, increment -6510544
+Golden_monkey_1 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 49825992, used 80197432, increment 1147496
+linearPredictor: max memory 536870912, total allocated 130023424, free 49745712, used 80277712, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 49745712, used 80277712, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 49745712, used 80277712, increment 0
+Initial loss: 7.087161487582597
+80: time = 0.633000 loss = 7.052109
+Resulting gain: 0.035052423684850176
+Golden_monkey_1 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 31307720, used 98715704, increment 18437992
+Golden_monkey_1 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 31299208, used 98724216, increment 8512
+linearPredictor: max memory 536870912, total allocated 130023424, free 31299208, used 98724216, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 31299208, used 98724216, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 31299208, used 98724216, increment 0
+Initial loss: 7.087161487582597
+Time since start: 37.004
+120: time = 0.329000 loss = 6.597674
+Resulting gain: 0.4894877266016575
+Golden_monkey_1 response curves
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 85563216, used 44460208, increment -54264008
+Golden_monkey_1 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 83172760, used 46850664, increment 2390456
+linearPredictor: max memory 536870912, total allocated 130023424, free 83092480, used 46930944, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 83092480, used 46930944, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 83092480, used 46930944, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+Time since start: 39.855
+240: time = 2.379000 loss = 6.420530 testLoss 6.101817
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 95487120, used 34536304, increment -12394640
+Golden_monkey_1 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 93311688, used 36711736, increment 2175432
+linearPredictor: max memory 536870912, total allocated 130023424, free 93231408, used 36792016, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 93231408, used 36792016, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 93231408, used 36792016, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+Time since start: 41.545
+200: time = 1.612000 loss = 6.452055 testLoss 6.256795
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 48028440, used 81994984, increment 45202968
+Golden_monkey_1 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 45846680, used 84176744, increment 2181760
+linearPredictor: max memory 536870912, total allocated 130023424, free 45766400, used 84257024, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 45766400, used 84257024, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 45766400, used 84257024, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+Time since start: 44.602
+360: time = 2.978000 loss = 6.374813 testLoss 6.009694
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 72976376, used 57047048, increment -27209976
+Golden_monkey_1 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 69718776, used 60304648, increment 3257600
+linearPredictor: max memory 536870912, total allocated 130023424, free 69638496, used 60384928, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 69638496, used 60384928, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 69638496, used 60384928, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+Time since start: 47.677
+240: time = 2.965000 loss = 6.653749 testLoss 6.133193
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 25734536, used 104288888, increment 43903960
+Golden_monkey_1 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 101116768, used 28906656, increment -75382232
+linearPredictor: max memory 536870912, total allocated 130023424, free 101116768, used 28906656, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 101116768, used 28906656, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 101116768, used 28906656, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+100: time = 0.679000 loss = 6.895239 testLoss 6.713567
+Res.gain: 0.19192238364876246
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 39594280, used 90429144, increment 61522488
+Golden_monkey_1 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 38202208, used 91821216, increment 1392072
+linearPredictor: max memory 536870912, total allocated 130023424, free 38202208, used 91821216, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 38202208, used 91821216, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 38202208, used 91821216, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+Time since start: 49.413
+140: time = 0.979000 loss = 6.717092 testLoss 6.347862
+Res.gain: 0.3700690995363516
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 48583352, used 81440072, increment -10381144
+Golden_monkey_1 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 47359080, used 82664344, increment 1224272
+linearPredictor: max memory 536870912, total allocated 130023424, free 47278800, used 82744624, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 47278800, used 82744624, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 47278800, used 82744624, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+80: time = 0.531000 loss = 7.052109 testLoss 7.012067
+Res.gain: 0.035052423684850176
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 36070984, used 93952440, increment 11207816
+Golden_monkey_1 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 36061976, used 93961448, increment 9008
+linearPredictor: max memory 536870912, total allocated 130023424, free 36061976, used 93961448, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 36061976, used 93961448, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 36061976, used 93961448, increment 0
+Initial loss: 7.087161487582597
+Initial test loss: 7.087161487582597
+120: time = 0.253000 loss = 6.597674 testLoss 6.536867
+Res.gain: 0.4894877266016575
+getSamples: max memory 536870912, total allocated 130023424, free 27169280, used 102854144, increment 8892696
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 26640528, used 103382896, increment 528752
+Golden_monkey_2: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+Time since start: 50.454
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 23299680, used 106723744, increment 3340848
+linearPredictor: max memory 536870912, total allocated 130023424, free 23219400, used 106804024, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 23219400, used 106804024, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 23219400, used 106804024, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+Time since start: 56.658
+480: time = 6.187000 loss = 6.232553 testLoss 6.178878
+Resulting gain: 0.8551619646904074
+Golden_monkey_2 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 31035120, used 98988304, increment -7815720
+Golden_monkey_2 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 29967200, used 100056224, increment 1067920
+linearPredictor: max memory 536870912, total allocated 130023424, free 29886920, used 100136504, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 29886920, used 100136504, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 29886920, used 100136504, increment 0
+Initial loss: 7.087714753886884
+Time since start: 59.329
+340: time = 1.885000 loss = 6.725968
+Resulting gain: 0.3617469215184217
+Golden_monkey_2 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 41684192, used 88339232, increment -11797272
+Golden_monkey_2 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 40648592, used 89374832, increment 1035600
+linearPredictor: max memory 536870912, total allocated 130023424, free 40568312, used 89455112, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 40568312, used 89455112, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 40568312, used 89455112, increment 0
+Initial loss: 7.087714753886884
+Time since start: 61.604
+240: time = 2.152000 loss = 6.585512
+Resulting gain: 0.5022032215911842
+Golden_monkey_2 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 89917112, used 40106312, increment -49348800
+Golden_monkey_2 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 88788264, used 41235160, increment 1128848
+linearPredictor: max memory 536870912, total allocated 130023424, free 88707984, used 41315440, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 88707984, used 41315440, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 88707984, used 41315440, increment 0
+Initial loss: 7.087714753886884
+80: time = 0.599000 loss = 7.038315
+Resulting gain: 0.04939952145157811
+Golden_monkey_2 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 70711232, used 59312192, increment 17996752
+Golden_monkey_2 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 70699904, used 59323520, increment 11328
+linearPredictor: max memory 536870912, total allocated 130023424, free 70699904, used 59323520, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 70699904, used 59323520, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 70699904, used 59323520, increment 0
+Initial loss: 7.087714753886884
+Time since start: 62.612
+100: time = 0.228000 loss = 6.703094
+Resulting gain: 0.3846203654196714
+Golden_monkey_2 response curves
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 50524792, used 79498632, increment 20175112
+Golden_monkey_2 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 48088616, used 81934808, increment 2436176
+linearPredictor: max memory 536870912, total allocated 130023424, free 48008336, used 82015088, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 48008336, used 82015088, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 48008336, used 82015088, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+Time since start: 68.321
+480: time = 5.032000 loss = 6.390271 testLoss 6.149647
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 89152272, used 40871152, increment -41143936
+Golden_monkey_2 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 86967384, used 43056040, increment 2184888
+linearPredictor: max memory 536870912, total allocated 130023424, free 86887104, used 43136320, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 86887104, used 43136320, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 86887104, used 43136320, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+Time since start: 71.013
+300: time = 2.598000 loss = 6.445196 testLoss 6.596237
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 39404856, used 90618568, increment 47482248
+Golden_monkey_2 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 36827224, used 93196200, increment 2577632
+linearPredictor: max memory 536870912, total allocated 130023424, free 36827224, used 93196200, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 36827224, used 93196200, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 36827224, used 93196200, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+Time since start: 74.856
+380: time = 3.759000 loss = 6.240994 testLoss 6.208698
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 31319504, used 98703920, increment 5507720
+Golden_monkey_2 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 27974320, used 102049104, increment 3345184
+linearPredictor: max memory 536870912, total allocated 130023424, free 27894040, used 102129384, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 27894040, used 102129384, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 27894040, used 102129384, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+Time since start: 81.051
+480: time = 6.030000 loss = 6.320164 testLoss 6.312262
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 19076200, used 110947224, increment 8817840
+Golden_monkey_2 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 92607264, used 37416160, increment -73531064
+linearPredictor: max memory 536870912, total allocated 130023424, free 92607264, used 37416160, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 92607264, used 37416160, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 92607264, used 37416160, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+Time since start: 82.93
+340: time = 1.794000 loss = 6.725968 testLoss 7.062842
+Res.gain: 0.3617469215184217
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 36623504, used 93399920, increment 55983760
+Golden_monkey_2 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 35473560, used 94549864, increment 1149944
+linearPredictor: max memory 536870912, total allocated 130023424, free 35393280, used 94630144, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 35393280, used 94630144, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 35393280, used 94630144, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+Time since start: 85.064
+240: time = 2.102000 loss = 6.585512 testLoss 6.269218
+Res.gain: 0.5022032215911842
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 20202984, used 109820440, increment 15190296
+Golden_monkey_2 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 19033880, used 110989544, increment 1169104
+linearPredictor: max memory 536870912, total allocated 130023424, free 18953600, used 111069824, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 18953600, used 111069824, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 18953600, used 111069824, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+80: time = 0.614000 loss = 7.038315 testLoss 6.957564
+Res.gain: 0.04939952145157811
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 81529760, used 48493664, increment -62576160
+Golden_monkey_2 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 81507248, used 48516176, increment 22512
+linearPredictor: max memory 536870912, total allocated 130023424, free 81507248, used 48516176, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 81507248, used 48516176, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 81507248, used 48516176, increment 0
+Initial loss: 7.087714753886884
+Initial test loss: 7.087714753886884
+100: time = 0.225000 loss = 6.703094 testLoss 6.686563
+Res.gain: 0.3846203654196714
+Time since start: 86.11
+getSamples: max memory 536870912, total allocated 130023424, free 72627344, used 57396080, increment 8879904
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 71922600, used 58100824, increment 704744
+Golden_monkey_3: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 68395576, used 61627848, increment 3527024
+linearPredictor: max memory 536870912, total allocated 130023424, free 68395576, used 61627848, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 68395576, used 61627848, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 68395576, used 61627848, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+Time since start: 92.485
+480: time = 6.281000 loss = 6.242192 testLoss 6.688228
+Resulting gain: 0.8451294023820566
+Golden_monkey_3 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 30252280, used 99771144, increment 38143296
+Golden_monkey_3 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 29227168, used 100796256, increment 1025112
+linearPredictor: max memory 536870912, total allocated 130023424, free 29146888, used 100876536, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 28622600, used 101400824, increment 524288
+Sequential: max memory 536870912, total allocated 130023424, free 28622600, used 101400824, increment 0
+Initial loss: 7.0873215737868644
+Time since start: 94.185
+120: time = 0.898000 loss = 6.728556
+Resulting gain: 0.35876556878277643
+Golden_monkey_3 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 19160560, used 110862864, increment 9462040
+Golden_monkey_3 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 18132672, used 111890752, increment 1027888
+linearPredictor: max memory 536870912, total allocated 130023424, free 18132672, used 111890752, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 18132672, used 111890752, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 18132672, used 111890752, increment 0
+Initial loss: 7.0873215737868644
+Time since start: 97.159
+300: time = 2.865000 loss = 6.658341
+Resulting gain: 0.4289805810881955
+Golden_monkey_3 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 44983112, used 85040312, increment -26850440
+Golden_monkey_3 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 43799760, used 86223664, increment 1183352
+linearPredictor: max memory 536870912, total allocated 130023424, free 43719480, used 86303944, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 43719480, used 86303944, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 43719480, used 86303944, increment 0
+Initial loss: 7.0873215737868644
+80: time = 0.599000 loss = 7.036108
+Resulting gain: 0.051213593198244034
+Golden_monkey_3 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 20029440, used 109993984, increment 23690040
+Golden_monkey_3 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 20010320, used 110013104, increment 19120
+linearPredictor: max memory 536870912, total allocated 130023424, free 20010320, used 110013104, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 20010320, used 110013104, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 20010320, used 110013104, increment 0
+Initial loss: 7.0873215737868644
+Time since start: 98.221
+100: time = 0.262000 loss = 6.702359
+Resulting gain: 0.38496252425849153
+Golden_monkey_3 response curves
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 68366496, used 61656928, increment -48356176
+Golden_monkey_3 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 65975864, used 64047560, increment 2390632
+linearPredictor: max memory 536870912, total allocated 130023424, free 65895584, used 64127840, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 65895584, used 64127840, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 65895584, used 64127840, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+Time since start: 102.713
+340: time = 3.690000 loss = 6.457550 testLoss 6.509096
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 101044912, used 28978512, increment -35149328
+Golden_monkey_3 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 98503608, used 31519816, increment 2541304
+linearPredictor: max memory 536870912, total allocated 130023424, free 98503608, used 31519816, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 98503608, used 31519816, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 98503608, used 31519816, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+Time since start: 105.239
+160: time = 2.281000 loss = 6.452156 testLoss 6.868581
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 56062992, used 73960432, increment 42440616
+Golden_monkey_3 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 53876544, used 76146880, increment 2186448
+linearPredictor: max memory 536870912, total allocated 130023424, free 53876544, used 76146880, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 53876544, used 76146880, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 53876544, used 76146880, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+Time since start: 109.981
+460: time = 4.656000 loss = 6.248518 testLoss 6.699166
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 72911696, used 57111728, increment -19035152
+Golden_monkey_3 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 69572752, used 60450672, increment 3338944
+linearPredictor: max memory 536870912, total allocated 130023424, free 69492472, used 60530952, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 69492472, used 60530952, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 69492472, used 60530952, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+Time since start: 116.53
+500: time = 6.403000 loss = 6.342240 testLoss 6.825199
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 82925552, used 47097872, increment -13433080
+Golden_monkey_3 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 81925416, used 48098008, increment 1000136
+linearPredictor: max memory 536870912, total allocated 130023424, free 81845136, used 48178288, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 81845136, used 48178288, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 81845136, used 48178288, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+120: time = 0.899000 loss = 6.728556 testLoss 7.091953
+Res.gain: 0.35876556878277643
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 83366336, used 46657088, increment -1521200
+Golden_monkey_3 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+Time since start: 117.554
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 82387488, used 47635936, increment 978848
+linearPredictor: max memory 536870912, total allocated 130023424, free 82307208, used 47716216, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 82307208, used 47716216, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 82307208, used 47716216, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+Time since start: 120.102
+300: time = 2.548000 loss = 6.658341 testLoss 6.668999
+Res.gain: 0.4289805810881955
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 86841784, used 43181640, increment -4534576
+Golden_monkey_3 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 85631680, used 44391744, increment 1210104
+linearPredictor: max memory 536870912, total allocated 130023424, free 85551400, used 44472024, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 85551400, used 44472024, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 85551400, used 44472024, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+80: time = 0.590000 loss = 7.036108 testLoss 7.046025
+Res.gain: 0.051213593198244034
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 74858880, used 55164544, increment 10692520
+Golden_monkey_3 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 74756456, used 55266968, increment 102424
+linearPredictor: max memory 536870912, total allocated 130023424, free 74676176, used 55347248, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 74676176, used 55347248, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 74676176, used 55347248, increment 0
+Initial loss: 7.0873215737868644
+Initial test loss: 7.0873215737868644
+100: time = 0.234000 loss = 6.702359 testLoss 6.813853
+Res.gain: 0.38496252425849153
+Time since start: 121.131
+getSamples: max memory 536870912, total allocated 130023424, free 65948032, used 64075392, increment 8728144
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 65101464, used 64921960, increment 846568
+Golden_monkey_4: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 61753728, used 68269696, increment 3347736
+linearPredictor: max memory 536870912, total allocated 130023424, free 61673448, used 68349976, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 61673448, used 68349976, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 61673448, used 68349976, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+Time since start: 126.023
+360: time = 4.785000 loss = 6.386157 testLoss 6.277969
+Resulting gain: 0.7022331563778357
+Golden_monkey_4 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 81961024, used 48062400, increment -20287576
+Golden_monkey_4 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 80937800, used 49085624, increment 1023224
+linearPredictor: max memory 536870912, total allocated 130023424, free 80857520, used 49165904, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 80857520, used 49165904, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 80857520, used 49165904, increment 0
+Initial loss: 7.08838978880533
+Time since start: 127.82
+140: time = 0.995000 loss = 6.873984
+Resulting gain: 0.21440600542731136
+Golden_monkey_4 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 65266256, used 64757168, increment 15591264
+Golden_monkey_4 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 64106728, used 65916696, increment 1159528
+linearPredictor: max memory 536870912, total allocated 130023424, free 64026448, used 65996976, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 64026448, used 65996976, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 64026448, used 65996976, increment 0
+Initial loss: 7.08838978880533
+Time since start: 131.157
+340: time = 3.240000 loss = 6.714857
+Resulting gain: 0.37353229856530135
+Golden_monkey_4 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 88312624, used 41710800, increment -24286176
+Golden_monkey_4 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 87117000, used 42906424, increment 1195624
+linearPredictor: max memory 536870912, total allocated 130023424, free 87036720, used 42986704, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 87036720, used 42986704, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 87036720, used 42986704, increment 0
+Initial loss: 7.08838978880533
+120: time = 0.800000 loss = 7.017617
+Resulting gain: 0.07077250371395571
+Golden_monkey_4 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 26443264, used 103580160, increment 60593456
+Golden_monkey_4 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 26433712, used 103589712, increment 9552
+linearPredictor: max memory 536870912, total allocated 130023424, free 26433712, used 103589712, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+Time since start: 132.16
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 26433712, used 103589712, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 26433712, used 103589712, increment 0
+Initial loss: 7.08838978880533
+120: time = 0.312000 loss = 6.747205
+Resulting gain: 0.3411852835883744
+Golden_monkey_4 response curves
+Time since start: 133.586
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 80928400, used 49095024, increment -54494688
+Golden_monkey_4 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 78576600, used 51446824, increment 2351800
+linearPredictor: max memory 536870912, total allocated 130023424, free 78496320, used 51527104, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 78496320, used 51527104, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 78496320, used 51527104, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+Time since start: 138.031
+360: time = 4.367000 loss = 6.529842 testLoss 6.144107
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 70056064, used 59967360, increment 8440256
+Golden_monkey_4 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 67915144, used 62108280, increment 2140920
+linearPredictor: max memory 536870912, total allocated 130023424, free 67834864, used 62188560, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 67834864, used 62188560, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 67834864, used 62188560, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+Time since start: 140.438
+240: time = 2.265000 loss = 6.565935 testLoss 6.301005
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 45168248, used 84855176, increment 22666616
+Golden_monkey_4 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 43058032, used 86965392, increment 2110216
+linearPredictor: max memory 536870912, total allocated 130023424, free 42977752, used 87045672, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 42977752, used 87045672, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 42977752, used 87045672, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+Time since start: 145.057
+420: time = 4.541000 loss = 6.407433 testLoss 6.424367
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 48857344, used 81166080, increment -5879592
+Golden_monkey_4 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 45604152, used 84419272, increment 3253192
+linearPredictor: max memory 536870912, total allocated 130023424, free 45523872, used 84499552, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 45523872, used 84499552, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 45523872, used 84499552, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+Time since start: 151.386
+460: time = 6.176000 loss = 6.494083 testLoss 6.599013
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 88700120, used 41323304, increment -43176248
+Golden_monkey_4 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 87670368, used 42353056, increment 1029752
+linearPredictor: max memory 536870912, total allocated 130023424, free 87590088, used 42433336, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 87590088, used 42433336, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 87590088, used 42433336, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+140: time = 0.884000 loss = 6.873984 testLoss 7.076760
+Res.gain: 0.21440600542731136
+Jackknife: only Precipitation Seasonality
+Making features
+Time since start: 152.394
+makeFeatures: max memory 536870912, total allocated 130023424, free 76291176, used 53732248, increment 11298912
+Golden_monkey_4 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 75058864, used 54964560, increment 1232312
+linearPredictor: max memory 536870912, total allocated 130023424, free 74978584, used 55044840, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 74978584, used 55044840, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 74978584, used 55044840, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+Time since start: 155.354
+340: time = 2.933000 loss = 6.714857 testLoss 6.614181
+Res.gain: 0.37353229856530135
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 34781608, used 95241816, increment 40196976
+Golden_monkey_4 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 33597008, used 96426416, increment 1184600
+linearPredictor: max memory 536870912, total allocated 130023424, free 33516728, used 96506696, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 33516728, used 96506696, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 33516728, used 96506696, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+120: time = 0.746000 loss = 7.017617 testLoss 6.833907
+Res.gain: 0.07077250371395571
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 55304688, used 74718736, increment -21787960
+Golden_monkey_4 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 55284048, used 74739376, increment 20640
+linearPredictor: max memory 536870912, total allocated 130023424, free 55203768, used 74819656, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 55203768, used 74819656, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 55203768, used 74819656, increment 0
+Initial loss: 7.08838978880533
+Initial test loss: 7.08838978880533
+Time since start: 156.506
+120: time = 0.313000 loss = 6.747205 testLoss 6.504974
+Res.gain: 0.3411852835883744
+getSamples: max memory 536870912, total allocated 130023424, free 46391024, used 83632400, increment 8812744
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 45515760, used 84507664, increment 875264
+Golden_monkey_5: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 42197488, used 87825936, increment 3318272
+linearPredictor: max memory 536870912, total allocated 130023424, free 42117208, used 87906216, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 42117208, used 87906216, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 42117208, used 87906216, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+Time since start: 159.791
+240: time = 3.067000 loss = 6.222172 testLoss 6.955560
+Resulting gain: 0.8632179091812535
+Golden_monkey_5 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 95867888, used 34155536, increment -53750680
+Golden_monkey_5 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 94826800, used 35196624, increment 1041088
+linearPredictor: max memory 536870912, total allocated 130023424, free 94826800, used 35196624, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 94826800, used 35196624, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 94826800, used 35196624, increment 0
+Initial loss: 7.085390074003889
+Time since start: 161.387
+100: time = 0.862000 loss = 6.790485
+Resulting gain: 0.2949046377877105
+Golden_monkey_5 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 82046520, used 47976904, increment 12780280
+Golden_monkey_5 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 80869256, used 49154168, increment 1177264
+linearPredictor: max memory 536870912, total allocated 130023424, free 80788976, used 49234448, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 80788976, used 49234448, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 80788976, used 49234448, increment 0
+Initial loss: 7.085390074003889
+Time since start: 163.319
+260: time = 1.817000 loss = 6.503252
+Resulting gain: 0.5821384035760477
+Golden_monkey_5 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 79862256, used 50161168, increment 926720
+Golden_monkey_5 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 78703776, used 51319648, increment 1158480
+linearPredictor: max memory 536870912, total allocated 130023424, free 78623496, used 51399928, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 78623496, used 51399928, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 78623496, used 51399928, increment 0
+Initial loss: 7.085390074003889
+Time since start: 164.382
+140: time = 0.953000 loss = 6.996861
+Resulting gain: 0.08852903536694257
+Golden_monkey_5 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 68310088, used 61713336, increment 10313408
+Golden_monkey_5 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 68299504, used 61723920, increment 10584
+linearPredictor: max memory 536870912, total allocated 130023424, free 68299504, used 61723920, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 68299504, used 61723920, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 68299504, used 61723920, increment 0
+Initial loss: 7.085390074003889
+120: time = 0.266000 loss = 6.681323
+Resulting gain: 0.40406745157075097
+Golden_monkey_5 response curves
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 48124920, used 81898504, increment 20174584
+Golden_monkey_5 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 45698056, used 84325368, increment 2426864
+linearPredictor: max memory 536870912, total allocated 130023424, free 45617776, used 84405648, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 45617776, used 84405648, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 45617776, used 84405648, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+Time since start: 166.848
+180: time = 1.747000 loss = 6.276942 testLoss 7.087606
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 47272776, used 82750648, increment -1655000
+Golden_monkey_5 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 45108008, used 84915416, increment 2164768
+linearPredictor: max memory 536870912, total allocated 130023424, free 45027728, used 84995696, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 45027728, used 84995696, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 45027728, used 84995696, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+Time since start: 168.231
+160: time = 1.305000 loss = 6.448060 testLoss 6.850472
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 78951792, used 51071632, increment -33924064
+Golden_monkey_5 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 76520288, used 53503136, increment 2431504
+linearPredictor: max memory 536870912, total allocated 130023424, free 76520288, used 53503136, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 76520288, used 53503136, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 76520288, used 53503136, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+Time since start: 171.08
+300: time = 2.755000 loss = 6.253665 testLoss 7.037539
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 49615504, used 80407920, increment 26904784
+Golden_monkey_5 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 46361160, used 83662264, increment 3254344
+linearPredictor: max memory 536870912, total allocated 130023424, free 46280880, used 83742544, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 46280880, used 83742544, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 46280880, used 83742544, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+Time since start: 173.783
+240: time = 2.593000 loss = 6.359014 testLoss 7.067932
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 77614576, used 52408848, increment -31333696
+Golden_monkey_5 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 76586808, used 53436616, increment 1027768
+linearPredictor: max memory 536870912, total allocated 130023424, free 76586808, used 53436616, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 76586808, used 53436616, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 76586808, used 53436616, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+100: time = 0.716000 loss = 6.790485 testLoss 7.060599
+Res.gain: 0.2949046377877105
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 89956024, used 40067400, increment -13369216
+Golden_monkey_5 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 88924336, used 41099088, increment 1031688
+linearPredictor: max memory 536870912, total allocated 130023424, free 88844056, used 41179368, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 88844056, used 41179368, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 88844056, used 41179368, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+Time since start: 176.186
+260: time = 1.593000 loss = 6.503252 testLoss 7.324818
+Res.gain: 0.5821384035760477
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 56689224, used 73334200, increment 32154832
+Golden_monkey_5 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 55437544, used 74585880, increment 1251680
+linearPredictor: max memory 536870912, total allocated 130023424, free 55357264, used 74666160, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 55357264, used 74666160, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 55357264, used 74666160, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+140: time = 0.953000 loss = 6.996861 testLoss 6.960566
+Res.gain: 0.08852903536694257
+Time since start: 177.201
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 57297312, used 72726112, increment -1940048
+Golden_monkey_5 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 57276728, used 72746696, increment 20584
+linearPredictor: max memory 536870912, total allocated 130023424, free 56752440, used 73270984, increment 524288
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 56752440, used 73270984, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 56752440, used 73270984, increment 0
+Initial loss: 7.085390074003889
+Initial test loss: 7.085390074003889
+120: time = 0.266000 loss = 6.681323 testLoss 6.964815
+Res.gain: 0.40406745157075097
+getSamples: max memory 536870912, total allocated 130023424, free 48383648, used 81639776, increment 8368792
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 47530648, used 82492776, increment 853000
+Golden_monkey_6: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 44190112, used 85833312, increment 3340536
+linearPredictor: max memory 536870912, total allocated 130023424, free 44109832, used 85913592, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 44109832, used 85913592, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 44109832, used 85913592, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+Time since start: 182.65
+460: time = 4.995000 loss = 6.323273 testLoss 6.123520
+Resulting gain: 0.7642814298356502
+Golden_monkey_6 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 27785728, used 102237696, increment 16324104
+Golden_monkey_6 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 26744872, used 103278552, increment 1040856
+linearPredictor: max memory 536870912, total allocated 130023424, free 26744872, used 103278552, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 26744872, used 103278552, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 26744872, used 103278552, increment 0
+Initial loss: 7.087554712118503
+Time since start: 184.604
+200: time = 1.157000 loss = 6.731198
+Resulting gain: 0.35635673994033024
+Golden_monkey_6 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 54226344, used 75797080, increment -27481472
+Golden_monkey_6 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 53181808, used 76841616, increment 1044536
+linearPredictor: max memory 536870912, total allocated 130023424, free 53181808, used 76841616, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 53181808, used 76841616, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 53181808, used 76841616, increment 0
+Initial loss: 7.087554712118503
+Time since start: 185.943
+140: time = 1.230000 loss = 6.665580
+Resulting gain: 0.42197505915852673
+Golden_monkey_6 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 55057680, used 74965744, increment -1875872
+Golden_monkey_6 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 53928992, used 76094432, increment 1128688
+linearPredictor: max memory 536870912, total allocated 130023424, free 53848712, used 76174712, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 53848712, used 76174712, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 53848712, used 76174712, increment 0
+Initial loss: 7.087554712118503
+Time since start: 187.905
+140: time = 1.852000 loss = 7.013405
+Resulting gain: 0.07414932385841322
+Golden_monkey_6 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 45628928, used 84394496, increment 8219784
+Golden_monkey_6 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 45606984, used 84416440, increment 21944
+linearPredictor: max memory 536870912, total allocated 130023424, free 45606984, used 84416440, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 45606984, used 84416440, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 45606984, used 84416440, increment 0
+Initial loss: 7.087554712118503
+120: time = 0.319000 loss = 6.739150
+Resulting gain: 0.34840493332823375
+Golden_monkey_6 response curves
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 25272256, used 104751168, increment 20334728
+Golden_monkey_6 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 96206688, used 33816736, increment -70934432
+linearPredictor: max memory 536870912, total allocated 130023424, free 96206688, used 33816736, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 96206688, used 33816736, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 96206688, used 33816736, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+Time since start: 193.18
+400: time = 4.453000 loss = 6.448189 testLoss 6.381491
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 74900992, used 55122432, increment 21305696
+Golden_monkey_6 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 72741896, used 57281528, increment 2159096
+linearPredictor: max memory 536870912, total allocated 130023424, free 72661616, used 57361808, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 72661616, used 57361808, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 72661616, used 57361808, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+Time since start: 195.371
+240: time = 2.084000 loss = 6.452807 testLoss 6.195809
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 49548168, used 80475256, increment 23113448
+Golden_monkey_6 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 47158416, used 82865008, increment 2389752
+linearPredictor: max memory 536870912, total allocated 130023424, free 47158416, used 82865008, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 47158416, used 82865008, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 47158416, used 82865008, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+Time since start: 198.685
+380: time = 3.240000 loss = 6.360401 testLoss 6.086829
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 41823168, used 88200256, increment 5335248
+Golden_monkey_6 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 38770968, used 91252456, increment 3052200
+linearPredictor: max memory 536870912, total allocated 130023424, free 38690688, used 91332736, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 38690688, used 91332736, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 38690688, used 91332736, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+Time since start: 203.19
+320: time = 4.323000 loss = 6.431988 testLoss 6.325077
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 79101800, used 50921624, increment -40411112
+Golden_monkey_6 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 77660688, used 52362736, increment 1441112
+linearPredictor: max memory 536870912, total allocated 130023424, free 77660688, used 52362736, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 77660688, used 52362736, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 77660688, used 52362736, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+Time since start: 204.391
+200: time = 1.148000 loss = 6.731198 testLoss 6.508396
+Res.gain: 0.35635673994033024
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 31810016, used 98213408, increment 45850672
+Golden_monkey_6 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 30808504, used 99214920, increment 1001512
+linearPredictor: max memory 536870912, total allocated 130023424, free 30700280, used 99323144, increment 108224
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 30700280, used 99323144, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 30700280, used 99323144, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+Time since start: 205.443
+140: time = 1.021000 loss = 6.665580 testLoss 6.649452
+Res.gain: 0.42197505915852673
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 41545008, used 88478416, increment -10844728
+Golden_monkey_6 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 40282448, used 89740976, increment 1262560
+linearPredictor: max memory 536870912, total allocated 130023424, free 40202168, used 89821256, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 40202168, used 89821256, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 40202168, used 89821256, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+140: time = 0.921000 loss = 7.013405 testLoss 7.109735
+Res.gain: 0.07414932385841322
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 41614736, used 88408688, increment -1412568
+Golden_monkey_6 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 41591944, used 88431480, increment 22792
+linearPredictor: max memory 536870912, total allocated 130023424, free 41591944, used 88431480, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 41591944, used 88431480, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 41591944, used 88431480, increment 0
+Initial loss: 7.087554712118503
+Initial test loss: 7.087554712118503
+Time since start: 206.761
+120: time = 0.320000 loss = 6.739150 testLoss 6.571605
+Res.gain: 0.34840493332823375
+getSamples: max memory 536870912, total allocated 130023424, free 32703888, used 97319536, increment 8888056
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 31933928, used 98089496, increment 769960
+Golden_monkey_7: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 28638368, used 101385056, increment 3295560
+linearPredictor: max memory 536870912, total allocated 130023424, free 28558088, used 101465336, increment 80280
+Deactivating (Vegetation Categories=2.0)
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 28558088, used 101465336, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 28558088, used 101465336, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+Time since start: 213.079
+480: time = 6.138000 loss = 6.048936 testLoss 6.689847
+Resulting gain: 1.0395515211166284
+Golden_monkey_7 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 34200688, used 95822736, increment -5642600
+Golden_monkey_7 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 33118848, used 96904576, increment 1081840
+linearPredictor: max memory 536870912, total allocated 130023424, free 33118848, used 96904576, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 33118848, used 96904576, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 33118848, used 96904576, increment 0
+Initial loss: 7.088488001059303
+Time since start: 215.263
+120: time = 1.382000 loss = 6.731840
+Resulting gain: 0.35664752661903787
+Golden_monkey_7 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 28566792, used 101456632, increment 4552056
+Golden_monkey_7 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 27375920, used 102647504, increment 1190872
+linearPredictor: max memory 536870912, total allocated 130023424, free 27295640, used 102727784, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 27295640, used 102727784, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 27295640, used 102727784, increment 0
+Initial loss: 7.088488001059303
+Time since start: 218.981
+400: time = 3.563000 loss = 6.475176
+Resulting gain: 0.613311808807369
+Golden_monkey_7 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 63860472, used 66162952, increment -36564832
+Golden_monkey_7 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 62650304, used 67373120, increment 1210168
+linearPredictor: max memory 536870912, total allocated 130023424, free 62570024, used 67453400, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 62570024, used 67453400, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 62570024, used 67453400, increment 0
+Initial loss: 7.088488001059303
+Time since start: 220.173
+140: time = 1.053000 loss = 6.978482
+Resulting gain: 0.11000587462576927
+Golden_monkey_7 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 53508392, used 76515032, increment 9061632
+Golden_monkey_7 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 53488640, used 76534784, increment 19752
+linearPredictor: max memory 536870912, total allocated 130023424, free 53488640, used 76534784, increment 0
+Deactivating (Vegetation Categories=2.0)
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 53488640, used 76534784, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 53488640, used 76534784, increment 0
+Initial loss: 7.088488001059303
+100: time = 0.250000 loss = 6.557643
+Resulting gain: 0.530844890631478
+Golden_monkey_7 response curves
+Time since start: 221.243
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 33324624, used 96698800, increment 20164016
+Golden_monkey_7 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 30975936, used 99047488, increment 2348688
+linearPredictor: max memory 536870912, total allocated 130023424, free 30449600, used 99573824, increment 526336
+Deactivating (Vegetation Categories=2.0)
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 30449600, used 99573824, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 30449600, used 99573824, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+Time since start: 224.764
+300: time = 3.444000 loss = 6.176745 testLoss 6.968107
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 69518824, used 60504600, increment -39069224
+Golden_monkey_7 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 67307952, used 62715472, increment 2210872
+linearPredictor: max memory 536870912, total allocated 130023424, free 67227672, used 62795752, increment 80280
+Deactivating (Vegetation Categories=2.0)
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 67227672, used 62795752, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 67227672, used 62795752, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+Time since start: 226.455
+180: time = 1.597000 loss = 6.275975 testLoss 6.712904
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 63516184, used 66507240, increment 3711488
+Golden_monkey_7 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 61331112, used 68692312, increment 2185072
+linearPredictor: max memory 536870912, total allocated 130023424, free 61250832, used 68772592, increment 80280
+Deactivating (Vegetation Categories=2.0)
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 61250832, used 68772592, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 61250832, used 68772592, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+Time since start: 229.908
+340: time = 3.314000 loss = 6.088875 testLoss 6.679858
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 38459096, used 91564328, increment 22791736
+Golden_monkey_7 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 35124096, used 94899328, increment 3335000
+linearPredictor: max memory 536870912, total allocated 130023424, free 35043816, used 94979608, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 35043816, used 94979608, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 35043816, used 94979608, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+Time since start: 237.024
+500: time = 6.974000 loss = 6.199814 testLoss 6.533850
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 47726088, used 82297336, increment -12682272
+Golden_monkey_7 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 46689920, used 83333504, increment 1036168
+linearPredictor: max memory 536870912, total allocated 130023424, free 46689920, used 83333504, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 46689920, used 83333504, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 46689920, used 83333504, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+120: time = 0.812000 loss = 6.731840 testLoss 6.522714
+Res.gain: 0.35664752661903787
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 47742600, used 82280824, increment -1052680
+Golden_monkey_7 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 46430208, used 83593216, increment 1312392
+linearPredictor: max memory 536870912, total allocated 130023424, free 46430208, used 83593216, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 46430208, used 83593216, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 46430208, used 83593216, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+Time since start: 241.375
+400: time = 3.392000 loss = 6.475176 testLoss 6.872749
+Res.gain: 0.613311808807369
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 21560200, used 108463224, increment 24870008
+Golden_monkey_7 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 20407984, used 109615440, increment 1152216
+linearPredictor: max memory 536870912, total allocated 130023424, free 20327704, used 109695720, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 20327704, used 109695720, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 20327704, used 109695720, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+Time since start: 242.45
+140: time = 0.981000 loss = 6.978482 testLoss 7.176177
+Res.gain: 0.11000587462576927
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 18975600, used 111047824, increment 1352104
+Golden_monkey_7 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 18955608, used 111067816, increment 19992
+linearPredictor: max memory 536870912, total allocated 130023424, free 18955608, used 111067816, increment 0
+Deactivating (Vegetation Categories=2.0)
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 18955608, used 111067816, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 18955608, used 111067816, increment 0
+Initial loss: 7.088488001059303
+Initial test loss: 7.088488001059303
+100: time = 0.207000 loss = 6.557643 testLoss 7.078337
+Res.gain: 0.530844890631478
+getSamples: max memory 536870912, total allocated 130023424, free 85011640, used 45011784, increment -66056032
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 84558072, used 45465352, increment 453568
+Golden_monkey_8: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 81264160, used 48759264, increment 3293912
+linearPredictor: max memory 536870912, total allocated 130023424, free 81183880, used 48839544, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 81183880, used 48839544, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 81183880, used 48839544, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+Time since start: 246.755
+300: time = 3.871000 loss = 6.365348 testLoss 6.124902
+Resulting gain: 0.7196104816143141
+Golden_monkey_8 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 71704144, used 58319280, increment 9479736
+Golden_monkey_8 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 70673760, used 59349664, increment 1030384
+linearPredictor: max memory 536870912, total allocated 130023424, free 70673760, used 59349664, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 70673760, used 59349664, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 70673760, used 59349664, increment 0
+Initial loss: 7.0849580450827485
+Time since start: 248.634
+160: time = 1.079000 loss = 6.869200
+Resulting gain: 0.2157576173243827
+Golden_monkey_8 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 33191104, used 96832320, increment 37482656
+Golden_monkey_8 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 31969024, used 98054400, increment 1222080
+linearPredictor: max memory 536870912, total allocated 130023424, free 31888744, used 98134680, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 31888744, used 98134680, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 31888744, used 98134680, increment 0
+Initial loss: 7.0849580450827485
+Time since start: 250.52
+220: time = 1.773000 loss = 6.753141
+Resulting gain: 0.33181677888397587
+Golden_monkey_8 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 66387032, used 63636392, increment -34498288
+Golden_monkey_8 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 65269232, used 64754192, increment 1117800
+linearPredictor: max memory 536870912, total allocated 130023424, free 65188952, used 64834472, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 65188952, used 64834472, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 65188952, used 64834472, increment 0
+Initial loss: 7.0849580450827485
+80: time = 0.642000 loss = 7.035480
+Resulting gain: 0.04947851760272037
+Golden_monkey_8 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 39283104, used 90740320, increment 25905848
+Golden_monkey_8 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 39274344, used 90749080, increment 8760
+linearPredictor: max memory 536870912, total allocated 130023424, free 39274344, used 90749080, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 39274344, used 90749080, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 39274344, used 90749080, increment 0
+Initial loss: 7.0849580450827485
+Time since start: 251.659
+120: time = 0.297000 loss = 6.734469
+Resulting gain: 0.3504887941894994
+Golden_monkey_8 response curves
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 18809584, used 111213840, increment 20464760
+Golden_monkey_8 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 83295096, used 46728328, increment -64485512
+linearPredictor: max memory 536870912, total allocated 130023424, free 83214816, used 46808608, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 83214816, used 46808608, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 83214816, used 46808608, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+Time since start: 254.323
+180: time = 1.900000 loss = 6.554409 testLoss 6.441904
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 64601696, used 65421728, increment 18613120
+Golden_monkey_8 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 62334520, used 67688904, increment 2267176
+linearPredictor: max memory 536870912, total allocated 130023424, free 62254240, used 67769184, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 62254240, used 67769184, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 62254240, used 67769184, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+Time since start: 256.366
+220: time = 1.948000 loss = 6.555910 testLoss 6.269143
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 66471296, used 63552128, increment -4217056
+Golden_monkey_8 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 64406368, used 65617056, increment 2064928
+linearPredictor: max memory 536870912, total allocated 130023424, free 64406368, used 65617056, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 64406368, used 65617056, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 64406368, used 65617056, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+Time since start: 259.262
+300: time = 2.807000 loss = 6.374532 testLoss 6.155463
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 35764512, used 94258912, increment 28641856
+Golden_monkey_8 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 32436464, used 97586960, increment 3328048
+linearPredictor: max memory 536870912, total allocated 130023424, free 32356184, used 97667240, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 32356184, used 97667240, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 32356184, used 97667240, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+Time since start: 263.518
+340: time = 4.131000 loss = 6.509739 testLoss 6.248797
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 95283768, used 34739656, increment -62927584
+Golden_monkey_8 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 94232136, used 35791288, increment 1051632
+linearPredictor: max memory 536870912, total allocated 130023424, free 94151856, used 35871568, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 94151856, used 35871568, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 94151856, used 35871568, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+Time since start: 264.564
+160: time = 0.984000 loss = 6.869200 testLoss 6.577024
+Res.gain: 0.2157576173243827
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 71391920, used 58631504, increment 22759936
+Golden_monkey_8 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 69999216, used 60024208, increment 1392704
+linearPredictor: max memory 536870912, total allocated 130023424, free 69999216, used 60024208, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 69999216, used 60024208, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 69999216, used 60024208, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+Time since start: 266.181
+220: time = 1.570000 loss = 6.753141 testLoss 6.661676
+Res.gain: 0.33181677888397587
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 77185296, used 52838128, increment -7186080
+Golden_monkey_8 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 76232144, used 53791280, increment 953152
+linearPredictor: max memory 536870912, total allocated 130023424, free 76151864, used 53871560, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 76151864, used 53871560, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 76151864, used 53871560, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+80: time = 0.588000 loss = 7.035480 testLoss 7.026314
+Res.gain: 0.04947851760272037
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 65044696, used 64978728, increment 11107168
+Golden_monkey_8 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 65034728, used 64988696, increment 9968
+linearPredictor: max memory 536870912, total allocated 130023424, free 65034728, used 64988696, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 65034728, used 64988696, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 65034728, used 64988696, increment 0
+Initial loss: 7.0849580450827485
+Initial test loss: 7.0849580450827485
+120: time = 0.298000 loss = 6.734469 testLoss 6.678405
+Res.gain: 0.3504887941894994
+Time since start: 267.253
+getSamples: max memory 536870912, total allocated 130023424, free 56198032, used 73825392, increment 8836696
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 55551496, used 74471928, increment 646536
+Golden_monkey_9: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 52231240, used 77792184, increment 3320256
+linearPredictor: max memory 536870912, total allocated 130023424, free 52150960, used 77872464, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 52150960, used 77872464, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 52150960, used 77872464, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+Time since start: 272.057
+420: time = 4.710000 loss = 6.300476 testLoss 6.556987
+Resulting gain: 0.7868204928116231
+Golden_monkey_9 response curves
+Response curve: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 63656328, used 66367096, increment -11505368
+Golden_monkey_9 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 62551800, used 67471624, increment 1104528
+linearPredictor: max memory 536870912, total allocated 130023424, free 62471520, used 67551904, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 62471520, used 67551904, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 62471520, used 67551904, increment 0
+Initial loss: 7.087296343688762
+Time since start: 273.729
+160: time = 0.953000 loss = 6.936834
+Resulting gain: 0.15046193916388173
+Golden_monkey_9 response curves
+Response curve: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 33584504, used 96438920, increment 28887016
+Golden_monkey_9 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 32402464, used 97620960, increment 1182040
+linearPredictor: max memory 536870912, total allocated 130023424, free 32322184, used 97701240, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 32322184, used 97701240, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 32322184, used 97701240, increment 0
+Initial loss: 7.087296343688762
+Time since start: 274.844
+140: time = 1.021000 loss = 6.585009
+Resulting gain: 0.5022878098641996
+Golden_monkey_9 response curves
+Response curve: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 40487600, used 89535824, increment -8165416
+Golden_monkey_9 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 39341840, used 90681584, increment 1145760
+linearPredictor: max memory 536870912, total allocated 130023424, free 39261560, used 90761864, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 39261560, used 90761864, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 39261560, used 90761864, increment 0
+Initial loss: 7.087296343688762
+Time since start: 276.107
+140: time = 1.122000 loss = 6.996046
+Resulting gain: 0.09125029952463315
+Golden_monkey_9 response curves
+Response curve: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 31390040, used 98633384, increment 7871520
+Golden_monkey_9 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 31380104, used 98643320, increment 9936
+linearPredictor: max memory 536870912, total allocated 130023424, free 31380104, used 98643320, increment 0
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 31380104, used 98643320, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 31380104, used 98643320, increment 0
+Initial loss: 7.087296343688762
+120: time = 0.281000 loss = 6.650409
+Resulting gain: 0.4368874330339638
+Golden_monkey_9 response curves
+Jackknife: leave Isothermality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 84363000, used 45660424, increment -52982896
+Golden_monkey_9 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 81931144, used 48092280, increment 2431856
+linearPredictor: max memory 536870912, total allocated 130023424, free 81850864, used 48172560, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 81850864, used 48172560, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 81850864, used 48172560, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+Time since start: 279.919
+300: time = 2.856000 loss = 6.321802 testLoss 6.473256
+Jackknife: leave Precipitation Seasonality out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 41986696, used 88036728, increment 39864168
+Golden_monkey_9 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 39808816, used 90214608, increment 2177880
+linearPredictor: max memory 536870912, total allocated 130023424, free 39728536, used 90294888, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 39204248, used 90819176, increment 524288
+Sequential: max memory 536870912, total allocated 130023424, free 39204248, used 90819176, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+Time since start: 282.13
+240: time = 2.118000 loss = 6.475931 testLoss 6.842553
+Jackknife: leave Slope out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 87397176, used 42626248, increment -48192928
+Golden_monkey_9 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 85186728, used 44836696, increment 2210448
+linearPredictor: max memory 536870912, total allocated 130023424, free 85106448, used 44916976, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 85106448, used 44916976, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 85106448, used 44916976, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+Time since start: 284.292
+240: time = 2.080000 loss = 6.339036 testLoss 6.670779
+Jackknife: leave Vegetation Categories out
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 76955816, used 53067608, increment 8150632
+Golden_monkey_9 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 73735704, used 56287720, increment 3220112
+linearPredictor: max memory 536870912, total allocated 130023424, free 73655424, used 56368000, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 73655424, used 56368000, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 73655424, used 56368000, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+Time since start: 287.053
+160: time = 2.635000 loss = 6.524519 testLoss 6.741906
+Jackknife: only Isothermality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 92267848, used 37755576, increment -18612424
+Golden_monkey_9 Isothermality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 91236952, used 38786472, increment 1030896
+linearPredictor: max memory 536870912, total allocated 130023424, free 91156672, used 38866752, increment 80280
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 91156672, used 38866752, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 91156672, used 38866752, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+Time since start: 288.158
+160: time = 1.055000 loss = 6.936834 testLoss 7.407928
+Res.gain: 0.15046193916388173
+Jackknife: only Precipitation Seasonality
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 68962552, used 61060872, increment 22194120
+Golden_monkey_9 Precipitation Seasonality: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 67328496, used 62694928, increment 1634056
+linearPredictor: max memory 536870912, total allocated 130023424, free 67328496, used 62694928, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 67328496, used 62694928, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 67328496, used 62694928, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+Time since start: 289.213
+140: time = 1.023000 loss = 6.585009 testLoss 6.823179
+Res.gain: 0.5022878098641996
+Jackknife: only Slope
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 78522024, used 51501400, increment -11193528
+Golden_monkey_9 Slope: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 77213152, used 52810272, increment 1308872
+linearPredictor: max memory 536870912, total allocated 130023424, free 77213152, used 52810272, increment 0
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 77213152, used 52810272, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 77213152, used 52810272, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+Time since start: 290.269
+140: time = 1.001000 loss = 6.996046 testLoss 6.874425
+Res.gain: 0.09125029952463315
+Jackknife: only Vegetation Categories
+Making features
+makeFeatures: max memory 536870912, total allocated 130023424, free 79141896, used 50881528, increment -1928744
+Golden_monkey_9 Vegetation Categories: 
+Regularization values: linear/quadratic/product: 0.241, categorical: 0.250, threshold: 1.670, hinge: 0.500
+33 samples
+Density: max memory 536870912, total allocated 130023424, free 79051816, used 50971608, increment 90080
+linearPredictor: max memory 536870912, total allocated 130023424, free 78971536, used 51051888, increment 80280
+Deactivating (Vegetation Categories=3.0)
+Deactivating (Vegetation Categories=5.0)
+Deactivating (Vegetation Categories=6.0)
+Deactivating (Vegetation Categories=7.0)
+Deactivating (Vegetation Categories=8.0)
+Deactivating (Vegetation Categories=9.0)
+FeaturedSpace: max memory 536870912, total allocated 130023424, free 78971536, used 51051888, increment 0
+Sequential: max memory 536870912, total allocated 130023424, free 78971536, used 51051888, increment 0
+Initial loss: 7.087296343688762
+Initial test loss: 7.087296343688762
+120: time = 0.255000 loss = 6.650409 testLoss 6.700236
+Res.gain: 0.4368874330339638
+Creating average grid, stddev grid etc.
+Writing file C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\Golden_monkey_avg.asc
+Writing file C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\Golden_monkey_stddev.asc
+Writing file C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\Golden_monkey_min.asc
+Writing file C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\Golden_monkey_max.asc
+Writing file C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\Golden_monkey_median.asc
+Time since start: 316.456
+Writing C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\plots\Golden_monkey_avg.png
+Writing C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\plots\Golden_monkey_stddev.png
+Time since start: 318.056
+Writing C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\plots\Golden_monkey_min.png
+Writing C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\plots\Golden_monkey_max.png
+Time since start: 319.952
+Writing C:\Users\jmak4\PycharmProjects\799B\Maxent 7-22 Limited\plots\Golden_monkey_median.png
+Golden_monkey average response curves
+Time since start: 322.505
+Ending
