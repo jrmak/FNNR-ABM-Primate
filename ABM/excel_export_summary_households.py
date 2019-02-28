@@ -63,11 +63,3 @@ def save_summary_households(run_number, steps, total_non_gtgp, total_gtgp, avera
     fnnr_export.writelines('\n')
     fnnr_export.flush()  # flush memory
     fnnr_export.close()
-
-def erase_household_summary():
-    try:
-        fnnr_export = open('abm_export_summary_household.csv', 'w+')  # w+ will create the file if it doesn't exist already
-        fnnr_export.truncate()
-    except IOError:
-        print('Please close Excel and retry.')  # will not work if the .csv is already open
-    fnnr_export.close()

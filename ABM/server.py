@@ -12,7 +12,7 @@ from model import *
 from environment import *
 from fnnr_config_file import family_setting, human_setting
 
-# 1-7-19
+# 2/27/19
 
 # grid should be a square
 width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
@@ -105,13 +105,15 @@ text0 = MapLegend()
 canvas = CanvasGrid(movement_portrayal, width, height, canvas_width, canvas_height)
 # chart_count = ChartModule([monkey_movement_chart])
 
-agent_slider = UserSettableParameter('slider', "Number of Families", family_setting, 1, 30, 1)
+agent_slider = UserSettableParameter('slider', "Number of GGM Families", family_setting, 1, 30, 1)
+# the below comment is only used in a legacy version of this code
+"""
 humans_choice = UserSettableParameter('choice', "Status of Humans in Reserve", human_setting,
                                       choices = ['with_humans', 'without_humans'])
+"""
 
-model_params = {"number_of_families": agent_slider, "grid_type": humans_choice}
+model_params = {"number_of_families": agent_slider, "grid_type": 'with_humans'}
 
 server = ModularServer(Movement, [canvas, text0], "FNNR: an ABM of Guizhou Golden Monkey Movement", model_params)
-        # deleted ', chart_count' after canvas
 
 server.launch()

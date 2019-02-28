@@ -1,6 +1,7 @@
 # !/usr/bin/python
 """
-This document imports human data from the Excel file containing Shuang's survey results and determines behavior for human agents.
+This document imports human data from the Excel file containing Shuang's survey results,
+and determines behavior for human agents.
 """
 
 from mesa.agent import Agent
@@ -36,6 +37,7 @@ while os.path.isfile(os.getcwd() + '\\' + 'fnnr_human_log_file' + str(run) + '.t
     # if folder exists in current directory, loop up until it finds a unique number
     run += 1
 human_log = 'fnnr_human_log_file' + str(run) + '.txt'
+
 
 def _readCSV(text):
     # reads in a .csv file.
@@ -114,7 +116,7 @@ class Human(Agent):
                 # above households do no gather resources
                 self.movement()
 
-        if 15 < self.age < 59 and random.random() < 1/73 and self.hh_id != 'Migrated':  # event check happens once a year
+        if 15 < self.age < 59 and random.random() < 1/73 and self.hh_id != 'Migrated':  # event check happens 1x/year
             self.migration_check()  # minors don't migrate
 
         elif self.hh_id == 'Migrated' and random.random() < 1/73:  # event check happens once a year:
@@ -141,7 +143,6 @@ class Human(Agent):
                 and [self.unique_id, self.hh_id] not in single_male_list:
             single_male_list.append([self.unique_id, self.hh_id])
 
-
         if self.unique_id in married_male_list:
             if [self.unique_id, self.hh_id] in single_male_list:
                 single_male_list.remove([self.unique_id, self.hh_id])
@@ -150,10 +151,11 @@ class Human(Agent):
         random.shuffle(single_male_list)
 
     def movement(self):
-    # human movement and resource collection behavior only occurs with 1 gatherer per household
+        # human movement and resource collection behavior only occurs with 1 gatherer per household
         if self.unique_id in head_of_household_list:
-            if len(human_avoidance_dict) > self.model.number_of_humans * 9:  # 8 neighbors/9 cells, so 94 * 9 instances per step
-                human_avoidance_dict.clear() # reset the list every step (once it hits a length of 372 * 9)
+            if len(human_avoidance_dict) > self.model.number_of_humans * 9:
+                # 8 neighbors/9 cells, so 94 * 9 instances per step
+                human_avoidance_dict.clear()  # reset the list every step (once it hits a length of 372 * 9)
 
             if self.resource_check == 0 and self.resource_position is not None and self.resource_position != '':
                 # if the human does not have the resource, head towards it
@@ -170,8 +172,9 @@ class Human(Agent):
                     for human_neighbor in human_neighboring_grids:
                         if self.resource_frequency > 6:
                             human_avoidance_dict.setdefault((human_neighbor), ((self.resource_frequency - 6) / 6))
-                if self.current_position[0] == list(self.home_position)[0] and self.current_position[1] == list(self.home_position)[1]:
-                    # if you are back home, go out and collect resources again
+                if self.current_position[0] == list(self.home_position)[0] and \
+                        self.current_position[1] == list(self.home_position)[1]:
+                    # if human agent is back home, go out and collect resources again
                     self.resource_check = 0
                     from model import resource_dict
                     resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
@@ -192,12 +195,12 @@ class Human(Agent):
         if 7 <= int(self.age) <= 19:
             if random.random() < 0.9:
                 self.education += 1
-                self.work_status == 5
+                self.work_status = 5
                 # most adults in the FNNR did not get a full 12-13 years of education
 
         # check age-based death rates
         if self.age <= 6:
-           self.death_rate = 0.00745 * 0.5
+            self.death_rate = 0.00745 * 0.5
         elif 6 < self.age <= 13:
             self.death_rate = 0.0009 * 0.5
         elif 13 < self.age <= 16:
@@ -210,8 +213,8 @@ class Human(Agent):
             self.death_rate = 0.05354 * 0.5
         # These rates are changeable later.
 
-        if 16 < self.age <= 20 and random.random() < (0.0192 * college_likelihood) and self.migration_status == 0\
-            and random.random() < ((1/73) / 4):
+        if 16 < self.age <= 20 and random.random() < (0.0192 * college_likelihood) and self.migration_status == 0 \
+                and random.random() < ((1/73) / 4):
             # person out-migrates to college and does not return
             log = open(human_log, 'a+')
             log.writelines('College, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
@@ -327,8 +330,9 @@ class Human(Agent):
             if self.last_birth_time >= random.uniform(1, 4):
                 last = self.model.human_id_count
                 log = open(human_log, 'a+')
-                log.writelines('Birth, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id) +
-                ',' + str(self.age) + ',' + str(self.gender) + ',' + ' gave birth to Agent,' + str(last + 1))
+                log.writelines('Birth, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                               + ',' + str(self.age) + ',' + str(self.gender) + ','
+                               + ' gave birth to Agent,' + str(last + 1))
                 log.writelines('\n')
                 log.close()
                 self.children += 1
@@ -358,11 +362,11 @@ class Human(Agent):
                     else:
                         birth_plan = 5
                 ind = Human(last + 1, self.model, self.current_position, self.hh_id, age, self.resource_check,
-                                      self.home_position, self.resource_position, self.resource_frequency, gender,
-                                      education, work_status, marriage, self.past_hh_id, self.mig_years,
-                                      self.migration_status, self.gtgp_part, self.non_gtgp_area,
-                                      self.migration_network, self.mig_remittances, self.income_local_off_farm,
-                                      self.last_birth_time, self.death_rate, age_category, children, birth_plan)
+                            self.home_position, self.resource_position, self.resource_frequency, gender,
+                            education, work_status, marriage, self.past_hh_id, self.mig_years,
+                            self.migration_status, self.gtgp_part, self.non_gtgp_area,
+                            self.migration_network, self.mig_remittances, self.income_local_off_farm,
+                            self.last_birth_time, self.death_rate, age_category, children, birth_plan)
                 self.model.grid.place_agent(ind, self.home_position)
                 self.model.schedule.add(ind)
                 self.model.number_of_humans += 1
@@ -414,7 +418,7 @@ class Human(Agent):
                 self.model.grid.remove_agent(self)
 
     def marriage_check(self):
-#        if random.random() < 0.0001055:
+        # if random.random() < 0.0001055:
         if random.random() < 0.00767:
             marriage_flag_list.append(1)
         if random.uniform(20, 30) < int(self.age) < 45 and int(self.gender) == 2 and int(self.marriage) != 1 \
@@ -453,10 +457,10 @@ class Human(Agent):
         self.mig_remittances = self.mig_remittances * 1.03  # yearly inflation
         self.income_local_off_farm = self.income_local_off_farm * 1.03  # yearly inflation
         prob = math.exp(2.07 - 0.00015 * float(self.income_local_off_farm) + 0.67 * float(num_labor_list[self.hh_id])
-               + 4.36 * float(self.migration_network) - 0.58 * float(non_gtgp_land_per_labor)
-               + 0.27 * float(self.gtgp_part) - 0.13 * float(self.age) + 0.07 * float(self.gender)
-               + 0.17 * float(self.education) + 0.88 * float(self.marriage) +
-               1.39 * float(self.work_status) + 0.001 * float(self.mig_remittances))  # Shuang's formula
+                        + 4.36 * float(self.migration_network) - 0.58 * float(non_gtgp_land_per_labor)
+                        + 0.27 * float(self.gtgp_part) - 0.13 * float(self.age) + 0.07 * float(self.gender)
+                        + 0.17 * float(self.education) + 0.88 * float(self.marriage) +
+                        1.39 * float(self.work_status) + 0.001 * float(self.mig_remittances))  # Shuang's formula
         mig_prob = (prob / (prob + 1) / 45)  # / 45 for ages 15-59; migration is a lifetime, not yearly, probability
         if random.random() < mig_prob and hh_size_list[self.hh_id] >= 2:  # out-migration occurs
             log = open(human_log, 'a+')
@@ -486,11 +490,12 @@ class Human(Agent):
         """Describes re-migration process and probability following out-migration"""
         if self.migration_status == 1:
             prob = math.exp(-1.2 + 0.06 * float(self.age) - 0.08 * self.mig_years)
-            re_mig_prob = (prob / (prob + 1) / 45) # 45 for ages 15-59; migration is a lifetime, not yearly, probability
+            re_mig_prob = (prob / (prob + 1) / 45)  # 45 for ages 15-59; migration is a lifetime, not yearly, probability
             self.mig_years += 1
             if random.random() < re_mig_prob:  # re-migration occurs
                 log = open(human_log, 'a+')
-                log.writelines('Re-migration, ' + 'Step ' + str(int(self.model.time * 73)) + ': Agent,' + str(self.unique_id)
+                log.writelines('Re-migration, ' + 'Step ' + str(int(self.model.time * 73))
+                               + ': Agent,' + str(self.unique_id)
                                + ',' + str(self.age) + ',' + str(self.gender) + ',' + 're-migrated')
                 log.writelines('\n')
                 log.close()
@@ -512,9 +517,8 @@ class Human(Agent):
                     num_labor_list[self.hh_id] += 1
                 total_migration_list[self.hh_id] -= 1
 
-
     def move_to(self, pos):
-        if pos != None:
+        if pos is not None:
             try:
                 self.model.grid.move_agent(self, pos)
             except Exception as e:

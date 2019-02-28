@@ -18,6 +18,7 @@ while os.path.isfile(os.getcwd() + '\\' + 'fnnr_monkey_log_file' + str(run) + '.
     run += 1
 monkey_log = 'fnnr_monkey_log_file' + str(run) + '.txt'
 
+
 class Monkey(Agent):
     #  while Family agents move on the visualization grid, Monkey agents follow demographic-based actions
     #  such as being born, aging, mating, dying, etc. in a different but related submodel
@@ -118,7 +119,7 @@ class Monkey(Agent):
                 # 0.9992255^73 = 94.5% chance
                 # 0.999153^73 = 94% chance
                 # 0.998095 = 87%
-        elif 10 < self.age <= 30 and self.gender == 0 and chance <= 0.001905: # 87% chance to survive
+        elif 10 < self.age <= 30 and self.gender == 0 and chance <= 0.001905:  # 87% chance to survive
             # We want a 3:1 male to female ratio, so females will less likely to die and males will be more likely
             self.death()
             if 10 < self.age <= 25:
@@ -140,7 +141,7 @@ class Monkey(Agent):
         elif self.age > 30 and self.gender == 1 and chance <= 0.01245:  # 1 - 0.98755; 40% survival; see below
             self.death()
             demographic_structure_list[5] -= 1
-        elif self.age > 30 and self.gender == 0 and chance <= 0.1:  # chances of survival are much lower for senior males
+        elif self.age > 30 and self.gender == 0 and chance <= 0.1:  # chances of survival are lower for senior males
             self.death()
             demographic_structure_list[5] -= 1
 
@@ -243,7 +244,6 @@ class Monkey(Agent):
         if self.unique_id in random_mother_list:
             random_mother_list.remove(self.unique_id)
         self.model.schedule.remove(self)
-
 
     def create_new_family(self):
         # a new family group forms when the size of the original group reaches < 45 members

@@ -114,11 +114,3 @@ def save_summary_human_demographics(run_number, steps, male_0, male_1, male_2, m
     fnnr_export.writelines('\n')
     fnnr_export.flush()  # flush memory
     fnnr_export.close()
-
-def erase_human_summary():
-    try:
-        fnnr_export = open('abm_export_summary_humans.csv', 'w+')  # w+ will create the file if it doesn't exist already
-        fnnr_export.truncate()
-    except IOError:
-        print('Please close Excel and retry.')  # will not work if the .csv is already open
-    fnnr_export.close()
