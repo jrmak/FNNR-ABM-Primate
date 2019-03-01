@@ -23,5 +23,7 @@ A web app version of server.py is being worked on.
 
 3b. Edit settings in 'fnnr_config_file.py' (optional) and run 'graph.py' to see population demographic charts after 10 years, or 730 time-steps (changeable in code). graph.py also provides all data output (Excel file export)--graph.py is the main file to run for data analysis; server.py is simply a demonstration.
 
+4. Once the model is run, 'run trim_grid35.py' on the 'abm_export_density_plot_with_humans_1.csv' file, then 'convert_csv_to_shapefile.py' on the trimmed version (rename the output shapefile within the code if you wish). Open the shapefile in ArcMap by using 'Add Data', select 'Zoom to Layer' from right-clicking the layer, and symbolize the layer with graduated colors. The other results are freely available to analyze with Excel; some tools, such as 'kappa_batch.py', have been developed, but need to be documented further.
+
 For more information, contact the owner of this repository.
 This project is open-source and follows the GNU GPLv3 license; a copy of it can be found under 'Data'. Essentially, any derivative work must also be open source.
