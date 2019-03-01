@@ -11,7 +11,7 @@ Documentation for this project--as well as the source code available for downloa
 
 Instructions for Running the Code:
 1. Have Python 3.X installed, as well as the Mesa (which comes with dependencies such as numpy, pandas, and tornado) and matplotlib libraries.
-* If you have errors running the code, make sure Mesa's edition is 0.8.3, and tornado's edition is 4.5.2.
+*If you have errors running the code, make sure Mesa's edition is 0.8.3, and tornado's edition is 4.5.2.*
 
 2. Download the code. Files are found in the ABM folder, though the Data folder has some files that are used for processing the data, using Microsoft Excel for some parts. Please refer to the later sections of the User's Manual, found in the parent directory of this repository, for more information.
 
