@@ -7,18 +7,19 @@ as well as csvfile = open('this name here.csv', 'r').
 """
 import shapefile, csv, os
 
-name_of_shp = 'difference_270-0_20_percentage' # change your shapefile name here
+name_of_shp = 'model_run' # change your shapefile name here
 
 currentpath = os.getcwd()
-file_name = currentpath + '\\difference270-0_20_percentage.csv'
+file_name = currentpath + '\\export_density_plot_wo31.csv'
 
-file_name_new = currentpath + '\\difference270-0_20_percentage_copy.csv'
+file_name_new = currentpath + '\\model_run.csv'
 
 csvfile = open(file_name, 'r')
 reader = csv.reader(csvfile, delimiter=',')
 csvlist = []
 for row in reader:
-    csvlist.append(row)
+    if 'x' not in row and '' not in row:
+        csvlist.append(row)
 csvstringlist = []
 for coord in csvlist:
     csvstringlist.append(str(coord).replace(" ",""))
@@ -32,8 +33,9 @@ reader = csv.reader(csvfile, delimiter=',')
 newcsvfile = open(file_name_new, 'w', newline="")  # newline = "" needed, else space between rows
 writer = csv.writer(newcsvfile, delimiter=',')
 for row in reader:
-    row.append(str(csvcounts[str(row).replace(" ", "")]))
-    writer.writerow(row)
+    if 'x' not in row and '' not in row:
+        row.append(str(csvcounts[str(row).replace(" ", "")]))
+        writer.writerow(row)
 # use the following code line to skip the first row if there is a header, though there shouldn't be:
 # next(reader, None)
 csvfile.close()
@@ -49,8 +51,13 @@ csvfile = open(file_name_new, 'r')
 reader = csv.reader(csvfile, delimiter=',')
 for row in reader:
     # create the point geometry
-    x = int(row[0])
-    y = int(row[1].replace(" ", ""))
-    counts = int(row[2])
-    output_shapefile.point(x, y)
-    output_shapefile.record(x, y, counts)
+    #print(row)
+    if row[0] != 'x' and row[0] != '' and row[0] != '1' and row[0] != '2':
+        try:
+            x = int(row[0])
+            y = int(row[1].replace(" ", ""))
+            counts = int(row[2])
+            output_shapefile.point(x, y)
+            output_shapefile.record(x, y, counts)
+        except IndexError:
+            pass
