@@ -184,16 +184,18 @@ class Human(Agent):
     def age_check(self):
         """Check working and education age, as well as age-based death rates"""
         # check working status
-        if 15 <= float(self.age) < 59:
-            if self.work_status == 5 or self.work_status == 6:
+        if 15 <= float(self.age) < 19 and self.work_status == 6 and self.migration_status == 0:
                 self.work_status = 1
                 num_labor_list[self.hh_id] += 1
-        else:
+        elif 20 <= float(self.age) < 59 and self.migration_status == 0 and self.work_status == 6:
+            self.work_status = 1
+            num_labor_list[self.hh_id] += 1
+        elif float(self.age) >= 59 or float(self.age) < 15:
             self.work_status = 6
 
         # check education status; measured in years of education
         if 7 <= int(self.age) <= 19:
-            if random.random() < 0.9:
+            if random.random() < (0.9 * 1/73):  # should increase on average once a year
                 self.education += 1
                 self.work_status = 5
                 # most adults in the FNNR did not get a full 12-13 years of education
@@ -302,7 +304,7 @@ class Human(Agent):
                 self.age_category += 1
                 if self.age_category == 6 and self.work_status == 1:
                     try:
-                        num_labor_list[self.hh_id] -= 1
+                        num_labor_list[self.hh_id] -= 1  # retires
                     except TypeError:
                         num_labor_list[self.past_hh_id] -= 1
                     self.work_status = 6
