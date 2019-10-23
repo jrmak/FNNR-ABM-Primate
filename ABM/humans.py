@@ -5,7 +5,6 @@ and determines behavior for human agents.
 """
 
 from mesa.agent import Agent
-from fnnr_config_file import college_likelihood
 import random
 import math
 import os
@@ -19,6 +18,7 @@ human_avoidance_dict = {}  # sets coordinate positions the monkeys should not st
 birth_flag_list = []
 marriage_flag_list = []
 human_demographic_structure_list = [0] * 20
+college_likelihood = 2
 
 # 169 = household IDs, 170 = 169 + 1 indices (+ 1 is for the 0th index)
 # 170 indices total; not all are used; these are just to store values for each household

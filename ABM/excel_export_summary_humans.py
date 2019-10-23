@@ -15,10 +15,12 @@ os.chdir(currentpath)  # uses current directory path
 
 
 def save_summary_humans(run_number, steps, number_of_humans, human_birth_count, human_death_count,
-                        human_marriage_count, num_labor, single_male_count, married_male_count, total_migration):
+                        human_marriage_count, num_labor, single_male_count, married_male_count, total_migration,
+                        household_area, farm_area, forest_area):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary_humans' + run_number + '.csv', 'a+')  # w+ resets every time
+        fnnr_export = open('abm_export_summary_humans' + '_' + household_area + '_' + farm_area + '_' + forest_area
+        + '_' + run_number + '.csv', 'a+')  # w+ resets every time
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 
@@ -53,10 +55,12 @@ def save_summary_humans(run_number, steps, number_of_humans, human_birth_count, 
 
 def save_summary_human_demographics(run_number, steps, male_0, male_1, male_2, male_3, male_4, male_5, male_6,
                                     male_7, male_8, male_9, female_0, female_1, female_2, female_3,
-                                    female_4, female_5, female_6, female_7, female_8, female_9):
+                                    female_4, female_5, female_6, female_7, female_8, female_9, household_area,
+                                    farm_area, forest_area):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary_human_demographics' + run_number + '.csv', 'a+')  # 'w+' resets every time
+        fnnr_export = open('abm_export_summary_human_demographics' + '_' + household_area + '_' + farm_area +
+                           '_' + forest_area + '_' + run_number + '.csv', 'a+')  # 'w+' resets every time
         # use the string 'a+' setting to append every time instead of reset
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open

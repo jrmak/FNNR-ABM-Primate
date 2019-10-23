@@ -3,8 +3,6 @@
 import csv
 import inspect
 import os
-from fnnr_config_file import scenario, unit_comp_flat, \
-    unit_comp_dry, unit_comp_rice, unit_comp_before, unit_comp_after, time_breakpoint
 
 """
 Contains two functions: save_summary_household and erase_summary_household.
@@ -17,21 +15,13 @@ os.chdir(currentpath)  # uses current directory path
 
 
 def save_summary_households(run_number, steps, total_non_gtgp, total_gtgp, average_non_gtgp_per_hh,
-                            average_gtgp_per_hh, average_non_gtgp_land_area_per_hh, average_gtgp_land_area_per_hh
+                            average_gtgp_per_hh, average_non_gtgp_land_area_per_hh, average_gtgp_land_area_per_hh,
+                            scenario, household_area, farm_area, forest_area
                             ):
     """Exports entries onto a .csv file"""
     try:
-        if scenario.lower() == 'flat':
-            fnnr_export = open('abm_export_summary_household' + '_' + scenario + '_'
-                               + str(unit_comp_flat) + '_' + run_number + '.csv', 'a+')
-        elif scenario.lower() == 'land_type':
-            fnnr_export = open('abm_export_summary_household' + '_' + scenario + '_'
-                               + str(unit_comp_dry) + 'd' + '_' + str(unit_comp_rice) + 'r'
-                               + '_' + run_number + '.csv', 'a+')
-        elif scenario.lower() == 'time':
-            fnnr_export = open('abm_export_summary_household' + '_' + scenario + '_'
-                               + str(unit_comp_before) + '_' + str(time_breakpoint)
-                               + '_' + str(unit_comp_after) + '_' + run_number + '.csv', 'a+')
+        fnnr_export = open('abm_export_summary_household' + '_'
+                            + household_area + '_' + farm_area + '_' + forest_area + '_' + run_number + '.csv', 'a+')
         # a+ will create the file if it doesn't exist
         # a is also preferred to w here to append, rather than overwrite, values
     except IOError:

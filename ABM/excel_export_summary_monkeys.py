@@ -14,10 +14,11 @@ os.chdir(currentpath)  # uses current directory path
 
 
 def save_summary(run_number, steps, number_of_monkeys, monkey_birth_count, monkey_death_count, demographic_structure_list,
-                 female_list, male_maingroup_list, reproductive_female_list):
+                 female_list, male_maingroup_list, reproductive_female_list, household_area, farm_area, forest_area):
     """Exports entries onto a .csv file"""
     try:
-        fnnr_export = open('abm_export_summary_monkeys' + run_number + '.csv', 'a+')  # "w+" resets, use "a+" to overwrite
+        fnnr_export = open('abm_export_summary_monkeys' + '_' + household_area + '_' + farm_area + '_' +
+                           forest_area + '_' + run_number + '.csv', 'a+')  # "w+" resets, use "a+" to overwrite
     except IOError:
         print('Please close Excel and retry.')  # will not work if the .csv is already open
 
