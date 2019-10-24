@@ -104,6 +104,11 @@ def execute():
     retry_run()
 
 def execute_extended():
+    for csv_file in os.listdir(os.getcwd()):
+        if csv_file[-3:] == 'csv' and csv_file not in ['hh_citizens.csv', 'hh_land.csv', 'hh_survey.csv',
+                                                       'household.csv', 'resources.csv']:
+            os.remove(csv_file)  # delete any old unfinished runs
+
     batch_count = 0
     for i in list(range(10)):
         execute_preset()
