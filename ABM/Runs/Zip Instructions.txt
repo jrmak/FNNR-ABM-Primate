@@ -1,0 +1,7 @@
+All runs should be automatically stored in this folder.
+
+Zip the entire file and send over Google Drive, or zip as many as you can up to 25 mb to send in separate emails.
+
+Don't worry about organizing runs.
+
+Any incomplete runs are stored outside of this folder, in the main folder, and are deleted automatically at the start of the next run.
