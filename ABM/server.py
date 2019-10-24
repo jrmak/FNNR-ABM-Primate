@@ -25,7 +25,7 @@ def movement_portrayal(agent):
     if type(agent) is Resource:
         portrayal["Color"] = "Yellow"
         portrayal["Shape"] = "circle"
-        portrayal["r"] = int(height / 30)
+        portrayal["r"] = int(height / 70)
         portrayal["Layer"] = 6
 
     elif type(agent) is Household:
@@ -69,19 +69,19 @@ def movement_portrayal(agent):
     if type(agent) is Human:
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "brown"
-        portrayal["r"] = int(height / 30)  # radius is based on height of landscape so that it remains the same total
+        portrayal["r"] = int(height / 40)  # radius is based on height of landscape so that it remains the same total
         portrayal["Layer"] = 8  # size, no matter what the resolution (individual pixel size) of the landscape is
 
     if type(agent) is Family and agent.family_type == 'traditional':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "darkgoldenrod"
-        portrayal["r"] = int(height / 30)
+        portrayal["r"] = int(height / 40)
         portrayal["Layer"] = 8
 
     elif type(agent) is Family and agent.family_type == 'all_male':
         portrayal["Shape"] = "circle"
         portrayal["Color"] = "#eee4b1"
-        portrayal["r"] = int(height / 30)
+        portrayal["r"] = int(height / 40)
         portrayal["Layer"] = 8
 
     return portrayal
