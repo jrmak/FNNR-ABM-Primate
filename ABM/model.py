@@ -7,9 +7,7 @@ from monkeys import *
 from environment import *
 from humans import _readCSV, Human, Resource, human_demographic_structure_list
 from land import Land
-from fnnr_config_file import family_setting, human_setting, run_setting
 import pickle
-
 
 """
 Operates the main model. Do not run this code directly; use server.py or graph.py.
@@ -17,7 +15,6 @@ It creates the agents and defines their attributes.
 It also sets up the environmental grid using imported vegetation, elevation, and resource layers.
 Then every step, it calls for agents to act.
 """
-
 
 # NOTE: right now, the number of monkey families is set to 1 for model testing purposes (model runs faster).
 # The actual number should be around 20. Change this in __init__() under Movement(Model).
@@ -29,24 +26,25 @@ household_list = [2, 3, 5, 6, 8, 9, 11, 14, 15, 16, 17, 19, 22, 25, 27, 30, 31, 
                   151, 153, 154, 155, 157, 159, 161, 163, 165, 166, 167, 169]
 vegetation_file = 'vegetation.txt'  # change these filenames to another file in the same directory as needed
 elevation_file = 'DEM.txt'
-household_file = 'hh_ascii400.txt'
-farm_file = 'farm_ascii300.txt'
 pes_file = 'pes_ascii200.txt'
-forest_file = 'forest_ascii200.txt'
+#household_file = 'hh_ascii400.txt'
+#farm_file = 'farm_ascii300.txt'
+#forest_file = 'forest_ascii200.txt'
+file_list = []
+setting_list = []  # defaults replaced by user input
 # If any of the above .txt input environmental files are changed, change the run_type of the model to 'first_run',
-# then back to 'normal_run' on any subsequent runs
+# then back to 'Normal Run' on any subsequent runs
 
 masterdict = {}
 resource_dict = {}
 
 
 class Movement(Model):
-
     def __init__(self, width = 0, height = 0, torus = False,
                  time = 0, step_in_year = 0,
-                 number_of_families = family_setting, number_of_monkeys = 0, monkey_birth_count = 0,
+                 number_of_families = 0, number_of_monkeys = 0, monkey_birth_count = 0,
                  monkey_death_count = 0, monkey_id_count = 0,
-                 number_of_humans = 0, grid_type = human_setting, run_type = run_setting, human_id_count = 0):
+                 number_of_humans = 0, grid_type = 0, run_type = 0, human_id_count = 0):
         # change the # of families here for graph.py, but use server.py to change # of families in the movement model
         # torus = False means monkey movement can't 'wrap around' edges
         super().__init__()
@@ -55,13 +53,19 @@ class Movement(Model):
         self.time = time  # time increases by 1/73 (decimal) each step
         self.step_in_year = step_in_year  # 1-73; each step is 5 days, and 5 * 73 = 365 days in a year
         self.number_of_families = number_of_families
+        if self.number_of_families == 0:
+            self.number_of_families = int(setting_list[0])
         self.number_of_monkeys = number_of_monkeys  # total, not in each family
         self.monkey_birth_count = monkey_birth_count
         self.monkey_death_count = monkey_death_count
         self.monkey_id_count = monkey_id_count
         self.number_of_humans = number_of_humans
-        self.grid_type = grid_type   # string 'with_humans' or 'without_humans'
-        self.run_type = run_type  # string with 'normal_run' or 'first_run'
+        self.grid_type = grid_type
+        if self.grid_type == 0:
+            self.grid_type = str(setting_list[1])   # string ''With Humans' or 'Without Humans'
+        self.run_type = run_type
+        if self.run_type == 0:
+            self.run_type = str(setting_list[2])  # string with 'Normal Run' or 'First Run'
         self.human_id_count = human_id_count
 
         # width = self._readASCII(vegetation_file)[1] # width as listed at the beginning of the ASCII file
@@ -69,6 +73,14 @@ class Movement(Model):
         width = 85
         height = 100
 
+        try:
+            household_file = file_list[0]
+            farm_file = file_list[1]
+            forest_file = file_list[2]
+        except IndexError:  # if you run server.py instead of gui.py
+            household_file = 'hh_ascii400.txt'
+            farm_file = 'farm_ascii300.txt'
+            forest_file = 'forest_ascii200.txt'
         self.grid = MultiGrid(width, height, torus)  # creates environmental grid, sets schedule
         # MultiGrid is a Mesa function that sets up the grid; options are between SingleGrid and MultiGrid
         # MultiGrid allows you to put multiple layers on the grid
@@ -81,7 +93,7 @@ class Movement(Model):
                             'Deciduous': [], 'Shrublands': [], 'Clouds': [], 'Farmland': []}
 
         # generate land
-        if self.run_type == 'first_run':
+        if self.run_type == 'First Run':
             gridlist = self._readASCII(vegetation_file)[0]  # list of all coordinate values; see readASCII function
             gridlist2 = self._readASCII(elevation_file)[0]  # list of all elevation values
             gridlist3 = self._readASCII(household_file)[0]  # list of all household coordinate values
@@ -109,13 +121,13 @@ class Movement(Model):
         # Pickling below
         load_dict = {}  # placeholder for model parameters, leave this here even though it does nothing
 
-        if self.grid_type == 'with_humans':
+        if self.grid_type == 'With Humans':
             empty_masterdict = self.saveLoad(load_dict, 'masterdict_veg', 'load')
             self.grid = self.saveLoad(self.grid, 'grid_veg', 'load')
 
-        if self.grid_type == 'without_humans':
+        if self.grid_type == 'Without Humans':
             empty_masterdict = self.saveLoad(load_dict, 'masterdict_without_humans', 'load')
-            self.grid = self.saveLoad(load_dict, 'grid_without_humans', 'load')
+            self.grid = self.saveLoad(load_dict, 'grid_Without Humans', 'load')
         masterdict = empty_masterdict
 
         startinglist = masterdict['Broadleaf'] + masterdict['Mixed'] + masterdict['Deciduous']
@@ -126,7 +138,7 @@ class Movement(Model):
                     startinglist.remove(coordinate)
         # Creation of resources (yellow dots in simulation)
         # These include Fuelwood, Herbs, Bamboo, etc., but right now resource type and frequency are not used
-        if self.grid_type == 'with_humans':
+        if self.grid_type == 'With Humans':
             for line in _readCSV('hh_survey.csv')[1:]:  # see 'hh_survey.csv'
                 hh_id_match = int(line[0])
                 resource_name = line[1]  # frequency is monthly; currently not-used
@@ -137,7 +149,7 @@ class Movement(Model):
                                     self, (x, y), hh_id_match, resource_name, frequency)
                 self.grid.place_agent(resource, (int(x), int(y)))
                 resource_dict.setdefault(hh_id_match, []).append(resource)
-                if self.run_type == 'first_run':
+                if self.run_type == 'First Run':
                     self.saveLoad(resource_dict, 'resource_dict', 'save')
 
         # Creation of land parcels
@@ -218,7 +230,7 @@ class Movement(Model):
                                   pre_gtgp_output, hh_size, non_gtgp_area, gtgp_area)
                         self.schedule.add(lp)
 
-        # Creation of humans (brown dots in simulation)
+        # Creation of humans (red dots in simulation)
         self.number_of_humans = 0
         self.human_id_count = 0
         line_counter = 0
@@ -344,7 +356,7 @@ class Movement(Model):
                                   non_gtgp_area, migration_network, mig_remittances,
                                   income_local_off_farm, last_birth_time, death_rate, age_category, children,
                                   birth_plan)
-                    if self.grid_type == 'with_humans':
+                    if self.grid_type == 'With Humans':
                         self.grid.place_agent(human, starting_position)
                         self.schedule.add(human)
 
@@ -463,7 +475,7 @@ class Movement(Model):
                               marriage, past_hh_id, mig_years, migration_status, gtgp_part, non_gtgp_area,
                               migration_network, mig_remittances, income_local_off_farm,
                               last_birth_time, death_rate, age_category, children, birth_plan)
-                if self.grid_type == 'with_humans':
+                if self.grid_type == 'With Humans':
                     self.grid.place_agent(human, starting_position)
                     self.schedule.add(human)
 
@@ -537,6 +549,7 @@ class Movement(Model):
                 self.monkey_id_count += 1
                 list_of_family_members.append(monkey.unique_id)
                 self.schedule.add(monkey)
+
 
     def step(self):
         # necessary; tells model to move forward

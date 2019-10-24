@@ -36,9 +36,9 @@ class Family(Agent):
 
         # loads environmental grid; it differs depending on whether or not human settlements are on the grid
         load_dict = {}
-        if self.model.grid_type == 'with_humans':
+        if self.model.grid_type == 'With Humans':
             masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
-        elif self.model.grid_type == 'without_humans':
+        elif self.model.grid_type == 'Without Humans':
             masterdict = self.model.saveLoad(load_dict, 'masterdict_without_humans', 'load')
         # print(self.model.grid_type)
         # Movement for families is defined below

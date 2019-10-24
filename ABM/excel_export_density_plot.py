@@ -2,7 +2,6 @@
 import csv
 import inspect
 import os
-from fnnr_config_file import human_setting
 
 """
 Contains two functions: save_summary and erase_summary.
@@ -13,10 +12,11 @@ currentpath = str(inspect.getfile(inspect.currentframe()))[:-28]  # 'removes exc
 os.chdir(currentpath)  # uses current directory path
 
 
-def save_density_plot(moved_list, number):
+def save_density_plot(moved_list, run_number, household_area, farm_area, forest_area):
     """Exports entries onto a .csv file"""
     try:
-        density_export = open('abm_export_density_plot_' + human_setting + '_' + str(number) + '.csv', 'w+')
+        density_export = open('abm_export_density_plot_' + household_area +
+                              '_' + farm_area + '_' + forest_area + '_' + str(run_number) + '.csv', 'w+')
         # a+ will create the file if it doesn't exist already
         # change the name of this file manually each run if changing testing styles to collect new data
         # without overwriting, e.g. naming the file with 'wo' vs 'w' for without or with humans

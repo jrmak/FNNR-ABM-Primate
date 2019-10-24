@@ -10,9 +10,6 @@ from mesa.visualization.UserParam import UserSettableParameter
 
 from model import *
 from environment import *
-from fnnr_config_file import family_setting, human_setting
-
-# 2/27/19
 
 # grid should be a square
 width = Movement._readASCII(Movement, vegetation_file)[2]  # width = height in this case, even if ASCII file isn't
@@ -98,21 +95,20 @@ class MapLegend(TextElement):
 
     def render(self, model):
         # image created on MS Paint and uploaded to internet, but also featured in this folder for reference
-        return ("<center><img src = 'http://i63.tinypic.com/21o30yg.png'></center>" + "<br>"
+        return ("<center><img src = 'https://i.imgur.com/siwLLKw.png'></center>" + "<br>"
                 + "<br><br></h3>")
 
 text0 = MapLegend()
 canvas = CanvasGrid(movement_portrayal, width, height, canvas_width, canvas_height)
 # chart_count = ChartModule([monkey_movement_chart])
 
-agent_slider = UserSettableParameter('slider', "Number of GGM Families", family_setting, 1, 30, 1)
+agent_slider = UserSettableParameter('slider', "Number of GGM Families", 20, 1, 30, 1)
 # the below comment is only used in a legacy version of this code
-"""
-humans_choice = UserSettableParameter('choice', "Status of Humans in Reserve", human_setting,
-                                      choices = ['with_humans', 'without_humans'])
-"""
 
-model_params = {"number_of_families": agent_slider, "grid_type": 'with_humans'}
+humans_choice = UserSettableParameter('choice', "Status of Humans in Reserve", 'With Humans',
+                                      choices = ['With Humans', 'Without Humans'])
+
+model_params = {"number_of_families": agent_slider, "grid_type": 'With Humans', "run_type": 'Normal Run'}
 
 server = ModularServer(Movement, [canvas, text0], "FNNR: an ABM of Guizhou Golden Monkey Movement", model_params)
 

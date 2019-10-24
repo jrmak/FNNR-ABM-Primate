@@ -1,8 +1,5 @@
 from mesa.agent import Agent
 import random
-from fnnr_config_file import scenario, unit_comp_flat,\
-    unit_comp_dry, unit_comp_rice, unit_comp_before, unit_comp_after, time_breakpoint, PES_span,\
-    land_step_measure, no_pay_part, min_threshold, year_setting
 from math import exp
 
 household_income_list = [0] * 170
@@ -11,6 +8,12 @@ non_gtgp_part_list = [0] * 170
 gtgp_part_list = [0] * 170
 non_gtgp_area_list = [0] * 170
 gtgp_area_list = [0] * 170
+
+scenario_list = []  # see gui.py
+pes_span = []
+land_step_measure = 6
+no_pay_part = 0.25
+min_threshold = 0.25
 
 class Land(Agent):
     """Sets land parcel agents"""
@@ -44,6 +47,19 @@ class Land(Agent):
         self.pre_gtgp_output = pre_gtgp_output
         self.non_gtgp_area = non_gtgp_area
         self.gtgp_area = gtgp_area
+
+        """
+        # code doesn't work, but leaving here until I can document the list indices properly
+        if scenario_list[0] == 'Flat':
+            unit_comp_flat = scenario_list[1]
+        elif scenario_list[0] == 'Land Type':
+            unit_comp_dry = scenario_list[1]
+            unit_comp_rice = scenario_list[2]
+        elif scenario_list[0] == 'Time':
+            time_breakpoint = scenario_list[3]
+            unit_comp_before = scenario_list[1]
+            unit_comp_after = scenario_list[2]
+        """
 
     def step(self):
         """Step behavior for LandParcelAgent"""
@@ -110,18 +126,21 @@ class Land(Agent):
 
         self.land_area = float(self.total_dry) + float(self.total_rice)
 
-        if scenario.lower() == 'flat':
-            comp_amount = self.land_area * unit_comp_flat
-        elif scenario.lower() == 'land_type':  # see fnnr_config_file
-            if int(self.land_type) == 1:
-                comp_amount = self.land_area * unit_comp_dry
-            elif int(self.land_type) == 2:
-                comp_amount = self.land_area * unit_comp_rice
-        elif scenario.lower() == 'time':
-            if self.model.time < scenario_breakpoint:
-                comp_amount = self.land_area * unit_comp_before
-            elif self.model.time > time_breakpoint:
-                comp_amount = self.land_area * unit_comp_after
+        try:
+            if scenario_list[0] == 'Flat':
+                comp_amount = self.land_area * float(scenario_list[1])
+            elif scenario_list[0] == 'Land Type':  # see fnnr_config_file
+                if int(self.land_type) == 1:
+                    comp_amount = self.land_area * float(scenario_list[1])
+                elif int(self.land_type) == 2:
+                    comp_amount = self.land_area * float(scenario_list[2])
+            elif scenario_list[0] == 'Time':
+                if self.model.time < float(scenario_list[3]):
+                    comp_amount = self.land_area * float(scenario_list[1])
+                elif self.model.time > float(scenario_list[3]):
+                    comp_amount = self.land_area * float(scenario_list[2])
+        except IndexError:  # running server.py instead of gui.py
+            comp_amount = self.land_area * 270
 
         self.gtgp_net_income = comp_amount - crop_income
         self.land_income = crop_income
@@ -157,13 +176,25 @@ class Land(Agent):
                     + 0.001 * float(self.hh_size) - 2.45 * self.land_type + 0.0006 * float(self.gtgp_net_income)
                     + 0.04 * self.land_time)  # Shuang's GTGP conversion formula
         gtgp_part_prob = (prob / (prob + 1))
-        if self.model.time > PES_span and self.gtgp_enrolled == 1:  # if PES payments have ended,
-            gtgp_part_prob = no_pay_part * gtgp_part_prob # raise chances of reverting
-            if random.random() < gtgp_part_prob * min_threshold:  # 0.3 is a minimum threshold
-                self.convert_gtgp_to_non_gtgp()
-        if self.model.time < PES_span:
-            if non_gtgp_area_list[self.hh_id] < minimum_non_gtgp and self.gtgp_enrolled == 1:  # keep minimum non-GTGP area
-                self.convert_gtgp_to_non_gtgp()
-            if self.gtgp_enrolled == 0 and random.random() < gtgp_part_prob:  # GTGP conversion
-                self.convert_non_gtgp_to_gtgp()
+        try:
+            if self.model.time > int(pes_span[0]) and self.gtgp_enrolled == 1:  # if PES payments have ended,
+                gtgp_part_prob = no_pay_part * gtgp_part_prob # raise chances of reverting
+                if random.random() < gtgp_part_prob * min_threshold:  # 0.3 is a minimum threshold
+                    self.convert_gtgp_to_non_gtgp()
+            elif self.model.time < int(pes_span[0]):
+                if non_gtgp_area_list[self.hh_id] < minimum_non_gtgp and self.gtgp_enrolled == 1:  # keep minimum non-GTGP area
+                    self.convert_gtgp_to_non_gtgp()
+                if self.gtgp_enrolled == 0 and random.random() < gtgp_part_prob:  # GTGP conversion
+                    self.convert_non_gtgp_to_gtgp()
+        except IndexError:  # running server.py instead of gui.py
+            if self.model.time > 4 and self.gtgp_enrolled == 1:  # if PES payments have ended,
+                gtgp_part_prob = no_pay_part * gtgp_part_prob  # raise chances of reverting
+                if random.random() < gtgp_part_prob * min_threshold:  # 0.3 is a minimum threshold
+                    self.convert_gtgp_to_non_gtgp()
+            elif self.model.time < 4:
+                if non_gtgp_area_list[self.hh_id] < minimum_non_gtgp and self.gtgp_enrolled == 1:  # keep minimum non-GTGP area
+                    self.convert_gtgp_to_non_gtgp()
+                if self.gtgp_enrolled == 0 and random.random() < gtgp_part_prob:  # GTGP conversion
+                    self.convert_non_gtgp_to_gtgp()
+
         # return self.gtgp_enrolled
