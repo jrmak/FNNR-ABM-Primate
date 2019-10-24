@@ -165,9 +165,13 @@ class Human(Agent):
                     resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
                     self.resource_frequency = resource.frequency
                     self.resource_position = resource.position
+                else:
+                    while self.current_position != self.resource_position:
+                        self.move_to_point(tuple(self.resource_position), self.resource_frequency)  # gather resources
 
             else:
-                while self.current_position != self.home_position:
+                while self.current_position != self.home_position:  # while is used instead of if--humans move faster
+                    # than model time
                     self.move_to_point(tuple(self.home_position), self.resource_frequency)  # else, head home
                     human_neighboring_grids = self.model.grid.get_neighborhood(self.current_position, True, False)
                     for human_neighbor in human_neighboring_grids:
@@ -181,6 +185,7 @@ class Human(Agent):
                     resource = random.choice(resource_dict[self.hh_id])  # randomly choose resource
                     self.resource_frequency = resource.frequency
                     self.resource_position = resource.position
+
 
     def age_check(self):
         """Check working and education age, as well as age-based death rates"""
@@ -553,7 +558,6 @@ class Human(Agent):
         current_position = tuple(current_position)
         self.move_to(current_position)
         self.current_position = current_position
-
         human_avoidance_dict.setdefault((current_position[0], current_position[1]), frequency / 6)
 
         if current_position[0] == destination[0] and current_position[1] == destination[1]:

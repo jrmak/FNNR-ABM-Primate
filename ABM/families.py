@@ -112,7 +112,7 @@ class Family(Agent):
                     current_position = self.neighbor_choice(neig, masterdict)
                     if current_position is not None and current_position not in masterdict['Elevation_Out_of_Bound'] \
                             and current_position not in masterdict['Outside_FNNR'] and (current_position
-                            not in human_avoidance_dict or random.random() > current_position[human_avoidance_dict]):
+                            not in human_avoidance_dict or random.random() > 0.9):
                         self.move_to(current_position)
                         self.current_position = current_position
 
@@ -139,7 +139,7 @@ class Family(Agent):
                 current_position = self.neighbor_choice(neig, masterdict)
                 if current_position is not None and current_position not in masterdict['Elevation_Out_of_Bound'] \
                         and current_position not in masterdict['Outside_FNNR'] and (current_position \
-                        not in human_avoidance_dict or random.random() > current_position[human_avoidance_dict]):
+                        not in human_avoidance_dict or random.random() > 0.9):
                     self.move_to(current_position)
                     self.current_position = current_position
                     moved_list.append(self.current_position)
@@ -170,7 +170,16 @@ class Family(Agent):
             self.current_position = current_position
         else:
             neig = self.model.grid.get_neighborhood(self.current_position, True, False)
-            current_position = self.neighbor_choice(neig, masterdict)
+            try:
+                current_position = self.neighbor_choice(neig, masterdict)
+            except NameError:  # masterdict
+                load_dict = {}
+                if self.model.grid_type == 'With Humans':
+                    masterdict = self.model.saveLoad(load_dict, 'masterdict_veg', 'load')
+                    current_position = self.neighbor_choice(neig, masterdict)
+                elif self.model.grid_type == 'Without Humans':
+                    masterdict = self.model.saveLoad(load_dict, 'masterdict_without_humans', 'load')
+                    current_position = self.neighbor_choice(neig, masterdict)
             from humans import human_avoidance_dict
             if current_position not in human_avoidance_dict:
                 self.move_to(current_position)
