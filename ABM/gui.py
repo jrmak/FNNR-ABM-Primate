@@ -113,7 +113,7 @@ def execute_extended():
     for i in list(range(10)):
         execute_preset()
         batch_count += 1
-        print("Batch of 27 runs finished: " + batch_count)
+        print("Batch of 27 runs finished: " + str(batch_count))
 
 def execute_preset():
     h_list = ['100', '400', '800']
