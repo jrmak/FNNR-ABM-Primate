@@ -17,6 +17,7 @@ from model import file_list, setting_list
 from land import scenario_list, pes_span
 from multiprocessing import Process, active_children
 import time
+import shutil
 
 run_token = []
 running_list = []
@@ -103,17 +104,22 @@ def execute():
         time.sleep(10)
     retry_run()
 
+
 def execute_extended():
     for csv_file in os.listdir(os.getcwd()):
         if csv_file[-3:] == 'csv' and csv_file not in ['hh_citizens.csv', 'hh_land.csv', 'hh_survey.csv',
                                                        'household.csv', 'resources.csv']:
-            os.remove(csv_file)  # delete any old unfinished runs
+            try:
+                os.remove(csv_file)  # delete any old unfinished runs
+            except PermissionError:
+                pass
 
     batch_count = 0
     for i in list(range(10)):
         execute_preset()
         batch_count += 1
         print("Batch of 27 runs finished: " + str(batch_count))
+
 
 def execute_preset():
     h_list = ['100', '400', '800']
@@ -328,13 +334,17 @@ def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, y
     for csv_file in os.listdir(os.getcwd()):
         if csv_file[-3:] == 'csv' and csv_file not in ['hh_citizens.csv', 'hh_land.csv', 'hh_survey.csv',
                                                        'household.csv', 'resources.csv']:
-            os.replace(os.getcwd() + r'\\' + csv_file, os.getcwd() + r'\\Runs\\' + csv_file)
+            try:
+                shutil.copy(os.getcwd() + r'\\' + csv_file, os.getcwd() + r'\\Runs\\' + csv_file)
+            except PermissionError:
+                pass
 
-        #if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_config_file.py
+# if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_config_file.py
 #    # this should only be run with 1 family at a time or else the graphs will be messed up
 #    for i in [1, 3, 5]:
 #        if t == 73 * i:
 #            save_density_plot(moved_list, str(i) + '_walk')
+
 if __name__ == '__main__':
     root = tk.Tk()
     root.title('FNNR ABM')
