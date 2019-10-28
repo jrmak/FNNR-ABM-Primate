@@ -336,13 +336,13 @@ def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, y
                                                        'household.csv', 'resources.csv']:
             try:
                 if not os.path.exists(os.getcwd() + r'\\Runs\\' + csv_file):
-                    shutil.copy(os.getcwd() + r'\\' + csv_file, os.getcwd() + r'\\Runs\\' + csv_file)
+                    os.replace(os.getcwd() + r'\\' + csv_file, os.getcwd() + r'\\Runs\\' + csv_file)
                 else:
-                    base, extension = os.path.splitext(name)
                     i = 1
-                    while os.path.exists(os.getcwd() + r'\\Runs\\' + csv_file.replace(csv_file[-4:], str(i) + '.csv')):
+                    while os.path.exists(os.getcwd() + r'\\Runs\\' + csv_file.replace(csv_file[-5:], str(i) + '.csv')):
                         i += 1
-                    shutil.copy(os.getcwd() + r'\\Runs\\' + csv_file.replace(csv_file[-4:], str(i) + '.csv'))
+                    os.replace(os.getcwd() + r'\\' + csv_file,
+                                os.getcwd() + r'\\Runs\\' + csv_file.replace(csv_file[-5:], str(i) + '.csv'))
             except PermissionError:
                 pass
 
