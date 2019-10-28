@@ -335,7 +335,14 @@ def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, y
         if csv_file[-3:] == 'csv' and csv_file not in ['hh_citizens.csv', 'hh_land.csv', 'hh_survey.csv',
                                                        'household.csv', 'resources.csv']:
             try:
-                shutil.copy(os.getcwd() + r'\\' + csv_file, os.getcwd() + r'\\Runs\\' + csv_file)
+                if not os.path.exists(os.getcwd() + r'\\Runs\\' + csv_file):
+                    shutil.copy(os.getcwd() + r'\\' + csv_file, os.getcwd() + r'\\Runs\\' + csv_file)
+                else:
+                    base, extension = os.path.splitext(name)
+                    i = 1
+                    while os.path.exists(os.getcwd() + r'\\Runs\\' + csv_file.replace(csv_file[-4:], str(i) + '.csv')):
+                        i += 1
+                    shutil.copy(os.getcwd() + r'\\Runs\\' + csv_file.replace(csv_file[-4:], str(i) + '.csv'))
             except PermissionError:
                 pass
 
