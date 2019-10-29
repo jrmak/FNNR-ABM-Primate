@@ -138,15 +138,18 @@ class Family(Agent):
                 neig = self.model.grid.get_neighborhood(self.current_position, True, False)
                 current_position = self.neighbor_choice(neig, masterdict)
                 if current_position is not None and current_position not in masterdict['Elevation_Out_of_Bound'] \
-                        and current_position not in masterdict['Outside_FNNR'] and (current_position \
-                        not in human_avoidance_dict or random.random() > 0.9):
+                        and current_position not in masterdict['Outside_FNNR'] and (current_position
+                                                                                    not in human_avoidance_dict):
                     self.move_to(current_position)
                     self.current_position = current_position
                     moved_list.append(self.current_position)
 
     def move_to_point(self, current_position, new_position):
         # Brings a pixel to a certain point using a correlated walk. Uses self.move_to within the function.
-        current_position = list(current_position)  # current position
+        try:
+            current_position = list(current_position)  # current position
+        except TypeError:
+            current_position = list(new_position)
         if current_position[0] < new_position[0]:  # if the current position is away from Yaogaoping,
             current_position[0] += 1  # move it closer
         elif current_position[0] == new_position[0]:
