@@ -112,7 +112,7 @@ class Family(Agent):
                     current_position = self.neighbor_choice(neig, masterdict)
                     if current_position is not None and current_position not in masterdict['Elevation_Out_of_Bound'] \
                             and current_position not in masterdict['Outside_FNNR'] and (current_position
-                            not in human_avoidance_dict or random.random() > 0.9):
+                            not in human_avoidance_dict):
                         self.move_to(current_position)
                         self.current_position = current_position
 
