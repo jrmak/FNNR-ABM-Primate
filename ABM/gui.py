@@ -10,15 +10,13 @@ from model import *
 from families import demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list, moved_list
 from humans import hh_size_list, human_birth_list, human_death_list, human_marriage_list,\
     single_male_list, married_male_list, \
-    num_labor_list, total_migration_list, human_demographic_structure_list
+    num_labor_list, total_migration_list, human_demographic_structure_list, fertility_scenario
 from land import non_gtgp_part_list, gtgp_part_list, non_gtgp_area_list, gtgp_area_list, household_income_list
 import os
 from model import file_list, setting_list
 from land import scenario_list, pes_span
 from multiprocessing import Process, active_children
 import time
-import shutil
-
 run_token = []
 running_list = []
 
@@ -75,6 +73,9 @@ def set_scenario(sc, flat, dry, rice, before, after, brk):
         scenario_list.append(before)
         scenario_list.append(after)
         scenario_list.append(brk)
+        
+def set_fertility(fertility):
+    fertility_scenario.append(fertility)
 
 def set_pes_program_length(length):
     pes_span.append(length)
@@ -95,10 +96,11 @@ def execute():
     brk = break_input.get()
     length = time_input.get()
     year = year_input.get()
+    fertility = fertility_input.get()
     batch = 1
     for i in list(range(int(thread_input.get()) - 1)):
         processes.append(Process(target=run_model, args=(h, fm, fr, fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch)))
+                                                  brk, length, year, fertility, batch)))
     for p in processes:
         p.start()
         run_token.append(1)
@@ -115,11 +117,36 @@ def execute_extended():
             except PermissionError:
                 pass
 
-    batch_count = 0
+    batch_number = 0
     for i in list(range(1, 11)):
         execute_preset(i)
-        batch_count += 1
-        print("Batch of 27 runs finished: " + str(batch_count))
+        batch_number += 1
+        print("Batch of 27 runs finished: " + str(batch_number))
+
+        if not os.path.exists(os.getcwd() + r'\\Runs\\'):
+            os.mkdir(os.getcwd() + r'\\Runs')
+        if not os.path.exists(os.getcwd() + r'\\Runs\\Batch 1'):
+            for i in list(range(1, 11)):
+                os.mkdir(os.getcwd() + r'\\Runs\\Batch ' + str(i))
+
+        for csv_file in os.listdir(os.getcwd()):
+            if csv_file[-3:] == 'csv' and csv_file not in ['hh_citizens.csv', 'hh_land.csv', 'hh_survey.csv',
+                                                           'household.csv', 'resources.csv']:
+                try:
+                    if not os.path.exists(os.getcwd() + r'\\Runs\\Batch ' + str(batch_number) + r'\\' + csv_file):
+                        os.replace(os.getcwd() + r'\\' + csv_file, os.getcwd() + r'\\Runs\\Batch ' + str(batch_number)
+                                   + r'\\' + csv_file)
+                    else:
+                        i = 1
+                        while os.path.exists(os.getcwd() + r'\\Runs\\Batch ' + str(batch_number) + r'\\'
+                                             + csv_file.replace(csv_file[-5:], str(i) + '.csv')):
+                            i += 1
+                        os.replace(os.getcwd() + r'\\' + csv_file,
+                                   os.getcwd() + r'\\Runs\\Batch ' + str(batch_number) + r'\\'
+                                   + csv_file.replace(csv_file[-5:], str(i) + '.csv'))
+                except PermissionError as e:
+                    print(e)
+                    pass
 
 
 def execute_preset(batch):
@@ -133,65 +160,66 @@ def execute_preset(batch):
     rice = '400'
     before = '200'
     after = '400'
+    fertility = '2.5'
     brk = 4
     length = 8
     year = 20
     p1 = Process(target=run_model, args=(h_list[0], fm_list[0], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p2 = Process(target=run_model, args=(h_list[0], fm_list[0], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p3 = Process(target=run_model, args=(h_list[0], fm_list[0], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p4 = Process(target=run_model, args=(h_list[0], fm_list[1], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p5 = Process(target=run_model, args=(h_list[0], fm_list[1], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p6 = Process(target=run_model, args=(h_list[0], fm_list[1], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p7 = Process(target=run_model, args=(h_list[0], fm_list[2], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p8 = Process(target=run_model, args=(h_list[0], fm_list[2], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p9 = Process(target=run_model, args=(h_list[0], fm_list[2], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
 
     p10 = Process(target=run_model, args=(h_list[1], fm_list[0], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p11 = Process(target=run_model, args=(h_list[1], fm_list[0], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p12 = Process(target=run_model, args=(h_list[1], fm_list[0], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p13 = Process(target=run_model, args=(h_list[1], fm_list[1], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p14 = Process(target=run_model, args=(h_list[1], fm_list[1], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p15 = Process(target=run_model, args=(h_list[1], fm_list[1], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p16 = Process(target=run_model, args=(h_list[1], fm_list[2], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p17 = Process(target=run_model, args=(h_list[1], fm_list[2], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p18 = Process(target=run_model, args=(h_list[1], fm_list[2], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
 
     p19 = Process(target=run_model, args=(h_list[2], fm_list[0], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p20 = Process(target=run_model, args=(h_list[2], fm_list[0], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p21 = Process(target=run_model, args=(h_list[2], fm_list[0], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p22 = Process(target=run_model, args=(h_list[2], fm_list[1], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p23 = Process(target=run_model, args=(h_list[2], fm_list[1], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p24 = Process(target=run_model, args=(h_list[2], fm_list[1], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p25 = Process(target=run_model, args=(h_list[2], fm_list[2], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p26 = Process(target=run_model, args=(h_list[2], fm_list[2], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
     p27 = Process(target=run_model, args=(h_list[2], fm_list[2], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, batch))
+                                                  brk, length, year, fertility, batch))
 
     # I know this code is terribly written, in a rush
 
@@ -271,20 +299,22 @@ def retry_run():
             brk = break_input.get()
             length = time_input.get()
             year = year_input.get()
+            fertility = fertility_input.get()
             batch_num = 1
             p = Process(target=run_model, args=(h, fm, fr, fam, sc, flat, dry, rice, before, after,
-                                                                 brk, length, year, batch_num))
+                                                                 brk, length, year, fertility, batch_num))
             p.start()
             run_token.append(1)
             time.sleep(10)
 
 
-def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, year, batch_number):
+def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, year, fertility, batch_number):
     """Identical to graph.py. Graph.py also directly runs the model."""
     set_filelist(h, fm, fr)
     set_other_settings(fam)
     set_scenario(sc, flat, dry, rice, before, after, brk)
     set_pes_program_length(length)
+    set_fertility(fertility)
 
     monkey_population_list = []
     monkey_birth_count = []
@@ -302,7 +332,7 @@ def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, y
         monkey_birth_count.append(model.monkey_birth_count)
         monkey_death_count.append(model.monkey_death_count)
         model.step()  # see model.step() in model.py; monkey agents age, family-pixel agents move
-        if (t % 6 == 0 and t != 0) or t == 1:  # save beginning structure, then every 100 days thereafter
+        if (t % 6 == 0 and t != 0):  # save beginning structure, then every 100 days thereafter
             print('Loading Run', 'Progress', t, '/', model_time)
             save_summary(str(run), t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                      demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list,
@@ -333,31 +363,7 @@ def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, y
 
     save_density_plot(moved_list, str(run), h, fm, fr)
     print('Run' + ' Done!')
-    time.sleep(1)
-    if not os.path.exists(os.getcwd() + r'\\Runs\\'):
-        os.mkdir(os.getcwd() + r'\\Runs')
-    if not os.path.exists(os.getcwd() + r'\\Runs\\Batch 1'):
-        for i in list(range(1, 11)):
-            os.mkdir(os.getcwd() + r'\\Runs\\Batch ' + str(i))
 
-    for csv_file in os.listdir(os.getcwd()):
-        if csv_file[-3:] == 'csv' and csv_file not in ['hh_citizens.csv', 'hh_land.csv', 'hh_survey.csv',
-                                                       'household.csv', 'resources.csv'] and csv_file[-5] == str(run):
-            try:
-                if not os.path.exists(os.getcwd() + r'\\Runs\\Batch ' + str(batch_number) + r'\\' + csv_file):
-                    os.replace(os.getcwd() + r'\\' + csv_file, os.getcwd() + r'\\Runs\\Batch ' + str(batch_number)
-                               + r'\\' + csv_file)
-                else:
-                    i = 1
-                    while os.path.exists(os.getcwd() + r'\\Runs\\Batch ' + str(batch_number) + r'\\'
-                                         + csv_file.replace(csv_file[-5:], str(i) + '.csv')):
-                        i += 1
-                    os.replace(os.getcwd() + r'\\' + csv_file,
-                                os.getcwd() + r'\\Runs\\Batch ' + str(batch_number) + r'\\'
-                               + csv_file.replace(csv_file[-5:], str(i) + '.csv'))
-            except PermissionError:
-                print('Permission Error')
-                pass
 
 # if random_walk_graph_setting == True:  # disabled or enabled according to fnnr_config_file.py
 #    # this should only be run with 1 family at a time or else the graphs will be messed up
@@ -469,8 +475,15 @@ if __name__ == '__main__':
     time_menu.grid(row=17, column=1)
     time_label = tk.Label(root, text="# of Years PES Program Lasts (All Scenarios)")
     time_label.grid(row=17, column=0, padx=10)
-    time_label2 = tk.Label(root, text="(Note: Must be equal to or higher than Breakpoint if Time Scenario)")
-    time_label2.grid(row=18, column=0, padx=10)
+    #time_label2 = tk.Label(root, text="(Note: Must be equal to or higher than Breakpoint if Time Scenario)")
+    #time_label2.grid(row=18, column=0, padx=10)
+
+    fertility_order = ['1.5', '2.5', '3.5']
+    fertility_input = tk.StringVar()
+    fertility_menu = ttk.OptionMenu(root, fertility_input, fertility_order[1], *fertility_order)
+    fertility_menu.grid(row=18, column=1)
+    fertility_label = tk.Label(root, text="Total Fertility Rate Scenario (Avg # of Children)")
+    fertility_label.grid(row=18, column=0, padx=10)
 
     divider_label = tk.Label(root, text="__________________________")
     divider_label.grid(row=19, column=0, padx=10)
