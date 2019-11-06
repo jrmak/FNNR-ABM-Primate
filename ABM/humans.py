@@ -32,6 +32,7 @@ total_migration_list = [0] * 170
 total_re_migration_list = [0] * 170
 first_step_income_list = [0] * 170
 
+fertility_scenario = []
 
 run = 1  # do not change this; it will automatically search for the first number-as-string not taken
 while os.path.isfile(os.getcwd() + '\\' + 'fnnr_human_log_file' + str(run) + '.txt'):
@@ -357,18 +358,45 @@ class Human(Agent):
                 elif gender == 2:
                     age_category = 10
                     birth_plan_chance = random.random()
-                    if birth_plan_chance < 0.03125:
-                        birth_plan = 0
-                    elif 0.03125 <= birth_plan_chance < 0.1875:
-                        birth_plan = 1
-                    elif 0.1875 <= birth_plan_chance < 0.5:
-                        birth_plan = 2
-                    elif 0.5 <= birth_plan_chance < 0.8125:
-                        birth_plan = 3
-                    elif 0.8125 <= birth_plan_chance < 0.96875:
-                        birth_plan = 4
-                    else:
-                        birth_plan = 5
+                    if fertility_scenario[0] == '2.5':
+                        if birth_plan_chance < 0.03125:
+                            birth_plan = 0
+                        elif 0.03125 <= birth_plan_chance < 0.1875:
+                            birth_plan = 1
+                        elif 0.1875 <= birth_plan_chance < 0.5:
+                            birth_plan = 2
+                        elif 0.5 <= birth_plan_chance < 0.8125:
+                            birth_plan = 3
+                        elif 0.8125 <= birth_plan_chance < 0.96875:
+                            birth_plan = 4
+                        else:
+                            birth_plan = 5
+                    elif fertility_scenario[0] == '1.5':
+                        if birth_plan_chance < 0.09:
+                            birth_plan = 0
+                        elif 0.09 <= birth_plan_chance < 0.59:
+                            birth_plan = 1
+                        elif 0.59 <= birth_plan_chance < 0.89:
+                            birth_plan = 2
+                        elif 0.89 <= birth_plan_chance < 0.95:
+                            birth_plan = 3
+                        elif 0.95 <= birth_plan_chance < 0.98:
+                            birth_plan = 4
+                        else:
+                            birth_plan = 5
+                    elif fertility_scenario[0] == '3.5':
+                        if birth_plan_chance < 0.02:
+                            birth_plan = 0
+                        elif 0.02 <= birth_plan_chance < 0.04:
+                            birth_plan = 1
+                        elif 0.04 <= birth_plan_chance < 0.08:
+                            birth_plan = 2
+                        elif 0.08 <= birth_plan_chance < 0.46:
+                            birth_plan = 3
+                        elif 0.46 <= birth_plan_chance < 0.9:
+                            birth_plan = 4
+                        else:
+                            birth_plan = 5
                 ind = Human(last + 1, self.model, self.current_position, self.hh_id, age, self.resource_check,
                             self.home_position, self.resource_position, self.resource_frequency, gender,
                             education, work_status, marriage, self.past_hh_id, self.mig_years,
