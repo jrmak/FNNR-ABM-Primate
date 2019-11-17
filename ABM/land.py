@@ -12,8 +12,9 @@ gtgp_area_list = [0] * 170
 scenario_list = []  # see gui.py
 pes_span = []
 land_step_measure = 6
-no_pay_part = 0.25
-min_threshold = 0.25
+no_pay_part_list = []
+min_threshold_list = []
+min_non_gtgp_list = []
 
 class Land(Agent):
     """Sets land parcel agents"""
@@ -68,7 +69,7 @@ class Land(Agent):
                 non_gtgp_part_list[self.hh_id] += 1
                 non_gtgp_area_list[self.hh_id] += (self.total_rice + self.total_dry - self.gtgp_rice - self.gtgp_dry)
                 if non_gtgp_area_list[self.hh_id] == 0:
-                    non_gtgp_area_list[self.hh_id] = 0.3  # minimum non-GTGP
+                    non_gtgp_area_list[self.hh_id] = min_non_gtgp_list[0] # minimum non-GTGP
             elif self.gtgp_enrolled == 1:
                 gtgp_part_list[self.hh_id] += 1
                 gtgp_area_list[self.hh_id] += self.gtgp_rice + self.gtgp_dry
@@ -134,6 +135,8 @@ class Land(Agent):
                     comp_amount = self.land_area * float(scenario_list[1])
                 elif int(self.land_type) == 2:
                     comp_amount = self.land_area * float(scenario_list[2])
+                else:
+                    comp_amount = 0
             elif scenario_list[0] == 'Time':
                 if self.model.time < float(scenario_list[3]):
                     comp_amount = self.land_area * float(scenario_list[1])
@@ -178,8 +181,8 @@ class Land(Agent):
         gtgp_part_prob = (prob / (prob + 1))
         try:
             if self.model.time > int(pes_span[0]) and self.gtgp_enrolled == 1:  # if PES payments have ended,
-                gtgp_part_prob = no_pay_part * gtgp_part_prob # raise chances of reverting
-                if random.random() < gtgp_part_prob * min_threshold:  # 0.3 is a minimum threshold
+                gtgp_part_prob = float(no_pay_part_list[0]) * gtgp_part_prob  # raise chances of reverting
+                if random.random() < gtgp_part_prob * float(min_threshold_list[0]):
                     self.convert_gtgp_to_non_gtgp()
             elif self.model.time < int(pes_span[0]):
                 if non_gtgp_area_list[self.hh_id] < minimum_non_gtgp and self.gtgp_enrolled == 1:  # keep minimum non-GTGP area
@@ -188,8 +191,8 @@ class Land(Agent):
                     self.convert_non_gtgp_to_gtgp()
         except IndexError:  # running server.py instead of gui.py
             if self.model.time > 4 and self.gtgp_enrolled == 1:  # if PES payments have ended,
-                gtgp_part_prob = no_pay_part * gtgp_part_prob  # raise chances of reverting
-                if random.random() < gtgp_part_prob * min_threshold:  # 0.3 is a minimum threshold
+                gtgp_part_prob = float(no_pay_part_list[0]) * gtgp_part_prob  # raise chances of reverting
+                if random.random() < gtgp_part_prob * float(min_threshold_list[0]):  # 0.1-0.4 is a minimum threshold
                     self.convert_gtgp_to_non_gtgp()
             elif self.model.time < 4:
                 if non_gtgp_area_list[self.hh_id] < minimum_non_gtgp and self.gtgp_enrolled == 1:  # keep minimum non-GTGP area

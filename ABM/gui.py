@@ -14,7 +14,7 @@ from humans import hh_size_list, human_birth_list, human_death_list, human_marri
 from land import non_gtgp_part_list, gtgp_part_list, non_gtgp_area_list, gtgp_area_list, household_income_list
 import os
 from model import file_list, setting_list
-from land import scenario_list, pes_span
+from land import scenario_list, pes_span, no_pay_part_list, min_threshold_list, min_non_gtgp_list
 from multiprocessing import Process, active_children
 import time
 run_token = []
@@ -73,6 +73,11 @@ def set_scenario(sc, flat, dry, rice, before, after, brk):
         scenario_list.append(before)
         scenario_list.append(after)
         scenario_list.append(brk)
+
+def set_multipliers(rev, conv, min_area):
+    min_threshold_list.append(rev)
+    no_pay_part_list.append(conv)
+    min_non_gtgp_list.append(min_area)
         
 def set_fertility(fertility):
     fertility_scenario.append(fertility)
@@ -97,10 +102,13 @@ def execute():
     length = time_input.get()
     year = year_input.get()
     fertility = fertility_input.get()
+    rev = reversion_input.get()
+    conv = conversion_input.get()
+    min_area = gtgp_input.get()
     batch = 1
     for i in list(range(int(thread_input.get()) - 1)):
         processes.append(Process(target=run_model, args=(h, fm, fr, fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch)))
+                                                  brk, length, year, fertility, rev, conv, min_area, batch)))
     for p in processes:
         p.start()
         run_token.append(1)
@@ -118,15 +126,15 @@ def execute_extended():
                 pass
 
     batch_number = 0
-    for i in list(range(1, 11)):
-        execute_preset(i)
+    for i in list(range(1, 31)):
+        execute_preset_fertility(i)
         batch_number += 1
-        print("Batch of 27 runs finished: " + str(batch_number))
+        print("Batch of 2 runs finished: " + str(batch_number))
 
         if not os.path.exists(os.getcwd() + r'\\Runs\\'):
             os.mkdir(os.getcwd() + r'\\Runs')
         if not os.path.exists(os.getcwd() + r'\\Runs\\Batch 1'):
-            for i in list(range(1, 11)):
+            for i in list(range(1, 31)):
                 os.mkdir(os.getcwd() + r'\\Runs\\Batch ' + str(i))
 
         for csv_file in os.listdir(os.getcwd()):
@@ -148,8 +156,31 @@ def execute_extended():
                     print(e)
                     pass
 
+def execute_preset_fertility(batch):
+    fam = 20
+    sc = 'Flat'
+    flat = '270'
+    dry = '200'
+    rice = '400'
+    before = '200'
+    after = '400'
+    brk = 4
+    length = 8
+    year = 20
+    p1 = Process(target=run_model, args=('400', '300', '200', fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, '1.5', '0.25', '0.25', '0.3', batch))
+    p2 = Process(target=run_model, args=('400', '300', '200', fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, '3.5', '0.25', '0.25', '0.3', batch))
 
-def execute_preset(batch):
+
+    # I know this code is terribly written, in a rush
+
+    p1.start()
+    p2.start()
+    p_join(p1)
+    p_join(p2)
+
+def execute_preset_land(batch):
     h_list = ['100', '400', '800']
     fm_list = ['0', '300', '600']
     fr_list = ['0', '200', '400']
@@ -165,66 +196,200 @@ def execute_preset(batch):
     length = 8
     year = 20
     p1 = Process(target=run_model, args=(h_list[0], fm_list[0], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p2 = Process(target=run_model, args=(h_list[0], fm_list[0], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p3 = Process(target=run_model, args=(h_list[0], fm_list[0], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p4 = Process(target=run_model, args=(h_list[0], fm_list[1], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p5 = Process(target=run_model, args=(h_list[0], fm_list[1], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p6 = Process(target=run_model, args=(h_list[0], fm_list[1], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p7 = Process(target=run_model, args=(h_list[0], fm_list[2], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p8 = Process(target=run_model, args=(h_list[0], fm_list[2], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p9 = Process(target=run_model, args=(h_list[0], fm_list[2], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
 
     p10 = Process(target=run_model, args=(h_list[1], fm_list[0], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p11 = Process(target=run_model, args=(h_list[1], fm_list[0], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p12 = Process(target=run_model, args=(h_list[1], fm_list[0], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p13 = Process(target=run_model, args=(h_list[1], fm_list[1], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p14 = Process(target=run_model, args=(h_list[1], fm_list[1], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p15 = Process(target=run_model, args=(h_list[1], fm_list[1], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p16 = Process(target=run_model, args=(h_list[1], fm_list[2], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p17 = Process(target=run_model, args=(h_list[1], fm_list[2], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p18 = Process(target=run_model, args=(h_list[1], fm_list[2], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
 
     p19 = Process(target=run_model, args=(h_list[2], fm_list[0], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p20 = Process(target=run_model, args=(h_list[2], fm_list[0], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p21 = Process(target=run_model, args=(h_list[2], fm_list[0], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p22 = Process(target=run_model, args=(h_list[2], fm_list[1], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p23 = Process(target=run_model, args=(h_list[2], fm_list[1], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p24 = Process(target=run_model, args=(h_list[2], fm_list[1], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p25 = Process(target=run_model, args=(h_list[2], fm_list[2], fr_list[0], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p26 = Process(target=run_model, args=(h_list[2], fm_list[2], fr_list[1], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
     p27 = Process(target=run_model, args=(h_list[2], fm_list[2], fr_list[2], fam, sc, flat, dry, rice, before, after,
-                                                  brk, length, year, fertility, batch))
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
 
     # I know this code is terribly written, in a rush
 
     p1.start()
     p2.start()
+    p3.start()
+    p_join(p1)
+    p4.start()
+    p_join(p2)
+    p5.start()
+    p_join(p3)
+    p6.start()
+    p_join(p4)
+    p7.start()
+    p_join(p5)
+    p8.start()
+    p_join(p6)
+    p9.start()
+    p_join(p7)
+    p10.start()
+    p_join(p8)
+    p11.start()
+    p_join(p9)
+    p12.start()
+    p_join(p10)
+    p13.start()
+    p_join(p11)
+    p14.start()
+    p_join(p12)
+    p15.start()
+    p_join(p13)
+    p16.start()
+    p_join(p14)
+    p17.start()
+    p_join(p15)
+    p18.start()
+    p_join(p16)
+    p19.start()
+    p_join(p17)
+    p20.start()
+    p_join(p18)
+    p21.start()
+    p_join(p19)
+    p22.start()
+    p_join(p20)
+    p23.start()
+    p_join(p21)
+    p24.start()
+    p_join(p22)
+    p25.start()
+    p_join(p23)
+    p26.start()
+    p_join(p24)
+    p27.start()
+    p_join(p25)
+    p_join(p26)
+    p_join(p27)
+
+def execute_preset_multiplier(batch):
+    hh = '400'
+    fm = '300'
+    fr = '200'
+    fam = 20
+    sc = 'Flat'
+    flat = '270'
+    dry = '200'
+    rice = '400'
+    before = '200'
+    after = '400'
+    fertility = '2.5'
+    conversion = ['0.1', '0.25', '0.4']
+    reversion = ['0.1', '0.25', '0.4']
+    gtgp = ['0.1', '0.3', '0.5']
+    brk = 4
+    length = 8
+    year = 20
+    p1 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[0], batch))
+    p2 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[1], batch))
+    p3 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[0], gtgp[2], batch))
+    p4 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[1], gtgp[0], batch))
+    p5 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[1], gtgp[1], batch))
+    p6 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[1], gtgp[2], batch))
+    p7 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[2], gtgp[0], batch))
+    p8 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[2], gtgp[1], batch))
+    p9 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[0], conversion[2], gtgp[2], batch))
+
+    p10 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[0], gtgp[0], batch))
+    p11 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[0], gtgp[1], batch))
+    p12 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[0], gtgp[2], batch))
+    p13 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[1], gtgp[0], batch))
+    p14 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[1], gtgp[1], batch))
+    p15 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[1], gtgp[2], batch))
+    p16 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[2], gtgp[0], batch))
+    p17 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[2], gtgp[1], batch))
+    p18 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[1], conversion[2], gtgp[2], batch))
+
+    p19 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[0], gtgp[0], batch))
+    p20 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[0], gtgp[1], batch))
+    p21 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[0], gtgp[2], batch))
+    p22 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[1], gtgp[0], batch))
+    p23 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[1], gtgp[1], batch))
+    p24 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[1], gtgp[2], batch))
+    p25 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[2], gtgp[0], batch))
+    p26 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[2], gtgp[1], batch))
+    p27 = Process(target=run_model, args=(hh, fm, fr, fam, sc, flat, dry, rice, before, after,
+                                                  brk, length, year, fertility, reversion[2], conversion[2], gtgp[2], batch))
+
+    # I know this code is terribly written, in a rush
+
+    p1.start()
+    time.sleep(10)
+    p2.start()
+    time.sleep(10)
     p3.start()
     p_join(p1)
     p4.start()
@@ -300,21 +465,30 @@ def retry_run():
             length = time_input.get()
             year = year_input.get()
             fertility = fertility_input.get()
+            rev = reversion_input.get()
+            con = conversion_input.get()
+            min_area = gtgp_input.get()
             batch_num = 1
             p = Process(target=run_model, args=(h, fm, fr, fam, sc, flat, dry, rice, before, after,
-                                                                 brk, length, year, fertility, batch_num))
+                                                        brk, length, year, fertility, rev, con, min_area, batch_num))
             p.start()
             run_token.append(1)
             time.sleep(10)
 
 
-def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, year, fertility, batch_number):
+def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, year, fertility, rev,
+              conv, min_area, batch_number):
     """Identical to graph.py. Graph.py also directly runs the model."""
     set_filelist(h, fm, fr)
     set_other_settings(fam)
     set_scenario(sc, flat, dry, rice, before, after, brk)
     set_pes_program_length(length)
     set_fertility(fertility)
+    set_multipliers(rev, conv, min_area)
+
+    r = rev.strip('.')
+    c = conv.strip('.')
+    min = min_area.strip('.')
 
     monkey_population_list = []
     monkey_birth_count = []
@@ -336,11 +510,11 @@ def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, y
             print('Loading Run', 'Progress', t, '/', model_time)
             save_summary(str(run), t, model.number_of_monkeys, model.monkey_birth_count, model.monkey_death_count,
                      demographic_structure_list, female_list, male_maingroup_list, reproductive_female_list,
-                         h, fm, fr)
+                         fertility)
             save_summary_humans(str(run), t, model.number_of_humans, len(human_birth_list), len(human_death_list),
                                 sum(human_marriage_list), sum(num_labor_list),
                                 len(single_male_list), len(married_male_list), sum(total_migration_list),
-                                h, fm, fr
+                                fertility
                                 )  # 94 households
             save_summary_human_demographics(str(run), t, human_demographic_structure_list[0],
                                             human_demographic_structure_list[1],
@@ -353,15 +527,15 @@ def run_model(h, fm, fr, fam, sc, flat, dry, rice, before, after, brk, length, y
                                             human_demographic_structure_list[14], human_demographic_structure_list[15],
                                             human_demographic_structure_list[16], human_demographic_structure_list[17],
                                             human_demographic_structure_list[18], human_demographic_structure_list[19],
-                                            h, fm, fr)
+                                            fertility)
             save_summary_households(str(run), t, sum(non_gtgp_part_list), sum(gtgp_part_list),
                                     sum(non_gtgp_part_list) / 94, sum(gtgp_part_list) / 94,
                                     sum(non_gtgp_area_list) / 94,
                                     sum(gtgp_area_list) / 94,
-                                    sc, h, fm, fr
+                                    sc, fertility
                                     )
 
-    save_density_plot(moved_list, str(run), h, fm, fr)
+    save_density_plot(moved_list, str(run), fertility)
     print('Run' + ' Done!')
 
 
@@ -485,32 +659,53 @@ if __name__ == '__main__':
     fertility_label = tk.Label(root, text="Total Fertility Rate Scenario (Avg # of Children)")
     fertility_label.grid(row=18, column=0, padx=10)
 
+    gtgp_order = ['0.1', '0.3', '0.5']
+    gtgp_input = tk.StringVar()
+    gtgp_menu = ttk.OptionMenu(root, gtgp_input, gtgp_order[1], *gtgp_order)
+    gtgp_menu.grid(row=19, column=1)
+    gtgp_label = tk.Label(root, text="Minimum Non-GTGP Land Area (mu)")
+    gtgp_label.grid(row=19, column=0, padx=10)
+
+    reversion_order = ['0.1', '0.25', '0.4']
+    reversion_input = tk.StringVar()
+    reversion_menu = ttk.OptionMenu(root, reversion_input, reversion_order[1], *reversion_order)
+    reversion_menu.grid(row=20, column=1)
+    reversion_label = tk.Label(root, text="Post-PES GTGP Reversion Factor (Higher Factor = Higher Chance")
+    reversion_label.grid(row=20, column=0, padx=10)
+
+    conversion_order = ['0.1', '0.25', '0.4']
+    conversion_input = tk.StringVar()
+    conversion_menu = ttk.OptionMenu(root, conversion_input, conversion_order[1], *conversion_order)
+    conversion_menu.grid(row=21, column=1)
+    conversion_label = tk.Label(root, text="Post-PES Non-GTGP Conversion Factor (Higher Factor = Higher Chance)")
+    conversion_label.grid(row=21, column=0, padx=10)
+
     divider_label = tk.Label(root, text="__________________________")
-    divider_label.grid(row=19, column=0, padx=10)
+    divider_label.grid(row=22, column=0, padx=10)
 
     thread_order = [1, 2, 3, 4]
     thread_input = tk.StringVar()
     thread_menu = ttk.OptionMenu(root, thread_input, thread_order[1], *thread_order)
-    thread_menu.grid(row=20, column=1)
+    thread_menu.grid(row=23, column=1)
     thread_label = tk.Label(root, text="# of Model Instances to Run Concurrently")
-    thread_label.grid(row=20, column=0, padx=10)
+    thread_label.grid(row=23, column=0, padx=10)
     thread_label2 = tk.Label(root, text="(Note: Too High = Slower Results)")
-    thread_label2.grid(row=21, column=0, padx=10)
+    thread_label2.grid(row=24, column=0, padx=10)
 
     run_count_input = tk.Entry(root)
-    run_count_input.grid(row=22, column=1)
+    run_count_input.grid(row=25, column=1)
     run_count_input.insert(0, 10)
     run_count = tk.Label(root, text="Total # of Runs:")
-    run_count.grid(row=22, column=0, padx=10)
+    run_count.grid(row=25, column=0, padx=10)
 
     run_button = tk.Button(root, text='Run Model', command=execute)
-    run_button.grid(row=23,column=1, pady=10)
+    run_button.grid(row=26,column=1, pady=10)
 
     divider_label = tk.Label(root, text="__________________________")
-    divider_label.grid(row=24, column=1, padx=10)
+    divider_label.grid(row=27, column=1, padx=10)
 
-    run_button = tk.Button(root, text='Run Model Up to 270 Times (Preset, ignore settings above)', command=execute_extended)
-    run_button.grid(row=25,column=1, pady=10, padx=10)
+    run_button = tk.Button(root, text='Run Model Up to 270 Times (Preset in Code)', command=execute_extended)
+    run_button.grid(row=28,column=1, pady=10, padx=10)
 
     root.update_idletasks()
     root.mainloop()
