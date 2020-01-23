@@ -1,19 +1,17 @@
 import os
+import time
 
 """
-This script needs to be modified before it is usable.
-After you run the model some X number of trials per setting, put all of the trials for each setting in one folder.
-Create subfolders for each file type (human demographics, monkey demographics).
-Then in each, create an empty .csv that is the same as the set_file_name stated here. This is so it can added to.
-Finally, run this script from the same directory as the other .csv files.
-
-This code assumes 3 sets of 30 trials and 1460 steps (20 years). It will take each of the 30 trials' outputs and average them.
-The number of trials can be adjusted; the default is 30 ('counter < 31').
+This script takes certain file outputs and creates an 'average' run out of those files, for use in creating a summary Excel graph
+for scientific purposes. For educational or observational purposes, you can skip straight to creating an Excel graph from any single
+model run's file output; this script is not useful in most cases.
 """
 
 set_file_name = 'average_human_population.csv'
-import time
-def read_first_line(filename, x):
+with open(set_file_name, 'a+') as f:  # create the file if it doesn't exist yet
+    f.close()
+
+def read_first_line(filename, x):  # x refers to i below and represents the step number in the model
     f = open(filename)
     lines = f.readlines()
     new_file = open(set_file_name, 'a+')
@@ -21,9 +19,10 @@ def read_first_line(filename, x):
     new_file.close()
 
 def get_values():
-    for i in list(range(2, 245)):
-        for filename in os.listdir(os.getcwd()):
-            if filename[-3:] == 'csv' and str(filename) != str(set_file_name):
-                read_first_line(filename, i)  # 0 years
-
+    for i in list(range(2, 245)):  # the range goes to 245 to include all rows, aka all 1460 time-steps in a 20-year script run
+        for filename in os.listdir(os.getcwd()): 
+            # os.getcwd() is the current directory as a string
+            # os.listdir(directory_name) lists the files in directory_name
+            if filename[-3:] == 'csv' and str(filename) != str(set_file_name):  # excludes already-created file if script runs twice
+                read_first_line(filename, i)
 get_values()

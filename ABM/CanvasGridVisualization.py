@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+
+"""
+This script is modified from the Mesa library for use with the model and, apart from these modifications, was not written by J. Mak.
+The modifications affect the appearance of the grid if the user chooses to run the model visualization using server.py.
+"""
+
 """
 Modular Canvas Rendering
 ========================
